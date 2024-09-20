@@ -9,7 +9,7 @@ import LoginScreen from "../screens/LoginScreen/LoginScreen";
 const Stack = createStackNavigator();
 
 const StackNavigator = () => (
-  <Stack.Navigator initialRouteName="BottomTabs">
+  <Stack.Navigator initialRouteName="Login">
     <Stack.Screen
       name="Login"
       options={{

@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { NavigationContainer } from "@react-navigation/native";
 import StackNavigator from "./stacks/StackNavigator";
+import Toast from "react-native-toast-message";
 
 export default function App() {
   return (
@@ -14,9 +15,10 @@ export default function App() {
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <PaperProvider>
-            <StatusBar barStyle="light-content" backgroundColor={"#1446a9"} />
+            <StatusBar barStyle="light-content" backgroundColor={"#7FB640"} />
             <NavigationContainer>
               <StackNavigator />
+              <Toast />
             </NavigationContainer>
           </PaperProvider>
         </PersistGate>

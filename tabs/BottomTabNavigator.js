@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 // Import screen components
 import defaultAvatar from "../assets/default-avatar.jpg";
 import HomeTabs from "./HomeTabs";
+import ProfileTabs from "./ProfileTabs";
 
 const Tab = createBottomTabNavigator();
 
@@ -26,9 +27,20 @@ const BottomTabNavigator = () => {
         component={HomeTabs}
         options={{
           headerShown: false,
-          tabBarLabel: "Home",
+          tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color, size }) => (
             <Icon name={"home-outline"} color={color} size={size + 5} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileTabs}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Tài khoản",
+          tabBarIcon: ({ color, size }) => (
+            <Icon name={"account-outline"} color={color} size={size + 5} />
           ),
         }}
       />

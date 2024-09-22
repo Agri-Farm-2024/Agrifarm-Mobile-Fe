@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.7",
+    "agrifarm-mobile-fe": "file:",
     "axios": "^1.7.7",
     "expo": "~51.0.28",
     "expo-image-picker": "~15.0.7",

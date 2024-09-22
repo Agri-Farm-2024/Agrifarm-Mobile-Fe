@@ -8,6 +8,8 @@ import {
   View,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { TouchableRipple } from "react-native-paper";
 
 const user = {
   avatar:
@@ -62,6 +64,18 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.infoTitle}>Số điện thoại:</Text>
           <Text style={styles.info}>{user.phone}</Text>
         </View>
+        <TouchableRipple
+          rippleColor="rgba(127, 182, 64, 0.5)"
+          onPress={() => console.log("Logout")}
+        >
+          <View style={styles.userInfoContainer}>
+            <View style={styles.logoutContainer}>
+              <MaterialCommunityIcons name="logout" size={24} color="#7FB640" />
+              <Text style={styles.logoutTitle}>Đăng xuất</Text>
+            </View>
+            <MaterialIcons name="arrow-forward-ios" size={24} color="#707070" />
+          </View>
+        </TouchableRipple>
       </View>
     </SafeAreaView>
   );
@@ -124,6 +138,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     backgroundColor: "#FFFFFF",
+    borderBottomWidth: 1,
+    borderBottomColor: "#D9D9D9",
   },
   infoTitle: {
     fontSize: 18,
@@ -132,6 +148,16 @@ const styles = StyleSheet.create({
   info: {
     fontSize: 18,
     fontWeight: "bold",
+  },
+  logoutContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    color: "#7FB640",
+  },
+  logoutTitle: {
+    color: "black",
+    fontSize: 18,
   },
 });
 

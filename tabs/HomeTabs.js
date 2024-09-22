@@ -8,6 +8,12 @@ export default function HomeTabs() {
     <>
       <Stack.Navigator
         initialRouteName="HomeScreen"
+        screenOptions={{
+          headerStyle: {
+            backgroundColor: "#7FB640",
+          },
+          headerTintColor: "#fff",
+        }}
         options={{
           headerShown: false,
           headerLeft: () => null, // This will remove the left button

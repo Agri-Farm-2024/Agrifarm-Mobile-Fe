@@ -5,57 +5,26 @@ import {
   Text,
   TouchableOpacity,
   View,
+  StyleSheet,
 } from "react-native";
-import { Avatar, Button } from "react-native-paper";
+import { Avatar } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-function HomeScreen() {
+function HomeScreen({ navigation }) {
   return (
     <SafeAreaView>
-      <View
-        style={{
-          paddingVertical: 30,
-          paddingHorizontal: 20,
-        }}
-      >
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.userInfo}>
             <Avatar.Image
               size={76}
               source={{
                 uri: "https://th.bing.com/th/id/OIP.EX4-Ntrsq26D7rjZEhky0gHaHN?rs=1&pid=ImgDetMain",
               }}
             />
-            <View style={{ marginLeft: 10 }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  fontWeight: "bold",
-                }}
-              >
-                CHÀO MỪNG
-              </Text>
-              <Text
-                style={{
-                  fontSize: 17,
-                  // fontWeight: "700",
-                }}
-              >
-                Gia Hân
-              </Text>
+            <View style={styles.userDetails}>
+              <Text style={styles.welcomeText}>CHÀO MỪNG</Text>
+              <Text style={styles.userName}>Gia Hân</Text>
             </View>
           </View>
           <TouchableOpacity>
@@ -66,213 +35,78 @@ function HomeScreen() {
             />
           </TouchableOpacity>
         </View>
+
         <Image
-          style={{
-            height: 180,
-            objectFit: "cover",
-            width: "100%",
-            marginTop: 30,
-          }}
+          style={styles.discountImage}
           source={require("../../assets/discount.png")}
         />
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: "800",
-          }}
-        >
-          Chức năng
-        </Text>
-        <View
-          style={{
-            marginTop: 20,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
+
+        <Text style={styles.functionTitle}>Chức năng</Text>
+
+        {/* First Row */}
+        <View style={styles.row}>
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="file-document-outline"
                 size={45}
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Hợp đồng thuê đất
-            </Text>
+            <Text style={styles.iconLabel}>Hợp đồng thuê đất</Text>
           </View>
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
+
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="briefcase-plus"
                 size={45}
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Yêu cầu dịch vụ
-            </Text>
+            <Text style={styles.iconLabel}>Yêu cầu dịch vụ</Text>
           </View>
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
+
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="book-outline"
                 size={45}
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Ghi Nhật ký
-            </Text>
+            <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
           </View>
         </View>
-        <View
-          style={{
-            marginTop: 20,
-            display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
+
+        {/* Second Row */}
+        <View style={styles.row}>
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="text-box-check-outline"
                 size={45}
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Quy trình canh tác
-            </Text>
+            <Text style={styles.iconLabel}>Quy trình canh tác</Text>
           </View>
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
-            <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
-            >
+
+          <View style={styles.iconContainer}>
+            <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="account-outline"
                 size={45}
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Thông tin
-            </Text>
+            <Text style={styles.iconLabel}>Thông tin</Text>
           </View>
-          <View
-            style={{
-              width: "20%",
-            }}
-          >
+
+          <View style={styles.iconContainer}>
             <TouchableOpacity
-              style={{
-                backgroundColor: "#7FB640",
-                display: "flex",
-                alignItems: "center",
-                padding: 10,
-                borderRadius: 10,
-              }}
+              style={styles.iconButton}
+              onPress={() => navigation.navigate("HelpScreen")}
             >
               <MaterialCommunityIcons
                 name="help-circle-outline"
@@ -280,22 +114,70 @@ function HomeScreen() {
                 color="white"
               />
             </TouchableOpacity>
-            <Text
-              style={{
-                marginTop: 5,
-                textAlign: "center",
-                fontSize: 16,
-                fontWeight: 400,
-                lineHeight: 24,
-              }}
-            >
-              Hỗ trợ
-            </Text>
+            <Text style={styles.iconLabel}>Hỗ trợ</Text>
           </View>
         </View>
       </View>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 30,
+    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  userInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  userDetails: {
+    marginLeft: 10,
+  },
+  welcomeText: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  userName: {
+    fontSize: 17,
+  },
+  discountImage: {
+    height: 180,
+    width: "100%",
+    marginTop: 30,
+    resizeMode: "cover",
+  },
+  functionTitle: {
+    fontSize: 20,
+    fontWeight: "800",
+    marginTop: 20,
+  },
+  row: {
+    marginTop: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  iconContainer: {
+    width: "20%",
+  },
+  iconButton: {
+    backgroundColor: "#7FB640",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 10,
+  },
+  iconLabel: {
+    marginTop: 5,
+    textAlign: "center",
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 24,
+  },
+});
 
 export default HomeScreen;

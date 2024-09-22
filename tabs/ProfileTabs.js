@@ -18,6 +18,7 @@ export default function ProfileTabs() {
         options={{
           headerShown: false,
           headerLeft: () => null, // This will remove the left button
+          headerTitleAlign: "center",
         }}
       >
         <Stack.Screen
@@ -26,7 +27,6 @@ export default function ProfileTabs() {
           options={{
             headerLeft: () => null, // This will remove the left button
             headerTitle: "Tài khoản",
-            headerTitleAlign: "center",
           }}
         />
         <Stack.Screen
@@ -34,7 +34,6 @@ export default function ProfileTabs() {
           component={EditProfileScreen}
           options={{
             headerTitle: "Cập nhật thông tin",
-            headerTitleAlign: "center",
           }}
         />
       </Stack.Navigator>

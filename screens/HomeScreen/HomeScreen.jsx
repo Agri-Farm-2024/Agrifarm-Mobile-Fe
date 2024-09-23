@@ -46,11 +46,14 @@ function HomeScreen({ navigation }) {
         {/* First Row */}
         <View style={styles.row}>
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.iconButton}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => navigation.navigate("LandLeaseScreen")}
+            >
               <MaterialCommunityIcons
                 name="file-document-outline"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Hợp đồng thuê đất</Text>
@@ -60,8 +63,8 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="briefcase-plus"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Yêu cầu dịch vụ</Text>
@@ -71,8 +74,8 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="book-outline"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
@@ -85,8 +88,8 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="text-box-check-outline"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Quy trình canh tác</Text>
@@ -96,8 +99,8 @@ function HomeScreen({ navigation }) {
             <TouchableOpacity style={styles.iconButton}>
               <MaterialCommunityIcons
                 name="account-outline"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Thông tin</Text>
@@ -110,8 +113,8 @@ function HomeScreen({ navigation }) {
             >
               <MaterialCommunityIcons
                 name="help-circle-outline"
-                size={45}
-                color="white"
+                size={40}
+                color="#7FB640"
               />
             </TouchableOpacity>
             <Text style={styles.iconLabel}>Hỗ trợ</Text>
@@ -166,7 +169,7 @@ const styles = StyleSheet.create({
     width: "20%",
   },
   iconButton: {
-    backgroundColor: "#7FB640",
+    // backgroundColor: "#7FB640",
     alignItems: "center",
     padding: 10,
     borderRadius: 10,

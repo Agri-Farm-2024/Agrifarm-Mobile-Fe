@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import defaultAvatar from "../assets/default-avatar.jpg";
 import HomeTabs from "./HomeTabs";
 import ProfileTabs from "./ProfileTabs";
+import ChatTabs from "./ChatTabs";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +31,22 @@ const BottomTabNavigator = () => {
           tabBarLabel: "Trang chủ",
           tabBarIcon: ({ color, size }) => (
             <Icon name={"home-outline"} color={color} size={size + 5} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Chat"
+        component={ChatTabs}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Chat",
+          tabBarIcon: ({ color, size }) => (
+            <Icon
+              name={"chat-processing-outline"}
+              color={color}
+              size={size + 5}
+            />
           ),
         }}
       />

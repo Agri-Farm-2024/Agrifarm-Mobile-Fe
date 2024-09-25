@@ -37,7 +37,7 @@ const DiaryProgress = ({ diaryProgress }) => {
           <View style={styles.diaryAction}>
             <TouchableRipple
               style={styles.actionWrapper}
-              rippleColor="rgba(127, 182, 64, 0.5)"
+              rippleColor="rgba(127, 182, 64, 0.2)"
               onPress={() => navigation.navigate("DiaryDetailView")}
             >
               <View>
@@ -80,17 +80,17 @@ const styles = StyleSheet.create({
     backgroundColor: "#7fb640",
   },
   diaryTime: {
-    width: "30%",
+    width: "25%",
   },
   stage: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: "bold",
     color: "#707070",
     marginBottom: 16,
     textAlign: "right",
   },
   dayTime: {
-    fontSize: 14,
+    fontSize: 12,
     color: "#707070",
     marginBottom: 4,
     textAlign: "right",
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     elevation: 1,
   },
   diaryAction: {
-    width: "60%",
+    width: "65%",
   },
   actionWrapper: {
     borderRadius: 7,

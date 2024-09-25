@@ -4,12 +4,12 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TouchableHighlight,
   TouchableOpacity,
   View,
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { TouchableRipple } from "react-native-paper";
 
 const user = {
   avatar:
@@ -64,8 +64,8 @@ const ProfileScreen = ({ navigation }) => {
           <Text style={styles.infoTitle}>Số điện thoại:</Text>
           <Text style={styles.info}>{user.phone}</Text>
         </View>
-        <TouchableRipple
-          rippleColor="rgba(127, 182, 64, 0.5)"
+        <TouchableHighlight
+          underlayColor="#7FB640"
           onPress={() => console.log("Logout")}
         >
           <View style={styles.userInfoContainer}>
@@ -75,7 +75,7 @@ const ProfileScreen = ({ navigation }) => {
             </View>
             <MaterialIcons name="arrow-forward-ios" size={24} color="#707070" />
           </View>
-        </TouchableRipple>
+        </TouchableHighlight>
       </View>
     </SafeAreaView>
   );

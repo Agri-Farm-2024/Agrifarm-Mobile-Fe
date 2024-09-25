@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   dialog: {
     borderRadius: 15, // Round corners
     backgroundColor: "#ffffff", // Dialog background color
+    paddingBottom: 20,
   },
   title: {
     textAlign: "center",

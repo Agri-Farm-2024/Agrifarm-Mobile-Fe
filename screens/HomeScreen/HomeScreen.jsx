@@ -68,7 +68,10 @@ function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.iconButton}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("DiaryScreen")}
+              style={styles.iconButton}
+            >
               <MaterialCommunityIcons
                 name="book-outline"
                 size={45}

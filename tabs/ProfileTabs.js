@@ -14,11 +14,11 @@ export default function ProfileTabs() {
             backgroundColor: "#7FB640",
           },
           headerTintColor: "#fff",
+          headerTitleAlign: "center",
         }}
         options={{
           headerShown: false,
           headerLeft: () => null, // This will remove the left button
-          headerTitleAlign: "center",
         }}
       >
         <Stack.Screen

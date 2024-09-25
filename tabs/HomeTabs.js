@@ -2,6 +2,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
 import HomeScreen from "../screens/HomeScreen/HomeScreen";
 import HelpScreen from "../screens/HelpScreen/HelpScreen";
+import DiaryScreen from "../screens/DiaryScreen/DiaryScreen";
 export default function HomeTabs() {
   const Stack = createStackNavigator();
 
@@ -33,6 +34,14 @@ export default function HomeTabs() {
           component={HelpScreen}
           options={{
             headerTitle: "Hỗ trợ",
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen
+          name="DiaryScreen"
+          component={DiaryScreen}
+          options={{
+            headerTitle: "Nhật ký canh tác",
             headerTitleAlign: "center",
           }}
         />

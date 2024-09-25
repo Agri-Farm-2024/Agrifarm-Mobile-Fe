@@ -22,6 +22,7 @@ const DropdownComponent = ({
   value,
   setValue,
   styleValue,
+  placeholderStyleValue,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -33,7 +34,7 @@ const DropdownComponent = ({
           isFocus && { borderColor: "#7FB640" },
           styleValue,
         ]}
-        placeholderStyle={styles.placeholderStyle}
+        placeholderStyle={[styles.placeholderStyle, placeholderStyleValue]}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
         data={options || data}

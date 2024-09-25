@@ -11,6 +11,8 @@ import DiaryActionScreen from "../screens/DiaryScreen/DiaryActionScreen";
 import CreateDiaryScreen from "../screens/DiaryScreen/CreateDiaryScreen";
 import WriteDiaryScreen from "../screens/DiaryScreen/WriteDiaryScreen";
 import UpdateDiaryScreen from "../screens/DiaryScreen/UpdateDiaryScreen";
+import LandLeaseScreen from "../screens/LandLeaseScreen/LandLeaseScreen";
+
 
 const Stack = createStackNavigator();
 
@@ -99,6 +101,12 @@ const StackNavigator = () => (
         },
       }}
       component={UpdateDiaryScreen}
+      name="LandLeaseScreen"
+      options={{
+        headerTitle: "Yêu cầu thuê đất",
+        headerTitleAlign: "center",
+      }}
+      component={LandLeaseScreen}
     />
   </Stack.Navigator>
 );

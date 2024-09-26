@@ -33,3 +33,9 @@ export function convertTo12HourFormat(isoString) {
   // Return the formatted time
   return `${hours}:${minutesFormatted} ${ampm}`;
 }
+//Functions will reuse here
+
+// 1200000 to 1.200.000
+export function formatNumberToVND(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}

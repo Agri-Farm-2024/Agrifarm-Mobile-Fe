@@ -15,6 +15,11 @@ import LandLeaseScreen from "../screens/LandLeaseScreen/LandLeaseScreen";
 import ServiceScreen from "../screens/ServiceSreen/ServiceScreen";
 import ServicePackageDetailScreen from "../screens/ServiceSreen/ServicePackageDetailScreen";
 import MyServiceDetailScreen from "../screens/ServiceSreen/MyServiceDetailScreen";
+import MaterialDetailScreen from "../screens/MaterialDetailScreen/MaterialDetailScreen";
+import CartMaterialsScreen from "../screens/CartMaterialsScreen/CartMaterialsScreen";
+import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
+import PaymentScreen from "../screens/PaymentScreen/PaymentScreen";
+import ThankYouScreen from "../screens/ThankYouScreen/ThankYouScreen";
 
 const Stack = createStackNavigator();
 
@@ -104,6 +109,7 @@ const StackNavigator = () => (
       }}
       component={UpdateDiaryScreen}
     />
+    {/* Fix: Removed empty Stack.Screen */}
     <Stack.Screen
       name="LandLeaseScreen"
       options={{
@@ -135,6 +141,46 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={MyServiceDetailScreen}
+    />
+    <Stack.Screen
+      name="MaterialDetailScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={MaterialDetailScreen}
+    />
+    <Stack.Screen
+      name="CartMaterialsScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={CartMaterialsScreen}
+    />
+    <Stack.Screen
+      name="CheckoutScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={CheckoutScreen}
+    />
+    <Stack.Screen
+      name="PaymentScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={PaymentScreen}
+    />
+    <Stack.Screen
+      name="ThankYouScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={ThankYouScreen}
     />
   </Stack.Navigator>
 );

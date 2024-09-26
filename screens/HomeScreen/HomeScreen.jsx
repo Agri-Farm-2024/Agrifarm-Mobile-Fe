@@ -7,10 +7,12 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import { Avatar } from "react-native-paper";
+import { Avatar, Badge } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { useSelector } from "react-redux";
 
 function HomeScreen({ navigation }) {
+  const cartCount = useSelector((state) => state.cart.cartCount);
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -27,12 +29,24 @@ function HomeScreen({ navigation }) {
               <Text style={styles.userName}>Gia Hân</Text>
             </View>
           </View>
-          <TouchableOpacity>
-            <MaterialCommunityIcons
-              name="bell-outline"
-              size={30}
-              color="#7FB640"
-            />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("CartMaterialsScreen")}
+          >
+            <MaterialCommunityIcons name="cart" size={30} color="#7FB640" />
+            {cartCount > 0 && (
+              <Badge
+                size={20}
+                style={{
+                  position: "absolute",
+                  top: -5,
+                  right: -5,
+                  backgroundColor: "red",
+                  color: "white",
+                }}
+              >
+                {cartCount}
+              </Badge>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -102,14 +116,17 @@ function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.iconButton}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => navigation.navigate("RequestMaterialsScreen")}
+            >
               <MaterialCommunityIcons
-                name="account-outline"
+                name="basket-plus-outline"
                 size={40}
                 color="#7FB640"
               />
             </TouchableOpacity>
-            <Text style={styles.iconLabel}>Thông tin</Text>
+            <Text style={styles.iconLabel}>Yêu cầu vật tư</Text>
           </View>
 
           <View style={styles.iconContainer}>

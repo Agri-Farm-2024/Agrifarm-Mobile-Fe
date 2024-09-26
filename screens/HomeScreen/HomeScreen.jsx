@@ -60,7 +60,10 @@ function HomeScreen({ navigation }) {
           </View>
 
           <View style={styles.iconContainer}>
-            <TouchableOpacity style={styles.iconButton}>
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => navigation.navigate("ServiceScreen")}
+            >
               <MaterialCommunityIcons
                 name="briefcase-plus"
                 size={40}

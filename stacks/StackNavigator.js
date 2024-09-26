@@ -12,7 +12,9 @@ import CreateDiaryScreen from "../screens/DiaryScreen/CreateDiaryScreen";
 import WriteDiaryScreen from "../screens/DiaryScreen/WriteDiaryScreen";
 import UpdateDiaryScreen from "../screens/DiaryScreen/UpdateDiaryScreen";
 import LandLeaseScreen from "../screens/LandLeaseScreen/LandLeaseScreen";
-
+import ServiceScreen from "../screens/ServiceSreen/ServiceScreen";
+import ServicePackageDetailScreen from "../screens/ServiceSreen/ServicePackageDetailScreen";
+import MyServiceDetailScreen from "../screens/ServiceSreen/MyServiceDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -101,12 +103,38 @@ const StackNavigator = () => (
         },
       }}
       component={UpdateDiaryScreen}
+    />
+    <Stack.Screen
       name="LandLeaseScreen"
       options={{
         headerTitle: "Yêu cầu thuê đất",
         headerTitleAlign: "center",
       }}
       component={LandLeaseScreen}
+    />
+    <Stack.Screen
+      name="ServiceScreen"
+      options={{
+        headerTitle: "Gói dịch vụ",
+        headerTitleAlign: "center",
+      }}
+      component={ServiceScreen}
+    />
+    <Stack.Screen
+      name="ServicePackageDetailScreen"
+      options={{
+        headerTitle: "Chi tiết gói dịch vụ",
+        headerTitleAlign: "center",
+      }}
+      component={ServicePackageDetailScreen}
+    />
+    <Stack.Screen
+      name="MyServiceDetailScreen"
+      options={{
+        headerTitle: "Dịch vụ của tôi",
+        headerTitleAlign: "center",
+      }}
+      component={MyServiceDetailScreen}
     />
   </Stack.Navigator>
 );

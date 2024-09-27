@@ -20,6 +20,9 @@ import CartMaterialsScreen from "../screens/CartMaterialsScreen/CartMaterialsScr
 import CheckoutScreen from "../screens/CheckoutScreen/CheckoutScreen";
 import PaymentScreen from "../screens/PaymentScreen/PaymentScreen";
 import ThankYouScreen from "../screens/ThankYouScreen/ThankYouScreen";
+import RequestMaterialsByStage from "../screens/RequestMaterialsScreen/RequestMaterialsByStage/RequestMaterialsByStage";
+import HistoryOrder from "../screens/HistoryOrder/HistoryOrder";
+import HistoryOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/HistoryOrderDetail";
 
 const Stack = createStackNavigator();
 
@@ -181,6 +184,30 @@ const StackNavigator = () => (
         swipeEnabled: false,
       }}
       component={ThankYouScreen}
+    />
+    <Stack.Screen
+      name="RequestMaterialsByStage"
+      options={{
+        headerTitle: "Yêu cầu vật tư",
+        headerTitleAlign: "center",
+      }}
+      component={RequestMaterialsByStage}
+    />
+    <Stack.Screen
+      name="HistoryOrder"
+      options={{
+        headerTitle: "Lịch sử đơn hàng",
+        headerTitleAlign: "center",
+      }}
+      component={HistoryOrder}
+    />
+    <Stack.Screen
+      name="HistoryOrderDetail"
+      options={{
+        headerTitle: "Chi tiết đơn hàng",
+        headerTitleAlign: "center",
+      }}
+      component={HistoryOrderDetail}
     />
   </Stack.Navigator>
 );

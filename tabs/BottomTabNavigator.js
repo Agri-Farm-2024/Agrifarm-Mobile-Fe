@@ -8,6 +8,7 @@ import defaultAvatar from "../assets/default-avatar.jpg";
 import HomeTabs from "./HomeTabs";
 import ProfileTabs from "./ProfileTabs";
 import ChatTabs from "./ChatTabs";
+import NotificationScreen from "../screens/NotificationScreen/NotificationScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -47,6 +48,18 @@ const BottomTabNavigator = () => {
               color={color}
               size={size + 5}
             />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: "Thông báo",
+          tabBarIcon: ({ color, size }) => (
+            <Icon name={"bell-outline"} color={color} size={size + 5} />
           ),
         }}
       />

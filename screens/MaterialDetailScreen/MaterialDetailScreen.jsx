@@ -7,7 +7,8 @@ import { addToCart, clearCart } from "../../redux/slices/cartSlice";
 import { formatNumberToVND } from "../../utils";
 
 export default function MaterialDetailScreen({ route, navigation }) {
-  const { image, name, type, price, requestType, id } = route.params;
+  const { image, name, type, price, requestType, id, quantityByStage } =
+    route.params;
   const dispatch = useDispatch();
   const cartCount = useSelector((state) => state.cart.cartCount);
 
@@ -89,38 +90,54 @@ export default function MaterialDetailScreen({ route, navigation }) {
           leo. Etiam id libero at turpis mollis posuere consectetur.
         </Text>
         <Text style={styles.priceProduct}>{formatNumberToVND(price)} VND</Text>
-        <View style={styles.addCartContainer}>
-          <View style={styles.adjustContainer}>
-            <IconButton
-              icon="minus"
-              size={24}
-              onPress={handleDecrease}
-              style={styles.adjustButton}
-              iconColor="#7fb640"
-              disabled={quantity === 0}
-            />
-            <Text style={styles.number}>{quantity}</Text>
-            <IconButton
-              icon="plus"
-              size={24}
-              onPress={handleIncrease}
-              style={styles.adjustButton}
-              iconColor="#7fb640"
-            />
-          </View>
+        {requestType === "request by stage" ? (
           <View>
             <Button
               style={{
                 borderRadius: 5,
                 backgroundColor: "#7fb640",
+                marginTop: 20,
+                width: 150,
               }}
               mode="contained"
-              onPress={handleAddToCart}
             >
-              Thêm vào giỏ hàng
+              Số lượng : {quantityByStage}
             </Button>
           </View>
-        </View>
+        ) : (
+          <View style={styles.addCartContainer}>
+            <View style={styles.adjustContainer}>
+              <IconButton
+                icon="minus"
+                size={24}
+                onPress={handleDecrease}
+                style={styles.adjustButton}
+                iconColor="#7fb640"
+                disabled={quantity === 0}
+              />
+              <Text style={styles.number}>{quantity}</Text>
+              <IconButton
+                icon="plus"
+                size={24}
+                onPress={handleIncrease}
+                style={styles.adjustButton}
+                iconColor="#7fb640"
+              />
+            </View>
+            <View>
+              <Button
+                style={{
+                  borderRadius: 5,
+                  backgroundColor: "#7fb640",
+                }}
+                mode="contained"
+                onPress={handleAddToCart}
+              >
+                Thêm vào giỏ hàng
+              </Button>
+            </View>
+          </View>
+        )}
       </View>
       <Toast />
     </SafeAreaView>

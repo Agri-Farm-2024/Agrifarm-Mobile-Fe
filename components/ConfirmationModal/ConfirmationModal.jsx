@@ -18,20 +18,20 @@ const ConfirmationModal = ({
         </Dialog.Content>
         <Dialog.Actions style={styles.actions}>
           <Button
-            mode="outlined"
-            onPress={onDismiss}
-            labelStyle={styles.cancelButtonText}
-            style={styles.cancelButton}
-          >
-            Hủy
-          </Button>
-          <Button
             mode="contained"
             onPress={onConfirm}
             labelStyle={styles.confirmButtonText}
             style={styles.confirmButton}
           >
             Xác nhận
+          </Button>
+          <Button
+            mode="outlined"
+            onPress={onDismiss}
+            labelStyle={styles.cancelButtonText}
+            style={styles.cancelButton}
+          >
+            Hủy
           </Button>
         </Dialog.Actions>
       </Dialog>
@@ -47,10 +47,10 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
-    fontSize: 20,
+    fontSize: 26,
     fontWeight: "bold",
     marginBottom: 10,
-    color: "#333", // Title color
+    color: "#4caf50", // Title color
   },
   contentText: {
     fontSize: 16,
@@ -67,11 +67,11 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     marginRight: 10,
-    borderColor: "#ff5252", // Red outline for cancel
+    borderColor: "#4caf50", // Red outline for cancel
     borderWidth: 1,
   },
   cancelButtonText: {
-    color: "#ff5252", // Red text for cancel
+    color: "#4caf50", // Red text for cancel
   },
   confirmButton: {
     flex: 1,

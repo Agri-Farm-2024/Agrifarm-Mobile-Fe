@@ -27,8 +27,10 @@ const ThankYouScreen = ({ navigation }) => {
 
       {/* Thank You Message */}
       <View style={styles.messageContainer}>
-        <Text style={styles.title}>Cám ơn!</Text>
-        <Text style={styles.subtitle}>Chúc bạn canh tác thuận lợi</Text>
+        <Text style={styles.title}>Thành công!</Text>
+        <Text style={styles.subtitle}>
+          Chúc bạn canh tác thuận lợi, vật tư sẽ được gửi đến bạn sớm thôi
+        </Text>
       </View>
 
       <Image
@@ -61,12 +63,12 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   iconContainer: {
-    flex: 3,
+    marginTop: 60,
     justifyContent: "center",
     alignItems: "center",
   },
   messageContainer: {
-    flex: 2,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -79,6 +81,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#333",
     marginTop: 10,
+    textAlign: "center",
+    lineHeight: 24,
   },
   buttonContainer: {
     flex: 1,

@@ -47,7 +47,6 @@ export default function RequestMaterialsList() {
             status={item.status}
             description={item.description}
             price={item.price}
-            
           />
         ))}
       </ScrollView>

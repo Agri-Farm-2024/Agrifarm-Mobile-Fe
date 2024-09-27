@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 export default function RequestMaterialsItem({
   title,
@@ -7,8 +8,12 @@ export default function RequestMaterialsItem({
   price,
   status,
 }) {
+  const navigation = useNavigation();
   return (
-    <TouchableOpacity style={styles.RequestMaterialsItem}>
+    <TouchableOpacity
+      style={styles.RequestMaterialsItem}
+      onPress={() => navigation.navigate("RequestMaterialsByStage")}
+    >
       <View
         style={{
           flexDirection: "row",

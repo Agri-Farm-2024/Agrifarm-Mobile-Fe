@@ -10,8 +10,10 @@ export default function MaterialItem({
   price,
   requestType,
   id,
+  quantity,
 }) {
   const navigation = useNavigation();
+  console.log(requestType);
   return (
     <TouchableOpacity
       style={styles.containerItem}
@@ -23,6 +25,7 @@ export default function MaterialItem({
           price,
           requestType,
           id,
+          quantityByStage: quantity,
         })
       }
     >
@@ -34,7 +37,11 @@ export default function MaterialItem({
       ></Image>
       <Text style={styles.nameProduct}>{name}</Text>
       <Text style={styles.typeProduct}>{type}</Text>
-      <Text style={styles.priceProduct}>{formatNumberToVND(price)} VND</Text>
+      <Text style={styles.priceProduct}>
+        {requestType == "request by stage"
+          ? "Số lượng: " + quantity
+          : formatNumberToVND(price) + " VND"}
+      </Text>
     </TouchableOpacity>
   );
 }

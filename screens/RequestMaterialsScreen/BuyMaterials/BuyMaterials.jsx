@@ -28,7 +28,6 @@ const data = [
     name: "Hành tím",
     type: "Gia vị",
     price: 8000,
-
     requestType: "buy",
   },
   {
@@ -38,7 +37,6 @@ const data = [
     name: "Hành tím",
     type: "Gia vị",
     price: 8000,
-
     requestType: "buy",
   },
   {

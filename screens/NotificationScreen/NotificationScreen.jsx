@@ -53,14 +53,21 @@ export default function NotificationScreen() {
       </Appbar.Header>
 
       {/* Danh sách thông báo */}
-      <Button
-        mode="outlined"
-        style={styles.markAsReadButton}
-        onPress={handleMarkAllAsRead}
-        textColor="#7fb640"
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "flex-end",
+        }}
       >
-        Đã đọc thông báo
-      </Button>
+        <Button
+          mode="outlined"
+          style={styles.markAsReadButton}
+          onPress={handleMarkAllAsRead}
+          textColor="#7fb640"
+        >
+          Đã đọc
+        </Button>
+      </View>
       <FlatList
         data={notifications}
         renderItem={renderItem}
@@ -112,6 +119,7 @@ const styles = StyleSheet.create({
   markAsReadButton: {
     margin: 16,
     borderColor: "#7fb640",
-    width: 200,
+    width: 100,
+    borderRadius: 10,
   },
 });

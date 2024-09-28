@@ -4,6 +4,7 @@ import HomeScreen from "../screens/HomeScreen/HomeScreen";
 import HelpScreen from "../screens/HelpScreen/HelpScreen";
 import RequestMaterialsScreen from "../screens/RequestMaterialsScreen/RequestMaterialsScreen";
 import DiaryScreen from "../screens/DiaryScreen/DiaryScreen";
+import RequestListScreen from "../screens/RequestListScreen/RequestListScreen";
 export default function HomeTabs() {
   const Stack = createStackNavigator();
 
@@ -53,6 +54,14 @@ export default function HomeTabs() {
             headerTitle: "Nhật ký canh tác",
             headerTitleAlign: "center",
           }}
+        />
+        <Stack.Screen
+          name="RequestListScreen"
+          component={RequestListScreen}
+          options={{
+            headerTitle: "Danh sách yêu cầu",
+            headerTitleAlign: "center",
+        }}
         />
       </Stack.Navigator>
     </>

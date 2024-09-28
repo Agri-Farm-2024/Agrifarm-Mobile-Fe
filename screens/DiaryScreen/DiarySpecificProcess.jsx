@@ -1,5 +1,9 @@
+// DiarySpecificProcess.js
+import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import DiaryProgress from "../../components/DiaryProgress";
+import { Button } from "react-native-paper";
+import PurchaseRequestModal from "./PurchaseRequestModal/PurchaseRequestModal"; // Import the modal
 
 const process = {
   authorProcess: "Nguyen Van A",
@@ -69,6 +73,16 @@ const process = {
 };
 
 const DiarySpecificProcess = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleOpenModal = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.diaryInfoContainer}>
@@ -76,6 +90,18 @@ const DiarySpecificProcess = () => {
         <Text style={styles.diaryInfo}>
           Người tạo quy trình: {process.authorProcess}
         </Text>
+        <Button
+          mode="contained"
+          style={{
+            width: 200,
+            marginTop: 10,
+            backgroundColor: "#7fb640",
+            borderRadius: 5,
+          }}
+          onPress={handleOpenModal}
+        >
+          Yêu cầu thu mua
+        </Button>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -83,6 +109,9 @@ const DiarySpecificProcess = () => {
       >
         <DiaryProgress diaryProgress={process.processContent} />
       </ScrollView>
+
+      {/* Use the PurchaseRequestModal */}
+      <PurchaseRequestModal visible={modalVisible} onClose={handleCloseModal} />
     </View>
   );
 };

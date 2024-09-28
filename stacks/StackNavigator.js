@@ -23,6 +23,9 @@ import ThankYouScreen from "../screens/ThankYouScreen/ThankYouScreen";
 import RequestMaterialsByStage from "../screens/RequestMaterialsScreen/RequestMaterialsByStage/RequestMaterialsByStage";
 import HistoryOrder from "../screens/HistoryOrder/HistoryOrder";
 import HistoryOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/HistoryOrderDetail";
+import RequestContractDetailScreen from "../screens/RequestListScreen/RequestContractDetailScreen/RequestContractDetailScreen";
+import RequestServicesDetailScreen from "../screens/RequestListScreen/RequestServicesDetailScreen/RequestServicesDetailScreen";
+import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseScreen/RequestPurchaseScreen";
 
 const Stack = createStackNavigator();
 
@@ -112,7 +115,6 @@ const StackNavigator = () => (
       }}
       component={UpdateDiaryScreen}
     />
-    {/* Fix: Removed empty Stack.Screen */}
     <Stack.Screen
       name="LandLeaseScreen"
       options={{
@@ -208,6 +210,30 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={HistoryOrderDetail}
+    />
+    <Stack.Screen
+      name="RequestContractDetailScreen"
+      options={{
+        headerTitle: "Chi tiết yêu cầu",
+        headerTitleAlign: "center",
+      }}
+      component={RequestContractDetailScreen}
+    />
+    <Stack.Screen
+      name="RequestServicesDetailScreen"
+      options={{
+        headerTitle: "Chi tiết yêu cầu",
+        headerTitleAlign: "center",
+      }}
+      component={RequestServicesDetailScreen}
+    />
+    <Stack.Screen
+      name="RequestPurchaseScreen"
+      options={{
+        headerTitle: "Chi tiết yêu cầu",
+        headerTitleAlign: "center",
+      }}
+      component={RequestPurchaseScreen}
     />
   </Stack.Navigator>
 );

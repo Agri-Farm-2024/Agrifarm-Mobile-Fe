@@ -160,6 +160,20 @@ function HomeScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Hỗ trợ</Text>
             </View>
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("RequestListScreen")}
+              >
+                <MaterialCommunityIcons
+                  name="format-list-checkbox"
+                  size={40}
+                  color="#7FB640"
+                />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
+            </View>
+            <View style={styles.iconContainer}></View>
           </View>
         </View>
       </ScrollView>
@@ -208,7 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   iconContainer: {
-    width: "20%",
+    width: "22%",
   },
   iconButton: {
     // backgroundColor: "#7FB640",

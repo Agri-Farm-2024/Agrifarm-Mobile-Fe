@@ -70,6 +70,7 @@ export default function BuyMaterials() {
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
+            paddingHorizontal: 20,
           }}
         >
           {data.map((item) => (

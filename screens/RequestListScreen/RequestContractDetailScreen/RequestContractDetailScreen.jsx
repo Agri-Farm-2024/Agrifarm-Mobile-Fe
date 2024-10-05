@@ -82,12 +82,6 @@ export default function RequestContractDetailScreen() {
 
         {/* Section title */}
         <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
-
-        {/* Contract info with scrollable content */}
-        <View style={styles.contractInfoContainer}>
-          <ContractComponent textSize={textSize} lineHeight={lineHeight} />
-        </View>
-
         {/* Buttons to adjust text size */}
         <View style={styles.buttonContainer}>
           <Button
@@ -104,6 +98,11 @@ export default function RequestContractDetailScreen() {
           >
             Thu nhỏ
           </Button>
+        </View>
+
+        {/* Contract info with scrollable content */}
+        <View style={styles.contractInfoContainer}>
+          <ContractComponent textSize={textSize} lineHeight={lineHeight} />
         </View>
 
         {/* Checkbox with text */}
@@ -173,9 +172,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   buttonContainer: {
+    marginTop: 10,
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
   },
   textButton: {
     backgroundColor: "#7fb640",

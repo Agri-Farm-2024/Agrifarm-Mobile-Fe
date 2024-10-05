@@ -140,8 +140,8 @@ export default function RequestMaterialsByStage({ navigation }) {
           paddingBottom: 20, // Prevent data from being cut off at the bottom
         }}
       >
-        {data.map((dataItem) => (
-          <View>
+        {data.map((dataItem, index) => (
+          <View key={index}>
             <View
               style={{
                 flexDirection: "row",

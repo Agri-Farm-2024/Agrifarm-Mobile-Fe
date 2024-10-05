@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   tabContainer: {
+    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 20,

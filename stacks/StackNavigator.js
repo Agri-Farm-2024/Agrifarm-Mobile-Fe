@@ -26,6 +26,8 @@ import HistoryOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/Histo
 import RequestContractDetailScreen from "../screens/RequestListScreen/RequestContractDetailScreen/RequestContractDetailScreen";
 import RequestServicesDetailScreen from "../screens/RequestListScreen/RequestServicesDetailScreen/RequestServicesDetailScreen";
 import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseScreen/RequestPurchaseScreen";
+import BottomTabNavigatorExpert from "../tabs/BottomTabNavigatorExpert";
+import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSpecificProcess/AddSpecificProcessScreen";
 
 const Stack = createStackNavigator();
 
@@ -38,7 +40,7 @@ const StackNavigator = () => (
       headerTintColor: "#fff",
       headerTitleAlign: "center",
     }}
-    initialRouteName="BottomTabs"
+    initialRouteName="Login"
   >
     <Stack.Screen
       name="Login"
@@ -234,6 +236,23 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={RequestPurchaseScreen}
+    />
+
+    {/* Expert */}
+    <Stack.Screen
+      name="BottomTabNavigatorExpert"
+      options={{
+        headerShown: false,
+      }}
+      component={BottomTabNavigatorExpert}
+    />
+    <Stack.Screen
+      name="AddSpecificProcessScreen"
+      options={{
+        headerTitle: "Thêm quy trình canh tác",
+        headerTitleAlign: "center",
+      }}
+      component={AddSpecificProcessScreen}
     />
   </Stack.Navigator>
 );

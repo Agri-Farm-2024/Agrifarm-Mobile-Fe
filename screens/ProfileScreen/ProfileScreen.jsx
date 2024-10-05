@@ -66,7 +66,7 @@ const ProfileScreen = ({ navigation }) => {
         </View>
         <TouchableHighlight
           underlayColor="#7FB640"
-          onPress={() => console.log("Logout")}
+          onPress={() => navigation.navigate("Login")}
         >
           <View style={styles.userInfoContainer}>
             <View style={styles.logoutContainer}>

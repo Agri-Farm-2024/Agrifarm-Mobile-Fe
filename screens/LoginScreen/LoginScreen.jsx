@@ -11,9 +11,9 @@ import { Button, Modal, Portal, TextInput } from "react-native-paper";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ForgotPasswordModal from "../../components/ForgotPasswordModal";
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [loginForm, setLoginForm] = useState({
-    username: "",
+    username: "expert",
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState(null);
@@ -22,37 +22,46 @@ const LoginScreen = () => {
   const [invalidInput, setInvalidInput] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
+  // UN COMMENT FOR CODE LOGIC LOGIN
+  // const handleLogin = () => {
+  //   console.log("handleLogin");
+  //   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  //   try {
+  //     if (loginForm.username === "" || loginForm.password === "") {
+  //       setErrorMessage("Vui lòng không bỏ trống!");
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Đăng nhập thất bại!",
+  //         text2: "Vui lòng không bỏ trống!",
+  //       });
+  //       setInvalidInput(true);
+  //       return;
+  //     }
+  //     if (!emailRegex.test(loginForm.username)) {
+  //       setErrorMessage("Vui lòng không bỏ trống!");
+  //       Toast.show({
+  //         type: "error",
+  //         text1: "Đăng nhập thất bại!",
+  //         text2: "Email không hợp lệ❗️",
+  //       });
+  //       setInvalidInput(true);
+  //       return;
+  //     }
+  //     setInvalidInput(false);
+  //     setErrorMessage(null);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // FAKE DATA TO LOGIN
   const handleLogin = () => {
-    console.log("handleLogin");
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    try {
-      if (loginForm.username === "" || loginForm.password === "") {
-        setErrorMessage("Vui lòng không bỏ trống!");
-        Toast.show({
-          type: "error",
-          text1: "Đăng nhập thất bại!",
-          text2: "Vui lòng không bỏ trống!",
-        });
-        setInvalidInput(true);
-        return;
-      }
-      if (!emailRegex.test(loginForm.username)) {
-        setErrorMessage("Vui lòng không bỏ trống!");
-        Toast.show({
-          type: "error",
-          text1: "Đăng nhập thất bại!",
-          text2: "Email không hợp lệ❗️",
-        });
-        setInvalidInput(true);
-        return;
-      }
-      setInvalidInput(false);
-      setErrorMessage(null);
-    } catch (error) {
-      console.log(error);
+    if (loginForm.username === "expert") {
+      navigation.navigate("BottomTabNavigatorExpert");
+    } else {
+      navigation.navigate("BottomTabs");
     }
   };
-
   return (
     <SafeAreaView>
       <ScrollView keyboardDismissMode="on-drag">
@@ -152,6 +161,7 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     paddingHorizontal: 40,
+    height: 1000,
   },
   title: {
     fontSize: 28,

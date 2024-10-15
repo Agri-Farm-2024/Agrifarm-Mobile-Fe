@@ -19,12 +19,37 @@ const service = {
   serviceDescription:
     "Gói quy trình canh tác theo chuẩn VietGap của giống cây. Dịch vụ này sẽ cung cấp quy trình cụ thể để trồng trọt theo chuẩn VietGAP. Dịch vụ sẽ cung cấp cung cấp vật tư cần thiết để trồng trọt như: phân bón, thuốc trừ sâu, các dụng cụ trồng trọt và các nguyên vật liệu để cải tạo đất và xây dựng mô hình đạt chuẩn VietGAP để trồng cây.",
   servicePrice: 2000000,
+  isPurchase: true,
+  isMaterial: true,
 };
 
 const plotOptions = [
   {
     label: "Mảnh đất số 1",
     value: "Mảnh đất số 1",
+  },
+  {
+    label: "Mảnh đất số 2",
+    value: "Mảnh đất số 2",
+  },
+];
+
+const plantSeasonOptions = [
+  {
+    label: "Tháng 9 - 12",
+    value: "Tháng 9 - 12",
+  },
+  {
+    label: "Tháng 10 - 1",
+    value: "Tháng 10 - 1",
+  },
+  {
+    label: "Tháng 1 - 3",
+    value: "Tháng 1 - 3",
+  },
+  {
+    value: "Tháng 4 - 8",
+    label: "Tháng 4 - 8",
   },
 ];
 
@@ -52,13 +77,15 @@ const ServicePackageDetailScreen = () => {
     plot: "",
     cultivatedArea: "",
     plantType: "",
+    plantSeason: "",
   });
 
   const handleSubmit = () => {
     if (
       formInput.plot === "" ||
       formInput.cultivatedArea === "" ||
-      formInput.plantType === ""
+      formInput.plantType === "" ||
+      formInput.plantSeason === ""
     ) {
       Toast.show({
         type: "error",
@@ -66,7 +93,7 @@ const ServicePackageDetailScreen = () => {
         text2: "Vui lòng điền đầy đủ thông tin!",
       });
     }
-    console.log("Submit");
+    console.log("Submit", formInput);
   };
 
   return (
@@ -91,6 +118,18 @@ const ServicePackageDetailScreen = () => {
             </Text>
           </View>
           <View style={styles.detail}>
+            <Text style={styles.detailName}>Bao tiêu</Text>
+            <Text style={styles.detailContent}>
+              {service.isPurchase == true ? "Có" : "Không"}
+            </Text>
+          </View>
+          <View style={styles.detail}>
+            <Text style={styles.detailName}>Bao vật tư</Text>
+            <Text style={styles.detailContent}>
+              {service.isMaterial == true ? "Có" : "Không"}
+            </Text>
+          </View>
+          <View style={styles.detail}>
             <Text style={styles.detailName}>Áp dụng cho mảnh đất</Text>
             <View style={styles.detailContentInput}>
               <DropdownComponent
@@ -101,8 +140,8 @@ const ServicePackageDetailScreen = () => {
                 options={plotOptions}
                 placeholder="Chọn mảnh đất"
                 value={formInput.plot}
-                setValue={(item) =>
-                  setFormInput({ ...formInput, plot: item.value })
+                setValue={(value) =>
+                  setFormInput({ ...formInput, plot: value })
                 }
               />
             </View>
@@ -118,8 +157,32 @@ const ServicePackageDetailScreen = () => {
                 options={plantTypeOptions}
                 placeholder="Chọn loại cây"
                 value={formInput.plantType}
-                setValue={(item) =>
-                  setFormInput({ ...formInput, plantType: item.value })
+                setValue={(value) => {
+                  if (formInput.plantType != value) {
+                    setFormInput({
+                      ...formInput,
+                      plantType: value,
+                      plantSeason: "",
+                    });
+                  }
+                }}
+              />
+            </View>
+          </View>
+          <View style={styles.detail}>
+            <Text style={styles.detailName}>Mùa vụ</Text>
+            <View style={styles.detailContentInput}>
+              <DropdownComponent
+                isDisabled={formInput.plantType == "" ? true : false}
+                styleValue={{
+                  height: 40,
+                }}
+                placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+                options={plantSeasonOptions}
+                placeholder="Chọn mùa vụ"
+                value={formInput.plantSeason}
+                setValue={(value) =>
+                  setFormInput({ ...formInput, plantSeason: value })
                 }
               />
             </View>
@@ -132,14 +195,14 @@ const ServicePackageDetailScreen = () => {
                 placeholder="Diện tích canh tác"
                 style={styles.input}
                 value={formInput.cultivatedArea}
-                onChange={(text) =>
+                onChangeText={(text) =>
                   setFormInput({ ...formInput, cultivatedArea: text })
                 }
               ></TextInput>
             </View>
           </View>
           <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Tạo nhật ký</Text>
+            <Text style={styles.submitButtonText}>Mua gói dịch vụ</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

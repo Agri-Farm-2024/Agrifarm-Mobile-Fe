@@ -23,6 +23,7 @@ const DropdownComponent = ({
   setValue,
   styleValue,
   placeholderStyleValue,
+  isDisabled,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -33,7 +34,9 @@ const DropdownComponent = ({
           styles.dropdown,
           isFocus && { borderColor: "#7FB640" },
           styleValue,
+          isDisabled && { backgroundColor: "#D9D9D9" },
         ]}
+        disable={isDisabled && isDisabled}
         placeholderStyle={[styles.placeholderStyle, placeholderStyleValue]}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}

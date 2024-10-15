@@ -63,7 +63,7 @@ const LoginScreen = ({ navigation }) => {
     }
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView keyboardDismissMode="on-drag">
         <View style={styles.container}>
           <Image
@@ -159,9 +159,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   container: {
-    backgroundColor: "#fff",
+    flex: 1,
     paddingHorizontal: 40,
-    height: 1000,
   },
   title: {
     fontSize: 28,

@@ -11,6 +11,7 @@ import {
 import { Avatar, Badge } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSelector } from "react-redux";
+import SlideImageComponent from "../../components/SlideImageComponent/SlideImageComponent";
 
 function HomeScreen({ navigation }) {
   const cartCount = useSelector((state) => state.cart.cartCount);
@@ -52,10 +53,7 @@ function HomeScreen({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <Image
-            style={styles.discountImage}
-            source={require("../../assets/discount.png")}
-          />
+          <SlideImageComponent />
 
           <Text style={styles.functionTitle}>Chức năng</Text>
 
@@ -173,7 +171,15 @@ function HomeScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
             </View>
-            <View style={styles.iconContainer}></View>
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("LandListScreen")}
+              >
+                <MaterialCommunityIcons name="map" size={40} color="#7FB640" />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Danh sách mảnh đất</Text>
+            </View>
           </View>
         </View>
       </ScrollView>

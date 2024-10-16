@@ -13,7 +13,7 @@ import ForgotPasswordModal from "../../components/ForgotPasswordModal";
 
 const LoginScreen = ({ navigation }) => {
   const [loginForm, setLoginForm] = useState({
-    username: "expert",
+    username: "landrenter",
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState(null);

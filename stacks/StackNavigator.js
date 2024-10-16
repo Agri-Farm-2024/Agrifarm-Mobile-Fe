@@ -28,6 +28,8 @@ import RequestServicesDetailScreen from "../screens/RequestListScreen/RequestSer
 import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseScreen/RequestPurchaseScreen";
 import BottomTabNavigatorExpert from "../tabs/BottomTabNavigatorExpert";
 import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSpecificProcess/AddSpecificProcessScreen";
+import LandListScreen from "../screens/LandListScreen/LandListScreen";
+import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -253,6 +255,23 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={AddSpecificProcessScreen}
+    />
+
+    <Stack.Screen
+      name="LandListScreen"
+      options={{
+        headerTitle: "Danh sách mảnh đất",
+        headerTitleAlign: "center",
+      }}
+      component={LandListScreen}
+    />
+    <Stack.Screen
+      name="LandDetailScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={LandDetailScreen}
     />
   </Stack.Navigator>
 );

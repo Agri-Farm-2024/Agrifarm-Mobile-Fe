@@ -29,6 +29,8 @@ import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseS
 import BottomTabNavigatorExpert from "../tabs/BottomTabNavigatorExpert";
 import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSpecificProcess/AddSpecificProcessScreen";
 import CreateStandardProcessScreen from "../screens/StandardProcessScreen/CreateStandardProcessScreen";
+import LandListScreen from "../screens/LandListScreen/LandListScreen";
+import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -262,6 +264,22 @@ const StackNavigator = () => (
         headerTitle: "Tạo quy trình chuẩn",
         headerTitleAlign: "center",
       }}
+    />
+    <Stack.Screen
+      name="LandListScreen"
+      options={{
+        headerTitle: "Danh sách mảnh đất",
+        headerTitleAlign: "center",
+      }}
+      component={LandListScreen}
+    />
+    <Stack.Screen
+      name="LandDetailScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={LandDetailScreen}
     />
   </Stack.Navigator>
 );

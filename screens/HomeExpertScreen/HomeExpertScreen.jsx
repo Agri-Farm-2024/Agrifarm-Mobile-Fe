@@ -79,11 +79,24 @@ function HomeExpertScreen({ navigation }) {
 
             <View style={styles.iconContainer}>
               <TouchableOpacity
+                onPress={() => navigation.navigate("StandardProcessScreen")}
+                style={styles.iconButton}
+              >
+                <MaterialCommunityIcons
+                  name="application-cog-outline"
+                  size={40}
+                  color="#7FB640"
+                />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Quy trình kỹ thuật chuẩn</Text>
+            </View>
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
                 onPress={() => navigation.navigate("SpecificProcessListScreen")}
                 style={styles.iconButton}
               >
                 <MaterialCommunityIcons
-                  name="book-outline"
+                  name="application-edit-outline"
                   size={40}
                   color="#7FB640"
                 />
@@ -147,6 +160,7 @@ function HomeExpertScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
             </View>
+            <View style={styles.iconContainer}></View>
           </View>
         </View>
       </ScrollView>

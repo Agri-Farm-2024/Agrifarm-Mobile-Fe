@@ -1,13 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import HomeScreen from "../screens/HomeScreen/HomeScreen";
-import HelpScreen from "../screens/HelpScreen/HelpScreen";
 import RequestMaterialsScreen from "../screens/RequestMaterialsScreen/RequestMaterialsScreen";
-import DiaryScreen from "../screens/DiaryScreen/DiaryScreen";
-import RequestListScreen from "../screens/RequestListScreen/RequestListScreen";
 import HomeExpertScreen from "../screens/HomeExpertScreen/HomeExpertScreen";
 import SpecificProcessListScreen from "../screens/SpecificProcessListScreen/SpecificProcessListScreen";
 import MyTaskScreen from "../screens/MyTaskScreen/MyTaskScreen";
+import StandardProcessScreen from "../screens/StandardProcessScreen/StandardProcessScreen";
 export default function HomeTabsExpert() {
   const Stack = createStackNavigator();
 
@@ -55,6 +52,14 @@ export default function HomeTabsExpert() {
           component={SpecificProcessListScreen}
           options={{
             headerTitle: "Quy trình canh tác",
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen
+          name="StandardProcessScreen"
+          component={StandardProcessScreen}
+          options={{
+            headerTitle: "Quy trình chuẩn",
             headerTitleAlign: "center",
           }}
         />

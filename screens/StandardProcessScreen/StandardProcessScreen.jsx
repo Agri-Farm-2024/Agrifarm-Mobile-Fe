@@ -25,7 +25,7 @@ const diaryList = [
   },
 ];
 
-const SpecificProcessListScreen = ({ navigation }) => {
+const StandardProcessScreen = ({ navigation }) => {
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -73,8 +73,7 @@ const SpecificProcessListScreen = ({ navigation }) => {
         icon="plus"
         style={styles.fab}
         onPress={() => {
-          // navigation.navigate("CreateSpecificProcessListScreen");
-          navigation.navigate("AddSpecificProcessScreen");
+          navigation.navigate("CreateStandardProcessScreen");
         }}
       />
     </SafeAreaView>
@@ -128,4 +127,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SpecificProcessListScreen;
+export default StandardProcessScreen;

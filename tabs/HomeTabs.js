@@ -61,7 +61,7 @@ export default function HomeTabs() {
           options={{
             headerTitle: "Danh sách yêu cầu",
             headerTitleAlign: "center",
-        }}
+          }}
         />
       </Stack.Navigator>
     </>

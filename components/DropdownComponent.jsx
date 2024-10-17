@@ -24,6 +24,7 @@ const DropdownComponent = ({
   styleValue,
   placeholderStyleValue,
   isDisabled,
+  data,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 

@@ -28,6 +28,7 @@ import RequestServicesDetailScreen from "../screens/RequestListScreen/RequestSer
 import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseScreen/RequestPurchaseScreen";
 import BottomTabNavigatorExpert from "../tabs/BottomTabNavigatorExpert";
 import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSpecificProcess/AddSpecificProcessScreen";
+import CreateStandardProcessScreen from "../screens/StandardProcessScreen/CreateStandardProcessScreen";
 
 const Stack = createStackNavigator();
 
@@ -253,6 +254,14 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={AddSpecificProcessScreen}
+    />
+    <Stack.Screen
+      name="CreateStandardProcessScreen"
+      component={CreateStandardProcessScreen}
+      options={{
+        headerTitle: "Tạo quy trình chuẩn",
+        headerTitleAlign: "center",
+      }}
     />
   </Stack.Navigator>
 );

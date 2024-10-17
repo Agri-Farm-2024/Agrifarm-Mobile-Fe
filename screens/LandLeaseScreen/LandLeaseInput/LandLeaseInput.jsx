@@ -14,27 +14,24 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 
 // Validation schema with Yup
+// Validation schema with Yup
 const validationSchema = Yup.object().shape({
   name: Yup.string().required("Họ và tên là bắt buộc"),
-  address: Yup.string().required("Địa chỉ là bắt buộc"),
-  cccd: Yup.string()
-    .matches(/^[0-9]+$/, "CCCD phải là số")
-    .min(9, "CCCD phải có ít nhất 9 chữ số")
-    .required("Số CCCD là bắt buộc"),
-  birthDate: Yup.date()
-    .required("Ngày sinh là bắt buộc")
-    .max(
-      new Date(new Date().setFullYear(new Date().getFullYear() - 18)),
-      "Bạn phải đủ 18 tuổi"
-    ),
+  phoneNumber: Yup.string()
+    .matches(/^[0-9]+$/, "Số điện thoại phải là số")
+    .min(10, "Số điện thoại phải có ít nhất 10 chữ số")
+    .max(11, "Số điện thoại không vượt quá 11 chữ số")
+    .required("Số điện thoại là bắt buộc"),
+  startTime: Yup.date().required("Thời gian bắt đầu là bắt buộc"),
   rentalMonths: Yup.number()
     .typeError("Số tháng cần thuê phải là số")
     .min(1, "Ít nhất là 1 tháng")
     .required("Số tháng cần thuê là bắt buộc"),
+  purpose: Yup.string().required("Mục đích thuê đất là bắt buộc"), // Add this line
 });
 
 const LandLeaseInput = forwardRef((props, ref) => {
-  const [birthDate, setBirthDate] = useState(new Date());
+  const [startTime, setStartTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const formikRef = React.useRef();
 
@@ -48,15 +45,15 @@ const LandLeaseInput = forwardRef((props, ref) => {
   const handleDateChange = (event, selectedDate, setFieldValue) => {
     setShowDatePicker(false);
     if (selectedDate) {
-      setFieldValue("birthDate", selectedDate);
-      setBirthDate(selectedDate);
+      setFieldValue("startTime", selectedDate);
+      setStartTime(selectedDate);
     }
   };
 
   return (
     <Formik
       innerRef={formikRef}
-      initialValues={props.formData} // Use props for initial values
+      initialValues={props.formData}
       validationSchema={validationSchema}
       onSubmit={(values, { setSubmitting }) => {
         props.handleGetData(values);
@@ -97,67 +94,54 @@ const LandLeaseInput = forwardRef((props, ref) => {
               value={values.name}
               placeholder="Họ và tên"
             />
-            {/* Địa chỉ */}
-            <Text>Địa chỉ</Text>
-            {touched.address && errors.address && (
-              <Text style={styles.errorText}>{errors.address}</Text>
+
+            {/* Số điện thoại */}
+            <Text>Số điện thoại</Text>
+            {touched.phoneNumber && errors.phoneNumber && (
+              <Text style={styles.errorText}>{errors.phoneNumber}</Text>
             )}
             <TextInput
               style={[
                 styles.input,
                 {
                   borderColor:
-                    touched.address && errors.address ? "red" : "#d4d7e3",
+                    touched.phoneNumber && errors.phoneNumber
+                      ? "red"
+                      : "#d4d7e3",
                 },
               ]}
-              onChangeText={handleChange("address")}
-              onBlur={handleBlur("address")}
-              value={values.address}
-              placeholder="Địa chỉ"
+              onChangeText={handleChange("phoneNumber")}
+              onBlur={handleBlur("phoneNumber")}
+              value={values.phoneNumber}
+              keyboardType="phone-pad"
+              placeholder="Số điện thoại"
             />
-            {/* Số CCCD */}
-            <Text>Số CCCD</Text>
-            {touched.cccd && errors.cccd && (
-              <Text style={styles.errorText}>{errors.cccd}</Text>
-            )}
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  borderColor: touched.cccd && errors.cccd ? "red" : "#d4d7e3",
-                },
-              ]}
-              onChangeText={handleChange("cccd")}
-              onBlur={handleBlur("cccd")}
-              value={values.cccd}
-              placeholder="Số CCCD"
-              keyboardType="numeric"
-            />
-            {/* Năm sinh (Date Picker) */}
-            <Text>Năm sinh</Text>
-            {touched.birthDate && errors.birthDate && (
-              <Text style={styles.errorText}>{errors.birthDate}</Text>
+            {/* Thời gian bắt đầu */}
+            <Text>Thời gian bắt đầu</Text>
+            {touched.startTime && errors.startTime && (
+              <Text style={styles.errorText}>{errors.startTime}</Text>
             )}
             <TouchableOpacity
-              style={[
-                styles.input,
-                {
-                  borderColor:
-                    touched.birthDate && errors.birthDate ? "red" : "#d4d7e3",
-                },
-              ]}
               onPress={() => setShowDatePicker(true)}
+              style={styles.datePicker}
             >
-              <Text>{birthDate.toLocaleDateString()}</Text>
+              <Text>
+                {startTime.toLocaleDateString("vi-VN", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </Text>
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
-                value={birthDate}
+                value={startTime}
                 mode="date"
                 display="default"
-                onChange={(event, selectedDate) =>
-                  handleDateChange(event, selectedDate, setFieldValue)
+                onChange={(e, selectedDate) =>
+                  handleDateChange(e, selectedDate, setFieldValue)
                 }
+                minimumDate={new Date()} // Set the minimum date to today
               />
             )}
             {/* Số tháng cần thuê */}
@@ -178,8 +162,29 @@ const LandLeaseInput = forwardRef((props, ref) => {
               onChangeText={handleChange("rentalMonths")}
               onBlur={handleBlur("rentalMonths")}
               value={values.rentalMonths}
-              placeholder="Số tháng cần thuê"
               keyboardType="numeric"
+              placeholder="Số tháng cần thuê"
+            />
+            {/* Mục đích thuê đất */}
+            <Text>Mục đích thuê đất</Text>
+            {touched.purpose && errors.purpose && (
+              <Text style={styles.errorText}>{errors.purpose}</Text>
+            )}
+            <TextInput
+              style={[
+                styles.input,
+                {
+                  borderColor:
+                    touched.purpose && errors.purpose ? "red" : "#d4d7e3",
+                },
+              ]}
+              onChangeText={handleChange("purpose")}
+              onBlur={handleBlur("purpose")}
+              value={values.purpose}
+              placeholder="Mục đích thuê đất"
+              multiline // Enable multiline input
+              numberOfLines={4} // Adjust the number of visible lines
+              textAlignVertical="top" // Align text to the top of the TextInput
             />
           </ScrollView>
         </KeyboardAvoidingView>
@@ -190,24 +195,29 @@ const LandLeaseInput = forwardRef((props, ref) => {
 
 const styles = StyleSheet.create({
   title: {
-    color: "#242731",
     fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 30,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   input: {
-    height: 50,
     borderWidth: 1,
-    padding: 10,
+    borderColor: "#d4d7e3",
     borderRadius: 5,
-    marginTop: 8,
+    padding: 10,
+    marginTop: 5,
     marginBottom: 15,
-    backgroundColor: "#f5f5f5",
-    justifyContent: "center",
   },
   errorText: {
     color: "red",
-    fontSize: 12,
+    marginBottom: 5,
+  },
+  datePicker: {
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    borderColor: "#d4d7e3",
+    marginTop: 5,
+    marginBottom: 15,
   },
 });
 

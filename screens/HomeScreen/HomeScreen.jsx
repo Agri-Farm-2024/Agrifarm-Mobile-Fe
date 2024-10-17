@@ -70,7 +70,7 @@ function HomeScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Hợp đồng thuê đất</Text>
+              <Text style={styles.iconLabel}>Yêu cầu thuê đất</Text>
             </View>
 
             <View style={styles.iconContainer}>

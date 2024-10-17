@@ -4,6 +4,7 @@ import { Button, Checkbox, Icon, Text } from "react-native-paper";
 import LandLeaseInput from "./LandLeaseInput/LandLeaseInput";
 import LandLeaseSign from "./LandLeaseSign/LandLeaseSign";
 import Toast from "react-native-toast-message";
+import LandLeaseReview from "./LandLeaseReview/LandLeaseReview";
 
 export default function LandLeaseScreen({ navigation }) {
   const [tourStep, setTourStep] = useState(0);
@@ -11,10 +12,10 @@ export default function LandLeaseScreen({ navigation }) {
   const [isChecked, setIsChecked] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    address: "",
-    cccd: "",
-    birthDate: new Date(),
+    phoneNumber: "",
     rentalMonths: "",
+    purpose: "",
+    startTime: new Date(),
   });
 
   const handleGetData = (data) => {
@@ -73,7 +74,7 @@ export default function LandLeaseScreen({ navigation }) {
         />
       )}
 
-      {tourStep === 1 && <LandLeaseSign formData={formData} />}
+      {tourStep === 1 && <LandLeaseReview formData={formData} />}
 
       <View>
         {tourStep === 1 && (
@@ -96,6 +97,7 @@ export default function LandLeaseScreen({ navigation }) {
           <Button
             style={{
               borderRadius: 5,
+              borderColor: tourStep == 0 ? null : "#7fb640",
             }}
             mode="outlined"
             onPress={handlePrevStep}

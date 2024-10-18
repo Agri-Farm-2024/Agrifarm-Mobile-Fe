@@ -28,6 +28,7 @@ import RequestServicesDetailScreen from "../screens/RequestListScreen/RequestSer
 import RequestPurchaseScreen from "../screens/RequestListScreen/RequestPurchaseScreen/RequestPurchaseScreen";
 import BottomTabNavigatorExpert from "../tabs/BottomTabNavigatorExpert";
 import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSpecificProcess/AddSpecificProcessScreen";
+import CreateStandardProcessScreen from "../screens/StandardProcessScreen/CreateStandardProcessScreen";
 import LandListScreen from "../screens/LandListScreen/LandListScreen";
 import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
 
@@ -256,7 +257,14 @@ const StackNavigator = () => (
       }}
       component={AddSpecificProcessScreen}
     />
-
+    <Stack.Screen
+      name="CreateStandardProcessScreen"
+      component={CreateStandardProcessScreen}
+      options={{
+        headerTitle: "Tạo quy trình chuẩn",
+        headerTitleAlign: "center",
+      }}
+    />
     <Stack.Screen
       name="LandListScreen"
       options={{

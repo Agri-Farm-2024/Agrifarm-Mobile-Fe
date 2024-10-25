@@ -1,18 +1,29 @@
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useState,
+} from "react";
 import { Button, TextInput } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for icons
 import Toast from "react-native-toast-message";
 import DropdownComponent from "../../components/DropdownComponent";
 
 const materialOptions = [
-  { label: "Cuốc", value: "1" },
-  { label: "Xẻng", value: "2" },
-  { label: "Phân bón", value: "3" },
+  { label: "Cuốc", value: "VT001" },
+  { label: "Xẻng", value: "VT002" },
+  { label: "Phân bón", value: "VT003" },
 ];
 
 const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   const [stages, setStages] = useState(props.plantStages);
+
+  useEffect(() => {
+    if (props.plantStages.length > 0) {
+      setStages(props.plantStages);
+    }
+  }, [props.plantStages]);
 
   const addStage = () => {
     setStages([
@@ -188,44 +199,50 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
         }
 
         stage.inputs.map((input, idxInput) => {
-          // Check if 'from' field is empty
-          if (!input.from.trim()) {
-            Toast.show({
-              type: "error",
-              text1: `Giai đoạn ${idxStage + 1}`,
-              text2: `Ô "Từ ngày" ở bước ${idxInput + 1} không được để trống`,
-            });
-            isFalse = true;
-          }
+          if (input) {
+            // Check if 'from' field is empty
+            if (!input.from.trim()) {
+              Toast.show({
+                type: "error",
+                text1: `Giai đoạn ${idxStage + 1}`,
+                text2: `Ô "Từ ngày" ở bước ${idxInput + 1} không được để trống`,
+              });
+              isFalse = true;
+            }
 
-          // Check if 'to' field is empty
-          else if (!input.to.trim()) {
-            Toast.show({
-              type: "error",
-              text1: `Giai đoạn ${idxStage + 1}`,
-              text2: `Ô "Đến ngày" ở bước ${idxInput + 1} không được để trống`,
-            });
-            isFalse = true;
-          }
+            // Check if 'to' field is empty
+            else if (!input.to.trim()) {
+              Toast.show({
+                type: "error",
+                text1: `Giai đoạn ${idxStage + 1}`,
+                text2: `Ô "Đến ngày" ở bước ${
+                  idxInput + 1
+                } không được để trống`,
+              });
+              isFalse = true;
+            }
 
-          // Check if 'single' field is empty
-          else if (!input.single.trim()) {
-            Toast.show({
-              type: "error",
-              text1: `Giai đoạn ${idxStage + 1}`,
-              text2: `Ô "Tiêu đề" ở bước ${idxInput + 1} không được để trống`,
-            });
-            isFalse = true;
-          }
+            // Check if 'single' field is empty
+            else if (!input.single.trim()) {
+              Toast.show({
+                type: "error",
+                text1: `Giai đoạn ${idxStage + 1}`,
+                text2: `Ô "Tiêu đề" ở bước ${idxInput + 1} không được để trống`,
+              });
+              isFalse = true;
+            }
 
-          // Check if 'multiline' field is empty
-          else if (!input.multiline.trim()) {
-            Toast.show({
-              type: "error",
-              text1: `Giai đoạn ${idxStage + 1}`,
-              text2: `Ô "Nội dung" ở bước ${idxInput + 1} không được để trống`,
-            });
-            isFalse = true;
+            // Check if 'multiline' field is empty
+            else if (!input.multiline.trim()) {
+              Toast.show({
+                type: "error",
+                text1: `Giai đoạn ${idxStage + 1}`,
+                text2: `Ô "Nội dung" ở bước ${
+                  idxInput + 1
+                } không được để trống`,
+              });
+              isFalse = true;
+            }
           }
         });
       }
@@ -258,7 +275,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
         stage.inputs.map((input, idxInput) => {
           console.log(input);
           //   Check validate from and to
-          if (Number(input.from) >= Number(input.to)) {
+          if (Number(input.from) > Number(input.to)) {
             Toast.show({
               type: "error",
               text1: `Kiểm tra lại ngày của giai đoạn ${idxStage + 1}`,
@@ -310,6 +327,14 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
       {stages.map((stage, indexStage) => (
         <View key={stage.id} style={styles.inputStageContainer}>
           <View style={styles.inputRow}>
+            <Text
+              style={[
+                styles.sub_header,
+                { color: "#7FB640", fontWeight: "bold" },
+              ]}
+            >
+              Giai đoạn {indexStage + 1}:
+            </Text>
             <TextInput
               mode="outlined"
               activeOutlineColor="#7FB640"
@@ -373,7 +398,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                   inputMode="numeric"
                   keyboardType="number"
                   style={[styles.input, styles.marginHorizontal]}
-                  value={input.from}
+                  value={input.from + ""}
                   onChangeText={(text) => {
                     setStages((prevStages) =>
                       prevStages.map((stageItem) =>
@@ -400,7 +425,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                   inputMode="numeric"
                   keyboardType="numeric"
                   style={[styles.input, styles.marginHorizontal]}
-                  value={input.to}
+                  value={input.to + ""}
                   onChangeText={(text) => {
                     setStages((prevStages) =>
                       prevStages.map((stageItem) =>
@@ -501,7 +526,9 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
             </View>
           ))}
 
-          <Text style={styles.sub_header}>Vật tư cần cho giai đoạn:</Text>
+          <Text style={styles.sub_header}>
+            Vật tư cần cho giai đoạn {indexStage + 1}:
+          </Text>
           {/* Dynamic Input Materials for this stage */}
           {stage.materials.map((material, materialIndex) => (
             <View key={materialIndex} style={styles.inputDateContainer}>
@@ -509,7 +536,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                 <View style={[styles.materialInput]}>
                   <DropdownComponent
                     styleValue={{ marginTop: 0 }}
-                    value={material.materialName}
+                    value={material.id}
                     data={materialOptions}
                     setValue={(value) => {
                       setStages((prevStages) =>
@@ -539,7 +566,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                   activeOutlineColor="#7FB640"
                   textColor="black"
                   inputMode="decimal"
-                  value={material.materialQuantity}
+                  value={material.materialQuantity + ""}
                   onChangeText={(text) => {
                     setStages((prevStages) =>
                       prevStages.map((stageItem) =>

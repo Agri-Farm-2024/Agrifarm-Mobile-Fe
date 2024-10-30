@@ -21,6 +21,8 @@
     "agrifarm-mobile-fe": "file:",
     "axios": "^1.7.7",
     "expo": "~51.0.28",
+    "expo-document-picker": "~12.0.2",
+    "expo-file-system": "~17.0.1",
     "expo-image-picker": "~15.0.7",
     "expo-status-bar": "~1.12.1",
     "formik": "^2.4.6",
@@ -47,9 +49,7 @@
     "react-redux": "^9.1.2",
     "redux-persist": "^6.0.0",
     "xlsx": "^0.18.5",
-    "yup": "^1.4.0",
-    "expo-document-picker": "~12.0.2",
-    "expo-file-system": "~17.0.1"
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -4,46 +4,36 @@ import { MaterialIcons } from "@expo/vector-icons";
 import ConfettiCannon from "react-native-confetti-cannon"; // Import ConfettiCannon
 import { Button } from "react-native-paper";
 
-const ThankYouScreen = ({ navigation, route }) => {
+const FailScreen = ({ navigation }) => {
   const confettiRef = useRef(); // Reference to control the confetti
-  const { msg } = route.params;
 
   return (
     <View style={styles.container}>
-      {/* Fireworks Effect */}
-      <ConfettiCannon
-        count={200}
-        origin={{ x: -10, y: 0 }} // Starting point of the confetti
-        autoStart={true}
-        fadeOut={true}
-        explosionSpeed={350}
-        fallSpeed={2500}
-        ref={confettiRef}
-      />
-
       {/* Icon at the top */}
       <View style={styles.iconContainer}>
-        <MaterialIcons name="check-circle" size={100} color="#76B947" />
+        <MaterialIcons name="error-outline" size={100} color="#D9534F" />
       </View>
 
-      {/* Thank You Message */}
+      {/* Failure Message */}
       <View style={styles.messageContainer}>
-        <Text style={styles.title}>Thành công!</Text>
-        <Text style={styles.subtitle}>{msg}</Text>
+        <Text style={styles.title}>Thanh toán thất bại!</Text>
+        <Text style={styles.subtitle}>
+          Rất tiếc, thanh toán của bạn không thành công. Vui lòng thử lại.
+        </Text>
       </View>
 
       <Image
         source={{
-          uri: "https://img.freepik.com/premium-vector/farmer-hat-overalls-vector-illustration-cartoon-style_1142-82965.jpg",
+          uri: "https://img.freepik.com/premium-vector/farmer-frowning-face-vector-illustration_1142-82965.jpg",
         }}
         style={styles.qrImage}
       />
 
-      {/* Done Button */}
+      {/* Retry Button */}
       <View style={styles.buttonContainer}>
         <Button
           mode="contained"
-          style={{ backgroundColor: "#7fb640" }}
+          style={{ backgroundColor: "#D9534F" }}
           onPress={() => navigation.navigate("HomeScreen")}
         >
           Trở về trang chủ
@@ -74,7 +64,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: "bold",
-    color: "#76B947",
+    color: "#D9534F",
   },
   subtitle: {
     fontSize: 18,
@@ -97,4 +87,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ThankYouScreen;
+export default FailScreen;

@@ -10,11 +10,14 @@ import {
 import { Button, Modal, Portal, TextInput } from "react-native-paper";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ForgotPasswordModal from "../../components/ForgotPasswordModal";
+import { login } from "../../redux/slices/userSlice";
+import { useDispatch } from "react-redux";
 
 const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
-    username: "landrenter",
-    password: "",
+    username: "landrenter@gmail.com",
+    password: "123",
   });
   const [errorMessage, setErrorMessage] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
@@ -22,46 +25,101 @@ const LoginScreen = ({ navigation }) => {
   const [invalidInput, setInvalidInput] = useState(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
-  // UN COMMENT FOR CODE LOGIC LOGIN
-  // const handleLogin = () => {
-  //   console.log("handleLogin");
-  //   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  //   try {
-  //     if (loginForm.username === "" || loginForm.password === "") {
-  //       setErrorMessage("Vui lòng không bỏ trống!");
-  //       Toast.show({
-  //         type: "error",
-  //         text1: "Đăng nhập thất bại!",
-  //         text2: "Vui lòng không bỏ trống!",
-  //       });
-  //       setInvalidInput(true);
-  //       return;
-  //     }
-  //     if (!emailRegex.test(loginForm.username)) {
-  //       setErrorMessage("Vui lòng không bỏ trống!");
-  //       Toast.show({
-  //         type: "error",
-  //         text1: "Đăng nhập thất bại!",
-  //         text2: "Email không hợp lệ❗️",
-  //       });
-  //       setInvalidInput(true);
-  //       return;
-  //     }
-  //     setInvalidInput(false);
-  //     setErrorMessage(null);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const handleLogin = () => {
+    console.log("handleLogin");
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    if (loginForm.username === "" || loginForm.password === "") {
+      setErrorMessage("Vui lòng không bỏ trống!");
+      Toast.show({
+        type: "error",
+        text1: "Đăng nhập thất bại!",
+        text2: "Vui lòng không bỏ trống!",
+      });
+      setInvalidInput(true);
+      return;
+    }
+
+    if (!emailRegex.test(loginForm.username)) {
+      setErrorMessage("Email không hợp lệ!");
+      Toast.show({
+        type: "error",
+        text1: "Đăng nhập thất bại!",
+        text2: "Email không hợp lệ❗️",
+      });
+      setInvalidInput(true);
+      return;
+    }
+
+    // Clear error and invalid input states
+    setInvalidInput(false);
+    setErrorMessage(null);
+
+    // Show loading toast
+    Toast.show({
+      type: "info",
+      text1: "Đang đăng nhập...",
+      text2: "Vui lòng chờ trong giây lát",
+      visibilityTime: 0, // Keeps the toast visible until manually hidden
+      autoHide: false,
+    });
+
+    // Dispatch the login action
+    dispatch(login({ email: loginForm.username, password: loginForm.password }))
+      .unwrap()
+      .then((res) => {
+        console.log(res);
+        Toast.hide();
+        if (res.statusCode === 201 && res.metadata.user.role >= 3) {
+          Toast.show({
+            type: "success",
+            text1: "Đăng nhập thành công!",
+          });
+
+          if (res.metadata.user.role === 3) {
+            navigation.navigate("BottomTabNavigatorExpert");
+          } else if (res.metadata.user.role === 4) {
+            navigation.navigate("BottomTabs");
+          }
+        } else {
+          Toast.show({
+            type: "error",
+            text1: "Đăng nhập thất bại!",
+            text2: "Không có tài khoản này",
+          });
+        }
+      })
+      .catch((error) => {
+        Toast.hide(); // Hide the loading toast
+        console.log(error.message);
+        if (error.message === "Invalid password") {
+          Toast.show({
+            type: "error",
+            text1: "Đăng nhập thất bại!",
+            text2: "Sai email hoặc mật khẩu !!!",
+          });
+          return;
+        }
+
+        if (error.message === "User is not active") {
+          Toast.show({
+            type: "error",
+            text1: "Đăng nhập thất bại!",
+            text2: "Tài khoản chưa được kích hoạt",
+          });
+          return;
+        }
+      });
+  };
 
   // FAKE DATA TO LOGIN
-  const handleLogin = () => {
-    if (loginForm.username === "expert") {
-      navigation.navigate("BottomTabNavigatorExpert");
-    } else {
-      navigation.navigate("BottomTabs");
-    }
-  };
+  // const handleLogin = () => {
+  //   if (loginForm.username === "expert") {
+  //     navigation.navigate("BottomTabNavigatorExpert");
+  //   } else {
+  //     navigation.navigate("BottomTabs");
+  //   }
+  // };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView keyboardDismissMode="on-drag">

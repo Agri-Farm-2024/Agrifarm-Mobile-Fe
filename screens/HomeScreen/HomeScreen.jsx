@@ -12,9 +12,11 @@ import { Avatar, Badge } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSelector } from "react-redux";
 import SlideImageComponent from "../../components/SlideImageComponent/SlideImageComponent";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function HomeScreen({ navigation }) {
   const cartCount = useSelector((state) => state.cart.cartCount);
+
   return (
     <SafeAreaView>
       <ScrollView>

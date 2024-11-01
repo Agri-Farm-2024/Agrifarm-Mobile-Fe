@@ -2,20 +2,16 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const api = axios.create({
-  baseURL: "https://be.sportlinker.site/v1/api",
+  baseURL: "https://api.agrifarm.site",
 });
 
 api.interceptors.request.use(
   async (config) => {
     // Get the tokens from AsyncStorage
-    const clientId = await AsyncStorage.getItem("xClientId");
     const accessToken = await AsyncStorage.getItem("accessToken");
     const refreshToken = await AsyncStorage.getItem("refreshToken");
 
     // Set the headers
-    if (clientId) {
-      config.headers["x-client-id"] = clientId;
-    }
     if (accessToken) {
       config.headers["authorization"] = `Bearer ${accessToken}`;
     }

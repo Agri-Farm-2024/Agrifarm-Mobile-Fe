@@ -31,6 +31,7 @@ import AddSpecificProcessScreen from "../screens/SpecificProcessListScreen/AddSp
 import CreateStandardProcessScreen from "../screens/StandardProcessScreen/CreateStandardProcessScreen";
 import LandListScreen from "../screens/LandListScreen/LandListScreen";
 import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
+import FailScreen from "../screens/FailScreen/FailScreen";
 
 const Stack = createStackNavigator();
 
@@ -191,6 +192,14 @@ const StackNavigator = () => (
         swipeEnabled: false,
       }}
       component={ThankYouScreen}
+    />
+    <Stack.Screen
+      name="FailScreen"
+      options={{
+        headerShown: false,
+        swipeEnabled: false,
+      }}
+      component={FailScreen}
     />
     <Stack.Screen
       name="RequestMaterialsByStage"

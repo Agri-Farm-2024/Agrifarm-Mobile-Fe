@@ -23,7 +23,10 @@ const PaymentScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      navigation.navigate("ThankYouScreen");
+      navigation.navigate("ThankYouScreen", {
+        msg: "Chúc bạn canh tác thuận lợi, vật tư sẽ được gửi đến bạn sớm thôi",
+      });
+      // navigation.navigate("FailScreen");
     }
   }, [timeLeft]);
 

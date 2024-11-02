@@ -1,8 +1,20 @@
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import React from "react";
+import { useSelector } from "react-redux";
+import { formatNumber } from "../../../utils";
 
-export default function LandLeaseReview({ formData }) {
+export default function LandLeaseReview({ formData, land }) {
   console.log(formData);
+
+  const user = useSelector((state) => state.userSlice.userInfo);
+  console.log(user);
+
+  const depositMoney =  Number(land.price_booking_per_month) * 2;
+  const totalMoney =
+    Number(land.price_booking_per_month) * formData.rentalMonths;
+
+  console.log(depositMoney);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Kiểm tra yêu cầu thuê đất</Text>
@@ -10,11 +22,15 @@ export default function LandLeaseReview({ formData }) {
       {/* Displaying each property from the formData object */}
       <View style={{ flexDirection: "row" }}>
         <Text style={styles.label}>Họ và tên: </Text>
-        <Text style={styles.text}>{formData.name}</Text>
+        <Text style={styles.text}>{user.full_name}</Text>
       </View>
       <View style={{ flexDirection: "row" }}>
         <Text style={styles.label}>Số điện thoại: </Text>
-        <Text style={styles.text}>{formData.phoneNumber}</Text>
+        <Text style={styles.text}>{user.phone ? user.phone : "Chưa có"}</Text>
+      </View>
+      <View style={{ flexDirection: "row" }}>
+        <Text style={styles.label}>Mảnh đất: </Text>
+        <Text style={styles.text}>{land.name}</Text>
       </View>
 
       <View style={{ flexDirection: "row" }}>
@@ -32,11 +48,17 @@ export default function LandLeaseReview({ formData }) {
       <Text style={styles.text}>{formData.purpose}</Text>
 
       <Text style={styles.label}>Tổng tiền thanh toán:</Text>
-      <Text style={styles.price}>20,000,000 VND</Text>
+      <Text style={styles.price}>
+        {formatNumber(totalMoney + depositMoney)} VND
+      </Text>
 
       <Text style={styles.label}>Bao gồm:</Text>
-      <Text style={styles.text}>Tiền thuê đất: 15,000,000 VND</Text>
-      <Text style={styles.text}>Tiền cọc: 5,000,000 VND</Text>
+      <Text style={styles.text}>
+        Tiền thuê đất: {formatNumber(totalMoney)} VND
+      </Text>
+      <Text style={styles.text}>
+        Tiền cọc: {formatNumber(depositMoney)} VND
+      </Text>
     </View>
   );
 }
@@ -57,7 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
-    color: "#4e6a5d",
+    color: "#7fb640",
     textAlign: "center",
   },
   label: {
@@ -69,13 +91,13 @@ const styles = StyleSheet.create({
   text: {
     marginVertical: 5,
     fontSize: 16,
-    color: "#2b2bff",
+    color: "#74483f",
     fontWeight: "500",
   },
   price: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#ff0505",
+    color: "#7fb640",
     marginVertical: 5,
   },
 });

@@ -61,7 +61,7 @@ function HomeScreen({ navigation }) {
 
           {/* First Row */}
           <View style={styles.row}>
-            <View style={styles.iconContainer}>
+            {/* <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => navigation.navigate("LandLeaseScreen")}
@@ -73,6 +73,16 @@ function HomeScreen({ navigation }) {
                 />
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Yêu cầu thuê đất</Text>
+            </View> */}
+
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("LandListScreen")}
+              >
+                <MaterialCommunityIcons name="map" size={40} color="#7FB640" />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Danh sách mảnh đất</Text>
             </View>
 
             <View style={styles.iconContainer}>
@@ -173,15 +183,7 @@ function HomeScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
             </View>
-            <View style={styles.iconContainer}>
-              <TouchableOpacity
-                style={styles.iconButton}
-                onPress={() => navigation.navigate("LandListScreen")}
-              >
-                <MaterialCommunityIcons name="map" size={40} color="#7FB640" />
-              </TouchableOpacity>
-              <Text style={styles.iconLabel}>Danh sách mảnh đất</Text>
-            </View>
+            <View style={styles.iconContainer}></View>
           </View>
         </View>
       </ScrollView>

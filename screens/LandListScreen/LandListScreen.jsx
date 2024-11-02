@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   FlatList,
@@ -10,6 +10,9 @@ import {
 import { Button } from "react-native-paper";
 import LandItem from "./LandItem"; // Import LandItem component
 import { FontAwesome } from "@expo/vector-icons";
+import { getListOfLand } from "../../redux/slices/landSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 export default function LandListScreen() {
   // Sample data for the list
@@ -51,24 +54,30 @@ export default function LandListScreen() {
     },
   ];
 
-  // Filter status state and filtered data
-  const [selectedStatus, setSelectedStatus] = useState("Tất cả");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const dispatch = useDispatch();
 
-  // Filtered data based on status
-  const filteredData =
-    selectedStatus === "Tất cả"
-      ? landData
-      : landData.filter((item) => item.status === selectedStatus);
+  const { landList, loading, error } = useSelector((state) => state.landSlice);
 
-  // Function to render each item
+  useEffect(() => {
+    dispatch(
+      getListOfLand({ status: selectedStatus, page_size: 100, page_index: 1 })
+    );
+  }, [selectedStatus]);
+
   const renderItem = ({ item }) => <LandItem item={item} />;
 
-  // Function to handle status selection
   const handleStatusSelect = (status) => {
     setSelectedStatus(status);
     setModalVisible(false);
   };
+
+  const statusOfLand = [
+    { name: "Tất cả", value: "" },
+    { name: "Chưa thuê", value: "free" },
+    { name: "Đã thuê", value: "booked" },
+  ];
 
   return (
     <View style={styles.container}>
@@ -107,16 +116,18 @@ export default function LandListScreen() {
             >
               <Text style={styles.optionTitle}>Chọn trạng thái</Text>
             </View>
-            {["Tất cả", "Chưa thuê", "Đã thuê"].map((status) => (
+            {statusOfLand.map((status, index) => (
               <TouchableOpacity
-                key={status}
-                onPress={() => handleStatusSelect(status)}
+                key={index}
+                onPress={() => handleStatusSelect(status.value)}
                 style={styles.option}
               >
-                <Text style={styles.optionText}>{status}</Text>
+                <Text style={styles.optionText}>{status.name}</Text>
                 <FontAwesome
                   name={
-                    status === selectedStatus ? "dot-circle-o" : "circle-thin"
+                    status.value === selectedStatus
+                      ? "dot-circle-o"
+                      : "circle-thin"
                   }
                   size={28}
                   color="#7FB640"
@@ -127,11 +138,15 @@ export default function LandListScreen() {
         </TouchableOpacity>
       </Modal>
 
-      <FlatList
-        data={filteredData}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+      {loading ? (
+        <ActivityIndicatorComponent />
+      ) : (
+        <FlatList
+          data={landList.lands}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+        />
+      )}
     </View>
   );
 }

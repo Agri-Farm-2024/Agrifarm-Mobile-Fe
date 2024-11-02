@@ -2,31 +2,38 @@
 
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { formatNumber } from "../../utils";
+import { convertImageURL, formatNumber } from "../../utils";
 import { useNavigation } from "@react-navigation/native";
 
 const LandItem = ({ item }) => {
   const navigation = useNavigation();
+
+  const image = item.url.find((item) => item.type === "image");
+
   return (
     <View style={styles.itemContainer}>
       <Image source={{ uri: item.image }} style={styles.itemImage} />
 
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>{item.name}</Text>
-        <Text style={styles.itemDescription}>{item.description}</Text>
+        <Text style={styles.itemDescription}>{item.title}</Text>
         <Text
           style={[
             styles.itemStatus,
-            item.status == "Đã thuê" ? styles.itemStatusSold : null,
+            item.status == "booked" ? styles.itemStatusSold : null,
           ]}
         >
-          {item.status}
+          {item.status == "booked" ? "Đã thuê" : "Chưa thuê"}
         </Text>
-        <Text style={styles.itemArea}>{formatNumber(item.area)} m2</Text>
+        <Text style={styles.itemArea}>
+          {formatNumber(item.acreage_land)} m2
+        </Text>
 
         <TouchableOpacity
           style={styles.detailButton}
-          onPress={() => navigation.navigate("LandDetailScreen")}
+          onPress={() =>
+            navigation.navigate("LandDetailScreen", { land: item })
+          }
         >
           <Text style={styles.detailButtonText}>Xem chi tiết</Text>
         </TouchableOpacity>

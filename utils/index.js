@@ -1,4 +1,4 @@
-import { api } from "../services/api";
+const api = `https://api.agrifarm.site`;
 
 //Format number
 export function formatNumber(number) {

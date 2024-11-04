@@ -10,7 +10,7 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Appbar, Button, FAB, Icon, IconButton } from "react-native-paper";
-import { formatNumber } from "../../utils";
+import { convertImageURL, formatNumber } from "../../utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import RenderHTML from "react-native-render-html";
 
@@ -56,7 +56,7 @@ export default function LandDetailScreen({ navigation, route }) {
   const { width } = useWindowDimensions();
 
   const openModal = (image) => {
-    setSelectedImage(image);
+    setSelectedImage(convertImageURL(image.string_url));
     setModalVisible(true);
   };
 
@@ -64,6 +64,8 @@ export default function LandDetailScreen({ navigation, route }) {
     setSelectedImage(null);
     setModalVisible(false);
   };
+
+  console.log(land.url);
 
   return (
     <View style={styles.container}>
@@ -81,11 +83,16 @@ export default function LandDetailScreen({ navigation, route }) {
           showsHorizontalScrollIndicator={false}
           style={styles.imageSlider}
         >
-          {data.images.map((image, index) => (
-            <TouchableOpacity key={index} onPress={() => openModal(image)}>
-              <Image source={{ uri: image }} style={styles.image} />
-            </TouchableOpacity>
-          ))}
+          {land.url
+            .filter((item) => item.type === "image")
+            .map((item, index) => (
+              <TouchableOpacity key={index} onPress={() => openModal(item)}>
+                <Image
+                  source={{ uri: convertImageURL(item.string_url) }}
+                  style={styles.image}
+                />
+              </TouchableOpacity>
+            ))}
         </ScrollView>
 
         {/* Land Details */}
@@ -195,7 +202,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   image: {
-    width: 300,
+    width: 400,
     height: 200,
     marginRight: 10,
   },

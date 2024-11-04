@@ -8,11 +8,15 @@ import { useNavigation } from "@react-navigation/native";
 const LandItem = ({ item }) => {
   const navigation = useNavigation();
 
-  const image = item.url.find((item) => item.type === "image");
+  const image = item.url.find((item) => item.type === "image")?.string_url;
+  console.log(convertImageURL(image));
 
   return (
     <View style={styles.itemContainer}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+      <Image
+        source={{ uri: convertImageURL(image) }}
+        style={styles.itemImage}
+      />
 
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>{item.name}</Text>

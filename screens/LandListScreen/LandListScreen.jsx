@@ -144,7 +144,7 @@ export default function LandListScreen() {
         <FlatList
           data={landList.lands}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.land_id}
         />
       )}
     </View>

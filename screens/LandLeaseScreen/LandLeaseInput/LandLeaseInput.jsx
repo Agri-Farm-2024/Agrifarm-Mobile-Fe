@@ -12,17 +12,17 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { formatNumber } from "../../../utils";
 
 // Validation schema with Yup
 // Validation schema with Yup
 const validationSchema = Yup.object().shape({
-  name: Yup.string().required("Họ và tên là bắt buộc"),
-  phoneNumber: Yup.string()
-    .matches(/^[0-9]+$/, "Số điện thoại phải là số")
-    .min(10, "Số điện thoại phải có ít nhất 10 chữ số")
-    .max(11, "Số điện thoại không vượt quá 11 chữ số")
-    .required("Số điện thoại là bắt buộc"),
-  startTime: Yup.date().required("Thời gian bắt đầu là bắt buộc"),
+  startTime: Yup.date()
+    .required("Thời gian bắt đầu là bắt buộc")
+    .min(
+      new Date(new Date().setHours(24, 0, 0, 0)),
+      "Thời gian bắt đầu phải là ngày mai trở đi"
+    ),
   rentalMonths: Yup.number()
     .typeError("Số tháng cần thuê phải là số")
     .min(1, "Ít nhất là 1 tháng")
@@ -76,47 +76,20 @@ const LandLeaseInput = forwardRef((props, ref) => {
           keyboardVerticalOffset={80}
         >
           <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-            <Text style={styles.title}>Thông tin khách hàng</Text>
-            {/* Họ và tên */}
-            <Text>Họ và tên</Text>
-            {touched.name && errors.name && (
-              <Text style={styles.errorText}>{errors.name}</Text>
-            )}
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  borderColor: touched.name && errors.name ? "red" : "#d4d7e3",
-                },
-              ]}
-              onChangeText={handleChange("name")}
-              onBlur={handleBlur("name")}
-              value={values.name}
-              placeholder="Họ và tên"
-            />
+            <Text style={styles.title}>Thông tin yêu cầu</Text>
 
-            {/* Số điện thoại */}
-            <Text>Số điện thoại</Text>
-            {touched.phoneNumber && errors.phoneNumber && (
-              <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-            )}
+            <Text>Mảnh đất cần thuê</Text>
             <TextInput
-              style={[
-                styles.input,
-                {
-                  borderColor:
-                    touched.phoneNumber && errors.phoneNumber
-                      ? "red"
-                      : "#d4d7e3",
-                },
-              ]}
-              onChangeText={handleChange("phoneNumber")}
-              onBlur={handleBlur("phoneNumber")}
-              value={values.phoneNumber}
-              keyboardType="phone-pad"
-              placeholder="Số điện thoại"
+              style={styles.input}
+              value={props.land.name}
+              editable={false}
             />
-            {/* Thời gian bắt đầu */}
+            <Text>Tiền thuê mỗi tháng</Text>
+            <TextInput
+              style={styles.input}
+              value={`${formatNumber(props.land.price_booking_per_month)} VND`}
+              editable={false}
+            />
             <Text>Thời gian bắt đầu</Text>
             {touched.startTime && errors.startTime && (
               <Text style={styles.errorText}>{errors.startTime}</Text>
@@ -144,7 +117,6 @@ const LandLeaseInput = forwardRef((props, ref) => {
                 minimumDate={new Date()} // Set the minimum date to today
               />
             )}
-            {/* Số tháng cần thuê */}
             <Text>Số tháng cần thuê</Text>
             {touched.rentalMonths && errors.rentalMonths && (
               <Text style={styles.errorText}>{errors.rentalMonths}</Text>
@@ -165,7 +137,6 @@ const LandLeaseInput = forwardRef((props, ref) => {
               keyboardType="numeric"
               placeholder="Số tháng cần thuê"
             />
-            {/* Mục đích thuê đất */}
             <Text>Mục đích thuê đất</Text>
             {touched.purpose && errors.purpose && (
               <Text style={styles.errorText}>{errors.purpose}</Text>

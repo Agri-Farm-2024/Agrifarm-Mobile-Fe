@@ -1,3 +1,5 @@
+import { api } from "../services/api";
+
 //Format number
 export function formatNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -38,4 +40,11 @@ export function convertTo12HourFormat(isoString) {
 // 1200000 to 1.200.000
 export function formatNumberToVND(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+}
+
+export function convertImageURL(relativePath) {
+  const formattedPath = relativePath.startsWith("/")
+    ? relativePath
+    : `/${relativePath}`;
+  return `${api}${formattedPath}`;
 }

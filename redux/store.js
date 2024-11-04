@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 
 import { userSlice } from "./slices/userSlice";
 import cartReducer from "./slices/cartSlice";
+import landSlice from "./slices/landSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -14,6 +15,7 @@ const rootPersistConfig = {
 const rootReducer = combineReducers({
   userSlice: userSlice.reducer,
   cart: cartReducer.reducer,
+  landSlice: landSlice.reducer,
 
   //add more reducer here
   //...

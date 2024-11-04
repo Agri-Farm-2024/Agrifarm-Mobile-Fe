@@ -7,8 +7,12 @@ import {
   StyleSheet,
   Modal,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
-import { Appbar, Button } from "react-native-paper";
+import { Appbar, Button, FAB, Icon, IconButton } from "react-native-paper";
+import { formatNumber } from "../../utils";
+import { MaterialIcons } from "@expo/vector-icons";
+import RenderHTML from "react-native-render-html";
 
 const data = {
   landID: "MD001",
@@ -44,9 +48,12 @@ const data = {
   ],
 };
 
-export default function LandDetailScreen({ navigation }) {
+export default function LandDetailScreen({ navigation, route }) {
+  const { land } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  const { width } = useWindowDimensions();
 
   const openModal = (image) => {
     setSelectedImage(image);
@@ -63,7 +70,7 @@ export default function LandDetailScreen({ navigation }) {
       {/* Header with back button */}
       <Appbar.Header style={{ backgroundColor: "#7fb640" }}>
         <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
-        <Appbar.Content color="#fff" title={`${data.nameLand}`} />
+        <Appbar.Content color="#fff" title={`${land.name}`} />
       </Appbar.Header>
 
       {/* Content */}
@@ -83,34 +90,58 @@ export default function LandDetailScreen({ navigation }) {
 
         {/* Land Details */}
         <View style={styles.section}>
-          <Text style={styles.titleName}>{data.nameLand}</Text>
-          <Text style={styles.text}>{`${data.position} -  ${data.area}`}</Text>
+          <Text style={styles.titleName}>{land.name}</Text>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 5,
+            }}
+          >
+            <MaterialIcons name="landscape" size={15} color="#555" />
+            <Text style={styles.text}>
+              Diện tích: {`${formatNumber(land.acreage_land)} m2`}
+            </Text>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginBottom: 5,
+            }}
+          >
+            <MaterialIcons name="attach-money" size={15} color="#555" />
+            <Text style={styles.text}>
+              Tiền thuê:{" "}
+              {`${formatNumber(land.price_booking_per_month)} / tháng`}
+            </Text>
+          </View>
+
           <Text
             style={[
               styles.textStatus,
-              data.status === "Đã thuê" ? styles.textStatusSold : null,
+              land.status === "booked" ? styles.textStatusSold : null,
             ]}
           >
-            {data.status}
+            {land.status === "booked" ? "Đã thuê" : "Chưa thuê"}
           </Text>
         </View>
 
         {/* Descriptions */}
         <View style={styles.section}>
-          <Text style={styles.title}>{data.description.title}</Text>
-          <Text style={styles.text}>{data.description.desc}</Text>
-          {data.description.sub.map((item, index) => (
-            <View key={index}>
-              <Text style={styles.subtitle}>{item.sub_title}</Text>
-              <Text style={styles.text}>{item.sub_desc}</Text>
-            </View>
-          ))}
+          <Text style={styles.title}>{land.title}</Text>
+          <RenderHTML
+            contentWidth={width}
+            source={{ html: land.description }}
+          />
         </View>
       </ScrollView>
 
       {/* Fixed Footer with Buttons */}
       <View style={styles.footer}>
         <Button
+          disabled={land.status === "booked"}
           icon="file-document-outline"
           mode="contained"
           style={[
@@ -119,7 +150,7 @@ export default function LandDetailScreen({ navigation }) {
               backgroundColor: "#7fb640",
             },
           ]}
-          onPress={() => navigation.navigate("LandLeaseScreen")}
+          onPress={() => navigation.navigate("LandLeaseScreen", { land })}
         >
           Thuê đất
         </Button>
@@ -197,7 +228,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 14,
     color: "#555",
-    marginBottom: 5,
+    marginLeft: 5,
   },
   textStatus: {
     fontSize: 15,

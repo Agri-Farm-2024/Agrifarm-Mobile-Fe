@@ -14,7 +14,7 @@ export const getListOfLand = createAsyncThunk(
         `/lands?status=${status}&page_size=${page_size}&page_index=${page_index}`
       );
 
-      console.log("getListOfLand data:", data);
+      // console.log("getListOfLand data:", data);
       return data.data;
     } catch (error) {
       console.log("error", error);

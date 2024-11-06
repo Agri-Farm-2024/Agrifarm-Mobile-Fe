@@ -50,9 +50,9 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      //   .addCase(login.pending, (state) => {
-      //     state.loading = true;
-      //   })
+      .addCase(login.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
         state.userInfo = action.payload.metadata.user;

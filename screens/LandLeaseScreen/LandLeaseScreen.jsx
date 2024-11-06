@@ -5,8 +5,11 @@ import LandLeaseInput from "./LandLeaseInput/LandLeaseInput";
 import LandLeaseSign from "./LandLeaseSign/LandLeaseSign";
 import Toast from "react-native-toast-message";
 import LandLeaseReview from "./LandLeaseReview/LandLeaseReview";
+import { useDispatch } from "react-redux";
+import { bookingLand } from "../../redux/slices/landSlice";
 
-export default function LandLeaseScreen({ navigation }) {
+export default function LandLeaseScreen({ navigation, route }) {
+  const { land } = route.params;
   const [tourStep, setTourStep] = useState(0);
   const landLeaseInputRef = useRef(null);
   const [isChecked, setIsChecked] = useState(false);
@@ -18,6 +21,9 @@ export default function LandLeaseScreen({ navigation }) {
     startTime: new Date(),
   });
 
+  const dispatch = useDispatch();
+
+  console.log(land);
   const handleGetData = (data) => {
     console.log("handleGetData: ", data);
     setFormData(data); // Update form data
@@ -36,6 +42,14 @@ export default function LandLeaseScreen({ navigation }) {
   };
 
   const handleSubmitForm = () => {
+    Toast.show({
+      type: "info",
+      text1: "Đang xử lí...",
+      text2: "Vui lòng chờ trong giây lát",
+      visibilityTime: 0,
+      autoHide: false,
+    });
+
     if (!isChecked) {
       Toast.show({
         type: "error",
@@ -44,12 +58,52 @@ export default function LandLeaseScreen({ navigation }) {
       });
       return;
     }
-    Toast.show({
-      type: "success",
-      text1: "Đơn đã được gửi",
-      text2: "Hệ thống sẽ xử lí đơn thuê đất của bạn!",
-    });
-    navigation.navigate("HomeScreen");
+
+    dispatch(
+      bookingLand({
+        land_id: land.land_id,
+        time_start: formData.startTime,
+        total_month: formData.rentalMonths,
+        purpose_rental: formData.purpose,
+      })
+    )
+      .then((response) => {
+        console.log("Booking successful:", response);
+        if (response.payload.statusCode === 400) {
+          if (
+            response.payload.message === "Wait for manager assign staff to land"
+          ) {
+            Toast.show({
+              type: "error",
+              text1: "Đơn chưa được gửi",
+              text2: "Đất chưa được quản lí bởi nhân viên",
+            });
+            return;
+          }
+          Toast.show({
+            type: "error",
+            text1: "Đơn chưa được gửi",
+            text2: `${response.payload.message}`,
+          });
+        }
+
+        if (response.payload.statusCode === 201) {
+          Toast.show({
+            type: "success",
+            text1: "Đơn đã được gửi",
+            text2: "Hệ thống sẽ xử lí đơn thuê đất của bạn!",
+          });
+          navigation.navigate("HomeScreen");
+        }
+      })
+      .catch((error) => {
+        // Handle error response
+        Toast.show({
+          type: "error",
+          text1: "Đơn chưa được gửi",
+          text2: "Booking Failed",
+        });
+      });
   };
 
   return (
@@ -71,10 +125,11 @@ export default function LandLeaseScreen({ navigation }) {
           handleGetData={handleGetData}
           formData={formData} // Pass the state
           ref={landLeaseInputRef}
+          land={land}
         />
       )}
 
-      {tourStep === 1 && <LandLeaseReview formData={formData} />}
+      {tourStep === 1 && <LandLeaseReview land={land} formData={formData} />}
 
       <View>
         {tourStep === 1 && (

@@ -58,7 +58,7 @@ export const userSlice = createSlice({
         state.userInfo = action.payload.metadata.user;
         AsyncStorage.setItem(
           "accessToken",
-        action.payload.metadata.token.accessToken
+          action.payload.metadata.token.accessToken
         );
         AsyncStorage.setItem(
           "refreshToken",

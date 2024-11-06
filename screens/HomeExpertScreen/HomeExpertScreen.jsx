@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import AgricultureExpertEfficiency from "./AgricultureExpertEfficiency/AgricultureExpertEfficiency";
 
 function HomeExpertScreen({ navigation }) {
-  const cartCount = useSelector((state) => state.cart.cartCount);
+  const cartCount = useSelector((state) => state.cartSlice.cartCount);
   return (
     <SafeAreaView>
       <ScrollView>

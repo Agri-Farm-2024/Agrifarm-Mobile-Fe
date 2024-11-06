@@ -3,17 +3,6 @@ import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-const data = [
-  { label: "Item 1", value: "1" },
-  { label: "Item 2", value: "2" },
-  { label: "Item 3", value: "3" },
-  { label: "Item 4", value: "4" },
-  { label: "Item 5", value: "5" },
-  { label: "Item 6", value: "6" },
-  { label: "Item 7", value: "7" },
-  { label: "Item 8", value: "8" },
-];
-
 const DropdownComponent = ({
   label,
   placeholder,
@@ -24,7 +13,7 @@ const DropdownComponent = ({
   styleValue,
   placeholderStyleValue,
   isDisabled,
-  data,
+  onScroll,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -37,11 +26,13 @@ const DropdownComponent = ({
           styleValue,
           isDisabled && { backgroundColor: "#D9D9D9" },
         ]}
+        onScroll={onScroll ? onScroll : null}
+        scrollEventThrottle={400} // Set throttle to improve performance
         disable={isDisabled && isDisabled}
         placeholderStyle={[styles.placeholderStyle, placeholderStyleValue]}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
-        data={options || data}
+        data={options || []}
         maxHeight={300}
         labelField="label"
         valueField="value"
@@ -106,5 +97,18 @@ const styles = StyleSheet.create({
   inputSearchStyle: {
     height: 40,
     fontSize: 16,
+  },
+  optionContainer: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  optionText: {
+    fontSize: 16,
+    color: "black",
+  },
+  divider: {
+    height: 1,
+    backgroundColor: "#E0E0E0", // Divider color
+    marginTop: 5,
   },
 });

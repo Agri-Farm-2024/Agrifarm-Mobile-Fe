@@ -8,7 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native-paper";
 import DropdownComponent from "../../components/DropdownComponent";
 import { Formik } from "formik";
@@ -16,23 +16,165 @@ import * as Yup from "yup";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import StandardProcessComponent from "./StandardProcessComponent";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useDispatch } from "react-redux";
+import {
+  createStandardProcess,
+  getPlantSeason,
+} from "../../redux/slices/processSlice";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
 
 const StandardProcessSchema = Yup.object().shape({
   processName: Yup.string().required("Vui lòng không bỏ trống!"),
-  plantType: Yup.string().required("Vui lòng chọn loại cây!"),
+  plantSeason: Yup.string().required("Vui lòng chọn loại cây!"),
 });
+
+const PAGE_SIZE = 10;
 
 export default function CreateStandardProcessScreen() {
   const [openStandardProcess, setOpenStandardProcess] = useState(false);
-  const plantTypeOptions = [
-    { label: "Dưa lưới", value: "Dưa lưới" },
-    { label: "Dưa hấu", value: "Dưa hấu" },
-    { label: "Dưa leo", value: "Dưa leo" },
-    { label: "Cây ớt", value: "Cây ớt" },
-  ];
+  const [plantSeasonOptions, setPlantSeasonOptions] = useState([]);
+  const [pageNumberPlantSeason, setPageNumberPlantSeason] = useState(1);
+  const [hasMorePlantSeason, setHasMorePlantSeason] = useState(true);
+  const [isLoadingPlantSeason, setIsLoadingPlantSeason] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const fetchPlantSeasonOptions = (pageIndex) => {
+    const params = {
+      page_size: PAGE_SIZE,
+      page_index: pageIndex,
+    };
+    setIsLoadingPlantSeason(true);
+    dispatch(getPlantSeason(params))
+      .then((response) => {
+        console.log("response plantSeasonOptions: " + JSON.stringify(response));
+        if (response.payload && response.payload.statusCode === 200) {
+          if (
+            response.payload.metadata &&
+            response.payload.metadata.plant_seasons &&
+            response.payload.metadata.plant_seasons.length > 0
+          ) {
+            const optionData = response.payload.metadata.plant_seasons.map(
+              (season) => ({
+                value: season.plant_season_id,
+                label: `Mùa vụ ${season.plant.name} Tháng ${season.month_start}`,
+              })
+            );
+            console.log("Option data: " + JSON.stringify(optionData));
+            setPlantSeasonOptions(optionData);
+            setPageNumberPlantSeason(pageIndex);
+            setIsLoadingPlantSeason(false);
+
+            //Check whether has more options to fetch
+            if (response.payload.metadata.pagination.total_page == pageIndex) {
+              setHasMorePlantSeason(false);
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        setIsLoadingPlantSeason(false);
+        console.log("Error loading plant season options", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchPlantSeasonOptions(1);
+  }, []);
+
+  const handleCreateStandardProcess = (values) => {
+    if (values.processName == "") {
+      Toast.show({
+        type: "error",
+        text1: `Tên quy trình không được bỏ trống`,
+      });
+    } else if (values.plantSeason == "") {
+      Toast.show({
+        type: "error",
+        text1: `Mùa vụ không được bỏ trống`,
+      });
+    } else {
+      //format data for api
+      const stageData = values.stages.map((stageItem, index) => ({
+        stage_title: stageItem.title,
+        stage_numberic_order: index + 1,
+        time_start: stageItem.inputs[0].from,
+        time_end: stageItem.inputs[stageItem.inputs.length - 1].to,
+        material: stageItem.materials.map((materialItem, index) => ({
+          material_id: materialItem.materialId,
+          quantity: materialItem.materialQuantity,
+        })),
+        content: stageItem.inputs.map((step, stepIndex) => ({
+          title: step.single,
+          content_numberic_order: stepIndex + 1,
+          content: step.multiline,
+          time_start: step.from,
+          time_end: step.to,
+        })),
+      }));
+      const formData = {
+        plant_season_id: values.plantSeason,
+        name: values.processName,
+        stage: stageData,
+      };
+
+      console.log("Submit to api", JSON.stringify(formData));
+
+      dispatch(createStandardProcess(formData))
+        .then((response) => {
+          console.log(
+            "Create standard process response",
+            JSON.stringify(response)
+          );
+          if (response.payload.statusCode != 201) {
+            if (response.payload.message == "Process name already exist") {
+              Toast.show({
+                type: "error",
+                text1: "Tên quy trình đã tồn tại!",
+              });
+            } else if (
+              response.payload.message == "plant season for process is exist"
+            ) {
+              Toast.show({
+                type: "error",
+                text1: "Đã tồn tại quy trình cho mùa vụ này!",
+              });
+            } else {
+              Toast.show({
+                type: "error",
+                text1: "Tạo quy trình thất bại!",
+              });
+            }
+          } else {
+            Toast.show({
+              type: "success",
+              text1: "Tạo quy trình thành công!",
+            });
+          }
+        })
+        .catch((error) => {
+          Toast.show({
+            type: "error",
+            text1: "Tạo quy trình thất bại!",
+          });
+          console.log("Error create standard process: " + error);
+        });
+    }
+  };
+
+  const handleScrollPlantSeasonOption = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    const isCloseToBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height * 0.75;
+
+    if (isCloseToBottom && !isLoading) {
+      if (!isLoadingPlantSeason && hasMorePlantSeason) {
+        fetchPlantSeasonOptions(pageNumberPlantSeason + 1);
+      }
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -46,12 +188,12 @@ export default function CreateStandardProcessScreen() {
           <Formik
             initialValues={{
               processName: "",
-              plantType: "",
+              plantSeason: "",
             }}
             validationSchema={StandardProcessSchema}
             onSubmit={(values) => {
               setOpenStandardProcess(true);
-              console.log(values);
+              console.log("Created standard process", values);
             }}
           >
             {({
@@ -85,36 +227,24 @@ export default function CreateStandardProcessScreen() {
                   {touched.processName && errors.processName}
                 </Text>
 
-                <Text style={styles.label}>Loại cây trồng</Text>
+                <Text style={styles.label}>Mùa vụ</Text>
                 <DropdownComponent
-                  options={plantTypeOptions}
-                  placeholder="Chọn loại cây"
-                  value={values.plantType}
-                  setValue={(value) => setFieldValue("plantType", value)}
+                  onScroll={handleScrollPlantSeasonOption}
+                  options={plantSeasonOptions}
+                  placeholder="Chọn mùa vụ"
+                  value={values.plantSeason}
+                  setValue={(value) => setFieldValue("plantSeason", value)}
                 />
                 <Text style={styles.errorMessage}>
-                  {touched.plantType && errors.plantType}
+                  {touched.plantSeason && errors.plantSeason}
                 </Text>
 
                 <StandardProcessComponent
-                  onSubmit={() => {
-                    console.log("submit", values.processName);
-                    if (values.processName == "") {
-                      Toast.show({
-                        type: "error",
-                        text1: `Tên quy trình không được bỏ trống`,
-                      });
-                    } else if (values.plantType == "") {
-                      Toast.show({
-                        type: "error",
-                        text1: `Loại cây trồng không được bỏ trống`,
-                      });
-                    } else {
-                      Toast.show({
-                        type: "success",
-                        text1: "Gửi thành công",
-                      });
-                    }
+                  onSubmit={(stages) => {
+                    handleCreateStandardProcess({
+                      ...values,
+                      stages: stages,
+                    });
                   }}
                 />
               </>

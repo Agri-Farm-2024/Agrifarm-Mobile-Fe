@@ -112,14 +112,6 @@ const LoginScreen = ({ navigation }) => {
       });
   };
 
-  // FAKE DATA TO LOGIN
-  // const handleLogin = () => {
-  //   if (loginForm.username === "expert") {
-  //     navigation.navigate("BottomTabNavigatorExpert");
-  //   } else {
-  //     navigation.navigate("BottomTabs");
-  //   }
-  // };
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
       <ScrollView keyboardDismissMode="on-drag">

@@ -28,13 +28,18 @@ const chatDetail = {
   messages: [
     {
       message_id: "MSG001",
-      is_me: true,
-      content: "Chao buoi sang di da bong di",
+      is_me: false,
+      content: "Chào bạn mình là kỹ thuật viên sẽ hỗ trợ cho bạn",
     },
     {
       message_id: "MSG002",
       is_me: false,
-      content: "oke let's go bae",
+      content: "Không biết bạn đang gặp vấn đề gì cần hỗ trợ?",
+    },
+    {
+      message_id: "MSG003",
+      is_me: true,
+      content: "Chào bạn, cây của mình đang bị loại côn trùng lạ phá hoại.",
     },
   ],
 };
@@ -126,27 +131,24 @@ export default function ChatDetailScreen({ navigation }) {
           contentContainerStyle={{ paddingTop: 20 }}
           onLayout={scrollToBottom}
         >
-          {chatDetail.messages
-            .slice()
-            .reverse()
-            .map((msg, index) => (
-              <View
-                key={msg.message_id}
+          {chatDetail.messages.slice().map((msg, index) => (
+            <View
+              key={msg.message_id}
+              style={
+                msg.is_me === true
+                  ? [styles.message, styles.myMessage]
+                  : [styles.message, styles.guestMessage]
+              }
+            >
+              <Text
                 style={
-                  msg.is_me === true
-                    ? [styles.message, styles.myMessage]
-                    : [styles.message, styles.guestMessage]
+                  msg.is_me === true ? { color: "white" } : { color: "black" }
                 }
               >
-                <Text
-                  style={
-                    msg.is_me === true ? { color: "white" } : { color: "black" }
-                  }
-                >
-                  {msg.content}
-                </Text>
-              </View>
-            ))}
+                {msg.content}
+              </Text>
+            </View>
+          ))}
         </ScrollView>
       </View>
       <KeyboardAvoidingView

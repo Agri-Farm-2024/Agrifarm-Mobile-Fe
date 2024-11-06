@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderBottomColor: "#C4C4C4",
     borderBottomWidth: 2,
+    marginBottom: 20,
   },
   tabLabel: {
     fontSize: 16,

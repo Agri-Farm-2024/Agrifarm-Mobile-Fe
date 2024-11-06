@@ -188,20 +188,55 @@ const TaskList = ({ taskType }) => {
   useEffect(() => {
     if (taskType == "Chưa bắt đầu") {
       setTaskList(notStartTasks);
-      setTaskIcon(<AntDesign name="playcircleo" size={24} color="black" />);
     } else if (taskType == "Đang làm") {
       setTaskList(doingTasks);
-      setTaskIcon(<Entypo name="circle" size={24} color="black" />);
     } else {
       setTaskList(doneTasks);
-      setTaskIcon(<AntDesign name="checkcircleo" size={24} color="black" />);
     }
   }, [taskType]);
 
+  const hadnleShowIconTask = (priority) => {
+    const iconColor =
+      priority == "Cao"
+        ? "rgba(217, 21, 21, 1)"
+        : priority == "Trung bình"
+        ? "rgba(255, 167, 86, 1)"
+        : "rgba(89, 226, 28, 0.8)";
+    if (taskType == "Chưa bắt đầu") {
+      return <AntDesign name="playcircleo" size={24} color={iconColor} />;
+    }
+    if (taskType == "Đang làm") {
+      return <Entypo name="circle" size={24} color={iconColor} />;
+    }
+    return <AntDesign name="checkcircleo" size={24} color={iconColor} />;
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.taskWrapper}>
-      <Text style={styles.taskTitle}>{item.title}</Text>
-      {taskIcon}
+    <View
+      style={[
+        styles.taskWrapper,
+        item.priority == "Trung bình" && {
+          backgroundColor: "rgba(255, 167, 86, 0.2)",
+        },
+        item.priority == "Cao" && {
+          backgroundColor: "rgba(217, 21, 21, 0.2)",
+        },
+      ]}
+    >
+      <Text
+        style={[
+          styles.taskTitle,
+          item.priority == "Trung bình" && {
+            color: "rgba(255, 167, 86, 1)",
+          },
+          item.priority == "Cao" && {
+            color: "rgba(217, 21, 21, 1)",
+          },
+        ]}
+      >
+        {item.title}
+      </Text>
+      {hadnleShowIconTask(item.priority)}
     </View>
   );
   return (
@@ -221,9 +256,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 20,
     paddingHorizontal: 10,
-    backgroundColor: "#7FB640",
+    backgroundColor: "rgba(89, 226, 28, 0.2)",
     marginBottom: 10,
     borderRadius: 7,
+  },
+  taskTitle: {
+    color: "rgba(89, 226, 28, 0.8)",
+    fontSize: 14,
   },
 });
 

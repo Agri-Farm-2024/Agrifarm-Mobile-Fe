@@ -21,7 +21,7 @@ import Toast from "react-native-toast-message";
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
 
 export default function CartMaterialsScreen({ navigation }) {
-  const cartItems = useSelector((state) => state.cart.items);
+  const cartItems = useSelector((state) => state.cartSlice.items);
   const cartBuy = cartItems.filter((item) => item.requestType === "buy");
   const cartRent = cartItems.filter((item) => item.requestType === "rent");
   const dispatch = useDispatch();

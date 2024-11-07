@@ -3,6 +3,9 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { persistReducer, persistStore } from "redux-persist";
 
 import { userSlice } from "./slices/userSlice";
+import processSlice from "./slices/processSlice";
+import cartSlice from "./slices/cartSlice";
+import materialSlice from "./slices/materialSlice";
 import cartReducer from "./slices/cartSlice";
 import landSlice from "./slices/landSlice";
 
@@ -14,6 +17,9 @@ const rootPersistConfig = {
 
 const rootReducer = combineReducers({
   userSlice: userSlice.reducer,
+  cartSlice: cartSlice.reducer,
+  processSlice: processSlice.reducer,
+  materialSlice: materialSlice.reducer,
   cart: cartReducer.reducer,
   landSlice: landSlice.reducer,
 

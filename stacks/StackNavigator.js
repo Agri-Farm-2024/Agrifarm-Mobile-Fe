@@ -32,6 +32,7 @@ import CreateStandardProcessScreen from "../screens/StandardProcessScreen/Create
 import LandListScreen from "../screens/LandListScreen/LandListScreen";
 import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
 import FailScreen from "../screens/FailScreen/FailScreen";
+import ChatDetailScreen from "../screens/ChatScreen/ChatDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -289,6 +290,14 @@ const StackNavigator = () => (
         swipeEnabled: false,
       }}
       component={LandDetailScreen}
+    />
+    <Stack.Screen
+      name="ChatDetailScreen"
+      component={ChatDetailScreen}
+      options={{
+        headerShown: false,
+        headerLeft: () => null, // This will remove the left button
+      }}
     />
   </Stack.Navigator>
 );

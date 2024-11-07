@@ -40,8 +40,7 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
       ],
       materials: [
         {
-          id: "",
-          materialName: "",
+          materialId: "",
           materialQuantity: "",
         },
       ],
@@ -53,6 +52,7 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
   const handleImport = async () => {
     try {
       console.log("Importing...");
+
       // Use expo-document-picker to pick the Excel file
       const result = await DocumentPicker.getDocumentAsync({
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -75,43 +75,32 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
         const worksheet = workbook.Sheets[workbook.SheetNames[0]];
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        let processData = [];
         let stepOfStageData = [];
         let materialData = [];
 
         jsonData.forEach((row, index) => {
           //Skip the header
           if (index > 1) {
-            // Handle read the Process Block
+            // Handle read the Stage Block
             if (row[0]) {
-              console.log("row[0]:", row[0]);
-              processData.push({
-                id: row[0] || "",
-                title: row[1] || "",
-                description: row[2] || "",
+              stepOfStageData.push({
+                stageId: row[0],
+                stageTitle: row[1],
+                stepDateStart: row[2],
+                stepDateEnd: row[3],
+                stepTitle: row[4],
+                stepDescription: row[5],
               });
             }
 
-            // Handle read the Stage Block
-            if (row[4]) {
-              stepOfStageData.push({
-                stageId: row[4],
-                stageTitle: row[5],
-                stepDateStart: row[6],
-                stepDateEnd: row[7],
-                stepTitle: row[8],
-                stepDescription: row[9],
+            // Handle read the Material Block
+            if (row[7]) {
+              materialData.push({
+                materialId: row[7] || "",
+                stageId: row[8] || "",
+                materialName: row[9] || "",
+                materialQuantity: row[10] || "",
               });
-
-              // Handle read Material Block
-              if (row[11]) {
-                materialData.push({
-                  materialId: row[11] || "",
-                  stageId: row[12] || "",
-                  materialName: row[13] || "",
-                  materialQuantity: row[14] || "",
-                });
-              }
             }
           }
         });
@@ -148,8 +137,7 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
           materials: materialData.reduce((acc, material) => {
             if (material.stageId == item.stageId) {
               acc.push({
-                id: material.materialId,
-                materialName: material.materialName,
+                materialId: material.materialId,
                 materialQuantity: material.materialQuantity + "", //convert to string to suitable with text input components
               });
             }
@@ -161,7 +149,6 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
         console.log("Stage data", JSON.stringify(stageData));
 
         //Set data to stage
-        setProcesses(processData);
         setPlantStages(stageData);
       }
     } catch (error) {
@@ -189,36 +176,32 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
     return () => backHandler.remove();
   }, [hasUnsavedChanges]);
 
-  const validateProcesses = () => {
-    for (let i = 0; i < processes.length; i++) {
-      if (!processes[i].title) {
-        Toast.show({
-          type: "error",
-          text1: `Bước ${i + 1}: Tiêu đề chuẩn bị là bắt buộc`,
-        });
-        return false;
-      }
-      if (!processes[i].description) {
-        Toast.show({
-          type: "error",
-          text1: `Bước ${i + 1}: Mô tả chuẩn bị là bắt buộc`,
-        });
-        return false;
-      }
-    }
-    return true;
-  };
+  // const validateProcesses = () => {
+  //   for (let i = 0; i < processes.length; i++) {
+  //     if (!processes[i].title) {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: `Bước ${i + 1}: Tiêu đề chuẩn bị là bắt buộc`,
+  //       });
+  //       return false;
+  //     }
+  //     if (!processes[i].description) {
+  //       Toast.show({
+  //         type: "error",
+  //         text1: `Bước ${i + 1}: Mô tả chuẩn bị là bắt buộc`,
+  //       });
+  //       return false;
+  //     }
+  //   }
+  //   return true;
+  // };
 
   const handleSubmit = () => {
-    if (validateProcesses()) {
-      if (inputPlanRef.current) {
-        const isInvalid = inputPlanRef.current.handleCheckValidateDate();
-        if (!isInvalid) {
-          console.log("processes submitted", processes);
-          console.log("plantStages submitted", JSON.stringify(plantStages));
-          setHasUnsavedChanges(false);
-          onSubmit();
-        }
+    if (inputPlanRef.current) {
+      const isInvalid = inputPlanRef.current.handleCheckValidateDate();
+      if (!isInvalid) {
+        setHasUnsavedChanges(false);
+        onSubmit(plantStages);
       }
     }
   };
@@ -242,12 +225,12 @@ export default function StandardProcessComponent({ navigation, onSubmit }) {
         />
       </View>
       <View>
-        <Text style={styles.sub_header}>Chuẩn bị trước khi trồng:</Text>
-        <StandardProcessInputs
+        {/* <Text style={styles.sub_header}>Chuẩn bị trước khi trồng:</Text> */}
+        {/* <StandardProcessInputs
           processes={processes}
           setProcesses={setProcesses}
           setHasUnsavedChanges={setHasUnsavedChanges}
-        />
+        /> */}
         <PlanToStandardFarmingInput
           setPlantStages={setPlantStages}
           plantStages={plantStages}

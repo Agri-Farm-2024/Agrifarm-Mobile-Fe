@@ -15,7 +15,7 @@ import SlideImageComponent from "../../components/SlideImageComponent/SlideImage
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function HomeScreen({ navigation }) {
-  const cartCount = useSelector((state) => state.cart.cartCount);
+  const cartCount = useSelector((state) => state.cartSlice.cartCount);
 
   return (
     <SafeAreaView>

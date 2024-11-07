@@ -9,6 +9,9 @@ import { Button, TextInput } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons"; // for icons
 import Toast from "react-native-toast-message";
 import DropdownComponent from "../../components/DropdownComponent";
+import TextEditor from "../../components/TextEditor";
+import { getMaterial } from "../../redux/slices/materialSlice";
+import { useDispatch } from "react-redux";
 
 const materialOptions = [
   { label: "Cuốc", value: "VT001" },
@@ -16,8 +19,72 @@ const materialOptions = [
   { label: "Phân bón", value: "VT003" },
 ];
 
+const PAGE_SIZE = 10;
+
 const PlanToStandardFarmingInput = forwardRef((props, ref) => {
+  const dispatch = useDispatch();
+
   const [stages, setStages] = useState(props.plantStages);
+  const [materialOptions, setMaterialOptions] = useState([]);
+  const [pageNumberMaterial, setPageNumberMaterial] = useState(1);
+  const [hasMoreMaterial, setHasMoreMaterial] = useState(true);
+  const [isLoadingMaterial, setIsLoadingMaterial] = useState(false);
+
+  useEffect(() => {
+    fetchMaterialOptions(1);
+  }, []);
+
+  const fetchMaterialOptions = (pageIndex) => {
+    const params = {
+      page_size: PAGE_SIZE,
+      page_index: pageIndex,
+    };
+
+    setIsLoadingMaterial(true);
+    dispatch(getMaterial(params))
+      .then((response) => {
+        console.log("response materialOptions: " + JSON.stringify(response));
+        if (response.payload && response.payload.statusCode === 200) {
+          if (
+            response.payload.metadata &&
+            response.payload.metadata.materials &&
+            response.payload.metadata.materials.length > 0
+          ) {
+            const optionData = response.payload.metadata.materials.map(
+              (material) => ({
+                value: material.material_id,
+                label: material.name,
+              })
+            );
+            console.log("Option data: " + JSON.stringify(optionData));
+            setMaterialOptions(optionData);
+            setPageNumberMaterial(pageIndex);
+            setIsLoadingMaterial(false);
+
+            //Check whether has more options to fetch
+            if (response.payload.metadata.pagination.total_page == pageIndex) {
+              setHasMoreMaterial(false);
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        setIsLoadingMaterial(false);
+        console.log("Error loading material options", error);
+      });
+  };
+
+  const handleScrollMaterialOption = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    const isCloseToBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height * 0.75;
+
+    if (isCloseToBottom && !isLoading) {
+      if (!isLoadingMaterial && hasMoreMaterial) {
+        fetchMaterialOptions(pageNumberMaterial + 1);
+      }
+    }
+  };
 
   useEffect(() => {
     if (props.plantStages.length > 0) {
@@ -32,7 +99,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
         id: Date.now(),
         title: "",
         inputs: [{ from: "", to: "", single: "", multiline: "" }],
-        materials: [{ id: "", materialName: "", materialQuantity: "" }],
+        materials: [{ materialId: "", materialQuantity: "" }],
       },
     ]);
   };
@@ -66,9 +133,8 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
               materials: [
                 ...stage.materials,
                 {
-                  id: "",
-                  name: "",
-                  quantity: "",
+                  materialId: "",
+                  materialQuantity: "",
                 },
               ],
             }
@@ -102,23 +168,20 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   const removeMaterialBlock = (stageId, index) => {
     const lengthOfThisStage = stages.filter((stage) => stage.id === stageId)[0]
       .materials.length;
-    if (lengthOfThisStage > 1) {
-      setStages((prevStages) =>
-        prevStages.map((stage) =>
-          stage.id === stageId
-            ? {
-                ...stage,
-                materials: stage.materials.filter((_, idx) => idx !== index),
-              }
-            : stage
-        )
-      );
-    } else {
-      Toast.show({
-        type: "error",
-        text1: "Phải có nội dung giai đoạn",
-      });
-    }
+    setStages((prevStages) =>
+      prevStages.map((stage) =>
+        stage.id === stageId
+          ? {
+              ...stage,
+              materials: stage.materials.filter((_, idx) => idx !== index),
+            }
+          : stage
+      )
+    );
+    Toast.show({
+      type: "error",
+      text1: "Phải có vật tư của giai đoạn",
+    });
   };
 
   const handleCheckValidateMaterial = () => {
@@ -127,22 +190,16 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
     let isFalse = false;
     stages.map((stage, stageIndex) => {
       //Check whether have empty material
-      console.log(
-        "material length",
-        JSON.stringify(stage),
-        stage.materials.length
-      );
+
       if (stage.materials.length > 0) {
-        console.log("Check material");
-        let materialNames = [];
+        let materialIds = [];
         stage.materials.map((material, materialIndex) => {
           if (
-            !material.materialName ||
+            !material.materialId ||
             !material.materialQuantity ||
-            material.materialName.trim() == "" ||
+            material.materialId.trim() == "" ||
             material.materialQuantity == ""
           ) {
-            console.log("material fail");
             Toast.show({
               type: "error",
               text1: `Giai đoạn ${stageIndex + 1}`,
@@ -154,7 +211,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
           }
 
           //Check the material duplicate in one stage
-          if (materialNames.includes(material.materialName)) {
+          if (materialIds.includes(material.materialId)) {
             isFalse = true;
             Toast.show({
               type: "error",
@@ -164,7 +221,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
               text2: `Vui lòng chọn vật tư khác`,
             });
           } else {
-            materialNames = [...materialNames, material.materialName];
+            materialIds = [...materialIds, material.materialId];
           }
         });
       }
@@ -177,10 +234,10 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
     props.setPlantStages(stages);
     let isFalse = false;
 
-    if (stages[0].inputs[0].from != 0) {
+    if (stages[0].inputs[0].from != 1) {
       Toast.show({
         type: "error",
-        text1: `Thời gian bắt đầu giai đoạn 1 phải là 0`,
+        text1: `Thời gian bắt đầu giai đoạn 1 phải là 1`,
       });
       isFalse = true;
     }
@@ -249,8 +306,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
     });
 
     stages.map((stage, idxStage) => {
-      console.log(stage);
-      console.log(idxStage);
       if (!isFalse) {
         // check time between stage
         if (idxStage > 0) {
@@ -259,7 +314,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
               .to;
           const firstPresentTo = stage.inputs[0].from;
           if (Number(firstPresentTo) <= Number(lastToPrev)) {
-            console.log("Problem at: " + JSON.stringify(stage));
             Toast.show({
               type: "error",
               text1: `Kiểm tra lại ngày của giai đoạn ${idxStage} và ${
@@ -273,7 +327,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
           }
         }
         stage.inputs.map((input, idxInput) => {
-          console.log(input);
           //   Check validate from and to
           if (Number(input.from) > Number(input.to)) {
             Toast.show({
@@ -290,13 +343,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
             const firstFromInputPresent = input.from;
 
             if (Number(firstFromInputPresent) <= Number(lastToInputPrev)) {
-              console.log(
-                "lastToInputPrev: " + JSON.stringify(lastToInputPrev)
-              );
-              console.log(
-                "firstFromInputPresent: " +
-                  JSON.stringify(firstFromInputPresent)
-              );
               Toast.show({
                 type: "error",
                 text1: `Kiểm tra lại ngày của giai đoạn ${idxStage + 1}`,
@@ -312,7 +358,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
     });
 
     const checkMaterial = handleCheckValidateMaterial();
-    console.log("FInal", isFalse && checkMaterial);
     return isFalse || checkMaterial;
   };
 
@@ -321,7 +366,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   }));
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text style={styles.sub_header}>Kế hoạch trồng trọt:</Text>
 
       {stages.map((stage, indexStage) => (
@@ -341,7 +386,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
               textColor="black"
               inputMode="text"
               style={styles.input}
-              placeholder={`Giai đoạn ${indexStage + 1}`}
+              placeholder={`Tên giai đoạn`}
               value={stage.title}
               onChangeText={(text) => {
                 setStages((prevStages) =>
@@ -495,8 +540,39 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                 placeholder="Tiêu đề"
               />
 
+              <View
+                style={{
+                  marginBottom: 20,
+                  borderRadius: 8,
+                  borderColor: "#aaa",
+                  borderWidth: 0.5,
+                  minHeight: 200,
+                }}
+              >
+                <TextEditor
+                  value={input.multiline}
+                  onValueChange={(text) => {
+                    setStages((prevStages) =>
+                      prevStages.map((stageItem) =>
+                        stageItem.id === stage.id
+                          ? {
+                              ...stageItem,
+                              inputs: stageItem.inputs.map((inputItem, idx) =>
+                                idx === inputIndex
+                                  ? { ...inputItem, multiline: text }
+                                  : inputItem
+                              ),
+                            }
+                          : stageItem
+                      )
+                    );
+                  }}
+                  placeholder="Nội dung"
+                />
+              </View>
+
               {/* Multiline input */}
-              <TextInput
+              {/* <TextInput
                 mode="outlined"
                 activeOutlineColor="#7FB640"
                 textColor="black"
@@ -522,13 +598,27 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                   );
                 }}
                 placeholder="Nội dung"
-              />
+              /> */}
             </View>
           ))}
 
           <Text style={styles.sub_header}>
             Vật tư cần cho giai đoạn {indexStage + 1}:
           </Text>
+          {stage.materials.length == 0 && (
+            <Button
+              style={{
+                borderRadius: 7,
+                borderColor: "#7FB640",
+                borderStyle: "dashed",
+              }}
+              mode="outlined"
+              onPress={() => addMaterialBlock(stage.id)}
+              icon={"plus"}
+            >
+              Thêm vât tư
+            </Button>
+          )}
           {/* Dynamic Input Materials for this stage */}
           {stage.materials.map((material, materialIndex) => (
             <View key={materialIndex} style={styles.inputDateContainer}>
@@ -536,8 +626,9 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                 <View style={[styles.materialInput]}>
                   <DropdownComponent
                     styleValue={{ marginTop: 0 }}
-                    value={material.id}
-                    data={materialOptions}
+                    value={material.materialId}
+                    options={materialOptions}
+                    onScroll={handleScrollMaterialOption}
                     setValue={(value) => {
                       setStages((prevStages) =>
                         prevStages.map((stageItem) =>
@@ -549,7 +640,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                                     idx === materialIndex
                                       ? {
                                           ...materialItem,
-                                          materialName: value,
+                                          materialId: value,
                                         }
                                       : materialItem
                                 ),
@@ -618,9 +709,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
 });
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-  },
   inputStageContainer: {
     marginBottom: 25,
   },

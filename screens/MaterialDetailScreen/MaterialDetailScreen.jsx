@@ -10,7 +10,7 @@ export default function MaterialDetailScreen({ route, navigation }) {
   const { image, name, type, price, requestType, id, quantityByStage } =
     route.params;
   const dispatch = useDispatch();
-  const cartCount = useSelector((state) => state.cart.cartCount);
+  const cartCount = useSelector((state) => state.cartSlice.cartCount);
 
   const [quantity, setQuantity] = useState(1);
 

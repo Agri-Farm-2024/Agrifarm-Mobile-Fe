@@ -33,6 +33,8 @@ import LandListScreen from "../screens/LandListScreen/LandListScreen";
 import LandDetailScreen from "../screens/LandDetailScreen/LandDetailScreen";
 import FailScreen from "../screens/FailScreen/FailScreen";
 import ChatDetailScreen from "../screens/ChatScreen/ChatDetailScreen";
+import TransactionScreen from "../screens/TransactionScreen/TransactionScreen";
+import TransactionDetailScreen from "../screens/TransactionDetailScreen/TransactionDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -297,6 +299,24 @@ const StackNavigator = () => (
       options={{
         headerShown: false,
         headerLeft: () => null, // This will remove the left button
+      }}
+    />
+
+    <Stack.Screen
+      name="TransactionScreen"
+      component={TransactionScreen}
+      options={{
+        headerTitle: "Danh sách giao dịch",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="TransactionDetailScreen"
+      component={TransactionDetailScreen}
+      options={{
+        headerTitle: "Thông tin hóa đơn",
+        headerTitleAlign: "center",
       }}
     />
   </Stack.Navigator>

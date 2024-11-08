@@ -15,27 +15,28 @@ export function convertHttpToHttps(url) {
 
 // 2024-06-09T03:11:56.622Z to  Output: "3:11 AM"
 export function convertTo12HourFormat(isoString) {
-  // Create a Date object from the ISO string
   const date = new Date(isoString);
-
-  // Get the hours and minutes
   let hours = date.getUTCHours();
   const minutes = date.getUTCMinutes();
-
-  // Determine AM/PM
   const ampm = hours >= 12 ? "PM" : "AM";
-
-  // Convert hours from 24-hour to 12-hour format
   hours = hours % 12;
-  hours = hours ? hours : 12; // the hour '0' should be '12'
-
-  // Format minutes to always have two digits
+  hours = hours ? hours : 12; 
   const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
-
-  // Return the formatted time
   return `${hours}:${minutesFormatted} ${ampm}`;
 }
-//Functions will reuse here
+
+// 2024-11-07T11:21:22.263Z  => 07/11/2024
+export function formatDateToDDMMYYYY(dateString) {
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
+// Example usage
+const formattedDate = formatDateToDDMMYYYY("2024-11-07T11:21:22.263Z");
+console.log(formattedDate); // Output: "07/11/2024"
 
 // 1200000 to 1.200.000
 export function formatNumberToVND(number) {

@@ -1,81 +1,200 @@
+import React, { useEffect, useState } from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
-import { FAB, TouchableRipple } from "react-native-paper";
+import { TouchableRipple } from "react-native-paper";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
-const requestList = [
-  {
-    type: "land lease",
-    title: "Yêu cầu thuê đất",
-    desc: "Yêu cầu thuê mảnh đất có ID MD001",
-    status: "processing",
-  },
-  {
-    type: "services",
-    title: "Yêu cầu gói dịch vụ",
-    desc: "Yêu cầu sử dụng gói dịch vụ VietGap",
-    status: "accept",
-  },
-  {
-    type: "purchasing",
-    title: "Yêu cầu thu mua",
-    desc: "Yêu cầu thu mua cho dịch vụ DV001",
-    status: "accept",
-  },
-  {
-    type: "purchasing",
-    title: "Yêu cầu thu mua",
-    desc: "Yêu cầu thu mua cho dịch vụ DV001",
-    status: "reject",
-  },
-];
+const fetchRequestsByType = async (type) => {
+  // Replace this with actual API calls, e.g., `fetch("https://api.example.com/requests?type=" + type)`
+  switch (type) {
+    case "land lease":
+      return [
+        {
+          type: "land lease",
+          title: "Yêu cầu thuê đất",
+          desc: "Yêu cầu thuê mảnh đất có ID MD001",
+          status: "processing",
+        },
+      ];
+    case "services":
+      return [
+        {
+          type: "services",
+          title: "Yêu cầu gói dịch vụ",
+          desc: "Yêu cầu sử dụng gói dịch vụ VietGap",
+          status: "accept",
+        },
+      ];
+    case "purchasing":
+      return [
+        {
+          type: "purchasing",
+          title: "Yêu cầu thu mua",
+          desc: "Yêu cầu thu mua cho dịch vụ DV001",
+          status: "reject",
+        },
+      ];
+    default:
+      return [];
+  }
+};
 
 const RequestListScreen = ({ navigation }) => {
+  const [selectedFilter, setSelectedFilter] = useState("land lease");
+  const [requests, setRequests] = useState([
+    {
+      type: "land lease",
+      title: "Yêu cầu thuê đất",
+      desc: "Yêu cầu thuê mảnh đất có ID MD001",
+      status: "processing",
+    },
+  ]);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (selectedFilter === "land lease") {
+      fetchRequestsLandLease();
+    }
+    if (selectedFilter === "services") {
+      fetchRequestsServices();
+    }
+    if (selectedFilter === "purchasing") {
+      fetchRequestsPurchase();
+    }
+  }, [selectedFilter]);
+
+  const fetchRequestsLandLease = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    console.log("fetchRequestsLandLease");
+  };
+
+  const fetchRequestsServices = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    console.log("fetchRequestsServices");
+  };
+
+  const fetchRequestsPurchase = async () => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+    console.log("fetchRequestsPurchase");
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.container}>
-          {requestList.map((request, index) => (
-            <TouchableRipple
-              key={index}
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() => {
-                if (request.type === "land lease") {
-                  navigation.navigate("RequestContractDetailScreen");
-                } else if (request.type === "services") {
-                  navigation.navigate("RequestServicesDetailScreen");
-                } else {
-                  navigation.navigate("RequestPurchaseScreen");
-                }
-              }}
-              style={styles.diaryContainer}
-            >
-              <>
-                <View style={styles.contentWrapper}>
-                  <Text style={styles.title}>{request.title}</Text>
-                  <Text style={styles.plantType}>{request.desc}</Text>
-                  <Text
-                    style={[
-                      styles.status,
-                      request.status == "processing" && { color: "#FFA756" },
-                      request.status == "cancel" && { color: "#D91515" },
-                      request.status == "reject" && { color: "red" },
-                    ]}
-                  >
-                    {request.status == "processing" && "Đang xử lí"}
-                    {request.status == "accept" && "Đã hoàn thành"}
-                    {request.status == "reject" && "Đã từ chối"}
-                  </Text>
-                </View>
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={24}
-                  color="#707070"
-                />
-              </>
-            </TouchableRipple>
-          ))}
-        </View>
-      </ScrollView>
+      {/* Filter Buttons */}
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          onPress={() => setSelectedFilter("land lease")}
+          style={[
+            styles.filterButton,
+            selectedFilter === "land lease" && styles.activeFilter,
+          ]}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedFilter === "land lease" && styles.activeFilterText,
+            ]}
+          >
+            Thuê đất
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setSelectedFilter("services")}
+          style={[
+            styles.filterButton,
+            selectedFilter === "services" && styles.activeFilter,
+          ]}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedFilter === "services" && styles.activeFilterText,
+            ]}
+          >
+            Dịch vụ
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setSelectedFilter("purchasing")}
+          style={[
+            styles.filterButton,
+            selectedFilter === "purchasing" && styles.activeFilter,
+          ]}
+        >
+          <Text
+            style={[
+              styles.filterText,
+              selectedFilter === "purchasing" && styles.activeFilterText,
+            ]}
+          >
+            Thu mua
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View style={{ paddingHorizontal: 20 }}>
+        {loading ? (
+          <ActivityIndicatorComponent />
+        ) : (
+          <View>
+            {requests.map((request, index) => (
+              <TouchableRipple
+                key={index}
+                rippleColor="rgba(127, 182, 64, 0.2)"
+                onPress={() => {
+                  if (request.type === "land lease") {
+                    navigation.navigate("RequestContractDetailScreen");
+                  } else if (request.type === "services") {
+                    navigation.navigate("RequestServicesDetailScreen");
+                  } else {
+                    navigation.navigate("RequestPurchaseScreen");
+                  }
+                }}
+                style={styles.diaryContainer}
+              >
+                <>
+                  <View style={styles.contentWrapper}>
+                    <Text style={styles.title}>{request.title}</Text>
+                    <Text style={styles.plantType}>{request.desc}</Text>
+                    <Text
+                      style={[
+                        styles.status,
+                        request.status === "processing" && { color: "#FFA756" },
+                        request.status === "reject" && { color: "red" },
+                      ]}
+                    >
+                      {request.status === "processing" && "Đang xử lí"}
+                      {request.status === "accept" && "Đã hoàn thành"}
+                      {request.status === "reject" && "Đã từ chối"}
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={24}
+                    color="#707070"
+                  />
+                </>
+              </TouchableRipple>
+            ))}
+          </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -87,13 +206,25 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
     gap: 20,
   },
-  fab: {
-    position: "absolute",
-    margin: 16,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "#7FB640",
-    borderRadius: 50,
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+    backgroundColor: "#f1f1f1",
+  },
+  filterButton: {
+    padding: 10,
+  },
+  filterText: {
+    fontSize: 16,
+    color: "gray",
+  },
+  activeFilter: {
+    borderBottomWidth: 2,
+    borderBottomColor: "#7FB640",
+  },
+  activeFilterText: {
+    color: "#7FB640",
   },
   diaryContainer: {
     flexDirection: "row",

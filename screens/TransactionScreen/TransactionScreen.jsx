@@ -62,13 +62,7 @@ export default function TransactionScreen() {
   }, [dispatch]);
 
   if (loading) {
-    return (
-      <ActivityIndicatorComponent
-        message="ĐANG TẢI..."
-        color="#7fb640"
-        size="50"
-      />
-    );
+    return <ActivityIndicatorComponent />;
   }
 
   if (error) {
@@ -78,51 +72,52 @@ export default function TransactionScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
-        {transactionList.transactions.map((transaction) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("TransactionDetailScreen", {
-                transactionID: transaction.transaction_id,
-              })
-            }
-            key={transaction.transaction_id}
-            style={styles.transactionContainer}
-          >
-            <View style={styles.transactionContent}>
-              <Text style={styles.transactionTitle}>
-                {transaction.purpose === "booking_land"
-                  ? "Thanh toán thuê đất"
-                  : "Chưa rõ"}
-              </Text>
-              <Text style={styles.transactionexpired_at}>
-                Hết hạn: {formatDateToDDMMYYYY(transaction.expired_at)}
-              </Text>
-            </View>
-            <Text style={styles.landName}>
-              Tên mảnh đất: {transaction.booking_land.land.name}
-            </Text>
-            <Text style={[styles.transactionAmount]}>
-              Số tiền: {formatNumber(transaction.total_price)} VND
-            </Text>
-
-            <Text
-              style={[
-                styles.transactionStatus,
-                transaction.status === "succeed" && styles.succeedStatus,
-                transaction.status === "approved" && styles.approvedStatus,
-                transaction.status === "expired" && styles.expiredStatus,
-              ]}
+        {transactionList?.transactions &&
+          transactionList?.transactions.map((transaction) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("TransactionDetailScreen", {
+                  transactionID: transaction.transaction_id,
+                })
+              }
+              key={transaction.transaction_id}
+              style={styles.transactionContainer}
             >
-              {transaction.status === "succeed"
-                ? "Hoàn thành"
-                : transaction.status === "pending"
-                ? "Chưa tới đợt thanh toán"
-                : transaction.status === "approved"
-                ? "Có thể thanh toán"
-                : "Thất bại"}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <View style={styles.transactionContent}>
+                <Text style={styles.transactionTitle}>
+                  {transaction.purpose === "booking_land"
+                    ? "Thanh toán thuê đất"
+                    : "Chưa rõ"}
+                </Text>
+                <Text style={styles.transactionexpired_at}>
+                  Hết hạn: {formatDateToDDMMYYYY(transaction.expired_at)}
+                </Text>
+              </View>
+              <Text style={styles.landName}>
+                Tên mảnh đất: {transaction.booking_land.land.name}
+              </Text>
+              <Text style={[styles.transactionAmount]}>
+                Số tiền: {formatNumber(transaction.total_price)} VND
+              </Text>
+
+              <Text
+                style={[
+                  styles.transactionStatus,
+                  transaction.status === "succeed" && styles.succeedStatus,
+                  transaction.status === "approved" && styles.approvedStatus,
+                  transaction.status === "expired" && styles.expiredStatus,
+                ]}
+              >
+                {transaction.status === "succeed"
+                  ? "Hoàn thành"
+                  : transaction.status === "pending"
+                  ? "Chưa tới đợt thanh toán"
+                  : transaction.status === "approved"
+                  ? "Có thể thanh toán"
+                  : "Thất bại"}
+              </Text>
+            </TouchableOpacity>
+          ))}
       </ScrollView>
     </SafeAreaView>
   );

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { ActivityIndicator } from "react-native-paper";
 
 const DropdownComponent = ({
   label,
@@ -14,6 +15,7 @@ const DropdownComponent = ({
   placeholderStyleValue,
   isDisabled,
   onScroll,
+  isLoading,
 }) => {
   const [isFocus, setIsFocus] = useState(false);
 
@@ -23,12 +25,12 @@ const DropdownComponent = ({
         style={[
           styles.dropdown,
           isFocus && { borderColor: "#7FB640" },
-          styleValue,
           isDisabled && { backgroundColor: "#D9D9D9" },
+          styleValue,
         ]}
         onScroll={onScroll ? onScroll : null}
         scrollEventThrottle={400} // Set throttle to improve performance
-        disable={isDisabled && isDisabled}
+        disable={isDisabled || isLoading}
         placeholderStyle={[styles.placeholderStyle, placeholderStyleValue]}
         selectedTextStyle={styles.selectedTextStyle}
         iconStyle={styles.iconStyle}
@@ -44,6 +46,18 @@ const DropdownComponent = ({
           setValue(item.value);
           setIsFocus(false);
         }}
+        renderRightIcon={() =>
+          isLoading ? (
+            <ActivityIndicator animating={true} color={"#7FB640"} size={20} />
+          ) : (
+            <AntDesign
+              style={styles.icon}
+              color={isFocus ? "#7FB640" : "#707070"}
+              name={"down"}
+              size={15}
+            />
+          )
+        }
         renderLeftIcon={() =>
           icon &&
           icon != "" && (
@@ -88,7 +102,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   selectedTextStyle: {
-    fontSize: 16,
+    fontSize: 14,
   },
   iconStyle: {
     width: 20,

@@ -8,10 +8,10 @@ const ActivityIndicatorComponent = ({
   size = 50,
 }) => {
   return (
-    <View>
+    <>
       <ActivityIndicator animating={true} color={color} size={size} />
       {message && <Text style={styles.message}>{message}</Text>}
-    </View>
+    </>
   );
 };
 

@@ -1,6 +1,15 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
-import { formatNumber } from "../../utils";
+import { formatNumber, shortenText } from "../../utils";
+import { useEffect } from "react";
+import { useIsFocused } from "@react-navigation/core";
+import { useDispatch, useSelector } from "react-redux";
+import { getServicePackageList } from "../../redux/slices/serviceSlice";
+import {
+  getServicePackageSelector,
+  serviceLoadingSelector,
+} from "../../redux/selectors";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const myService = [
   {
@@ -61,72 +70,100 @@ const services = [
 ];
 
 const ServiceScreen = ({ navigation }) => {
+  const isFocused = useIsFocused();
+
+  const dispatch = useDispatch();
+
+  const serviceList = useSelector(getServicePackageSelector);
+  const loading = useSelector(serviceLoadingSelector);
+
+  const fetchServiceList = () => {
+    try {
+      dispatch(getServicePackageList());
+    } catch (error) {
+      console.log("Error fetching service package list", error);
+    }
+  };
+  useEffect(() => {
+    if (isFocused) {
+      fetchServiceList();
+    }
+  }, [isFocused]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.headerLabel}>Dịch vụ đang sử dụng</Text>
-          {myService.map((service, index) => (
-            <TouchableRipple
-              style={styles.serviceContainer}
-              key={`MSV${index}`}
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() => {
-                navigation.navigate("MyServiceDetailScreen");
-              }}
-            >
-              <>
-                <View style={styles.titleWrapper}>
-                  <Text style={styles.serviceTitle}>
-                    {service.serviceTitle}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.serviceStatus,
-                      service.status == "Sắp hết hạn" && {
-                        backgroundColor: "#D91515",
-                      },
-                    ]}
+        {loading && <ActivityIndicatorComponent />}
+        {!loading && (
+          <>
+            <View style={styles.sectionContainer}>
+              <Text style={styles.headerLabel}>Dịch vụ đang sử dụng</Text>
+              {myService.map((service, index) => (
+                <TouchableRipple
+                  style={styles.serviceContainer}
+                  key={`MSV${index}`}
+                  rippleColor="rgba(127, 182, 64, 0.2)"
+                  onPress={() => {
+                    navigation.navigate("MyServiceDetailScreen");
+                  }}
+                >
+                  <>
+                    <View style={styles.titleWrapper}>
+                      <Text style={styles.serviceTitle}>
+                        {service.serviceTitle}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.serviceStatus,
+                          service.status == "Sắp hết hạn" && {
+                            backgroundColor: "#D91515",
+                          },
+                        ]}
+                      >
+                        {service.status}
+                      </Text>
+                    </View>
+                    <Text style={styles.serviceDescription}>
+                      {service.serviceDescription}
+                    </Text>
+                    <Text style={styles.serviceDescription}>
+                      Loại cây: {service.platType}
+                    </Text>
+                    <Text style={styles.servicePrice}>
+                      {formatNumber(service.servicePrice)} VND
+                    </Text>
+                  </>
+                </TouchableRipple>
+              ))}
+            </View>
+            <View style={[styles.sectionContainer, { paddingBottom: 50 }]}>
+              <Text style={styles.headerLabel}>Các gói dịch vụ</Text>
+              {serviceList?.metadata &&
+                serviceList?.metadata?.map((service, index) => (
+                  <TouchableRipple
+                    rippleColor="rgba(127, 182, 64, 0.2)"
+                    onPress={() => {
+                      navigation.navigate("ServicePackageDetailScreen", {
+                        serviceDetail: service,
+                      });
+                    }}
+                    key={`SV${index}`}
+                    style={styles.serviceContainer}
                   >
-                    {service.status}
-                  </Text>
-                </View>
-                <Text style={styles.serviceDescription}>
-                  {service.serviceDescription}
-                </Text>
-                <Text style={styles.serviceDescription}>
-                  Loại cây: {service.platType}
-                </Text>
-                <Text style={styles.servicePrice}>
-                  {formatNumber(service.servicePrice)} VND
-                </Text>
-              </>
-            </TouchableRipple>
-          ))}
-        </View>
-        <View style={[styles.sectionContainer, { paddingBottom: 50 }]}>
-          <Text style={styles.headerLabel}>Các gói dịch vụ</Text>
-          {services.map((service, index) => (
-            <TouchableRipple
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() => {
-                navigation.navigate("ServicePackageDetailScreen");
-              }}
-              key={`SV${index}`}
-              style={styles.serviceContainer}
-            >
-              <>
-                <Text style={styles.serviceTitle}>{service.serviceTitle}</Text>
-                <Text style={styles.serviceDescription}>
-                  {service.serviceDescription}
-                </Text>
-                <Text style={styles.servicePrice}>
-                  {formatNumber(service.servicePrice)} VND
-                </Text>
-              </>
-            </TouchableRipple>
-          ))}
-        </View>
+                    <>
+                      <Text style={styles.serviceTitle}>{service.name}</Text>
+                      <Text style={styles.serviceDescription}>
+                        {shortenText(service.description, 50)}
+                      </Text>
+                      <Text style={styles.servicePrice}>
+                        {formatNumber(service.price)} VND
+                      </Text>
+                    </>
+                  </TouchableRipple>
+                ))}
+            </View>
+          </>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -91,8 +91,16 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => {
         Toast.hide(); // Hide the loading toast
-        console.log(error.message);
+        console.log(error);
         if (error.message === "Invalid password") {
+          Toast.show({
+            type: "error",
+            text1: "Đăng nhập thất bại!",
+            text2: "Sai email hoặc mật khẩu !!!",
+          });
+          return;
+        }
+        if (error.message === "Email is not exist") {
           Toast.show({
             type: "error",
             text1: "Đăng nhập thất bại!",

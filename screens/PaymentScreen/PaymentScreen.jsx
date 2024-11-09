@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
-import { Appbar } from "react-native-paper"; // Import Appbar from React Native Paper
+import { Appbar } from "react-native-paper";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
+import { getTransactionByID } from "../../redux/slices/transactionSlice";
+import { useDispatch } from "react-redux";
+import Toast from "react-native-toast-message";
 
-const PaymentScreen = ({ navigation }) => {
-  const [timeLeft, setTimeLeft] = useState(5); // 300 seconds = 5 minutes
+const PaymentScreen = ({ navigation, route }) => {
+  const [timeLeft, setTimeLeft] = useState(300);
+  const { payment_link, transactionID } = route.params;
+  const dispatch = useDispatch();
+
+  if (!payment_link || !transactionID) {
+    return <ActivityIndicatorComponent />;
+  }
 
   useEffect(() => {
     if (timeLeft === 0) return;
@@ -11,6 +21,17 @@ const PaymentScreen = ({ navigation }) => {
     const intervalId = setInterval(() => {
       setTimeLeft((prevTime) => prevTime - 1);
     }, 1000);
+
+    if (timeLeft % 5 === 0) {
+      dispatch(getTransactionByID({ transactionID })).then((res) => {
+        console.log(res.payload.status);
+        if (res.payload.status === "succeed") {
+          navigation.navigate("ThankYouScreen", {
+            msg: "Thanh toán thành công, chúc bạn canh tác thuận lợi",
+          });
+        }
+      });
+    }
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [timeLeft]);
@@ -23,10 +44,11 @@ const PaymentScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      navigation.navigate("ThankYouScreen", {
-        msg: "Chúc bạn canh tác thuận lợi, vật tư sẽ được gửi đến bạn sớm thôi",
+      Toast.show({
+        type: "info",
+        text1: "Hãy thanh toán sớm nhé !!!",
       });
-      // navigation.navigate("FailScreen");
+      navigation.navigate("HomeScreen");
     }
   }, [timeLeft]);
 
@@ -42,15 +64,15 @@ const PaymentScreen = ({ navigation }) => {
         <Text style={styles.title}>QUÉT ĐỂ THANH TOÁN</Text>
         <Image
           source={{
-            uri: "https://th.bing.com/th/id/R.dcf4b6e228aef80dd1a58f4c76f07128?rik=Qj2LybacmBALtA&riu=http%3a%2f%2fpngimg.com%2fuploads%2fqr_code%2fqr_code_PNG25.png&ehk=eKH2pdoegouCUxO1rt6BJXt4avVYywmyOS8biIPp5zc%3d&risl=&pid=ImgRaw&r=0",
+            uri: payment_link,
           }} // Replace with actual URL of the QR code image
           style={styles.qrImage}
         />
-        <Text style={styles.accountText}>Tên chủ TK: AgriFarm</Text>
+        {/* <Text style={styles.accountText}>Tên chủ TK: AgriFarm</Text>
         <Text style={styles.accountText}>
           STK: <Text style={styles.accountHighlight}>4940116348275</Text>
         </Text>
-        <Text style={styles.accountText}>Ngân hàng TMCP Ngoại thương VN</Text>
+        <Text style={styles.accountText}>Ngân hàng TMCP Ngoại thương VN</Text> */}
       </View>
 
       <Text style={styles.countdown}>
@@ -80,8 +102,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   qrImage: {
-    width: 200,
-    height: 200,
+    width: 300,
+    height: 500,
     marginBottom: 20,
   },
   accountText: {

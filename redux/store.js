@@ -10,6 +10,8 @@ import cartReducer from "./slices/cartSlice";
 import landSlice from "./slices/landSlice";
 import serviceSlice from "./slices/serviceSlice";
 import plantSlice from "./slices/plantSlice";
+import transactionSlice from "./slices/transactionSlice";
+import requestSlice from "./slices/requestSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -26,6 +28,9 @@ const rootReducer = combineReducers({
   landSlice: landSlice.reducer,
   serviceSlice: serviceSlice.reducer,
   plantSlice: plantSlice.reducer,
+  requestSlice: requestSlice.reducer,
+
+  transactionSlice: transactionSlice.reducer,
 
   //add more reducer here
   //...

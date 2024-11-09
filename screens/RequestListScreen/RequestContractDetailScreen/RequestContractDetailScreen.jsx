@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -9,34 +9,87 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Text, Checkbox, Button, Divider } from "react-native-paper";
-import ContractComponent from "./ContractComponent"; // Import the contract component
-import Toast from "react-native-toast-message";
+import { getBookingByID } from "../../../redux/slices/requestSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
+import {
+  convertImageURL,
+  formatDateToDDMMYYYY,
+  formatNumber,
+} from "../../../utils";
 
-export default function RequestContractDetailScreen({ navigation }) {
-  const [checked, setChecked] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+export default function RequestContractDetailScreen({ navigation, route }) {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const { requestID } = route.params;
+  const dispatch = useDispatch();
+
+  const { booking, loading, error } = useSelector(
+    (state) => state.requestSlice
+  );
+
+  useEffect(() => {
+    if (requestID) {
+      dispatch(getBookingByID({ booking_id: requestID }));
+    }
+  }, [requestID]);
+
+  console.log(requestID + "- booking:" + JSON.stringify(booking));
+
+  if (loading || !booking) return <ActivityIndicatorComponent />;
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container}>
         {/* Request details */}
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Yêu cầu:</Text>
-          <Text style={styles.value}>Yêu cầu thuê đất</Text>
+          <Text style={styles.label}>Mảnh đất:</Text>
+          <Text style={styles.value}>{booking?.land?.name}</Text>
         </View>
 
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Ngày gửi yêu cầu:</Text>
-          <Text style={styles.value}>25/09/2020</Text>
+          <Text style={styles.value}>
+            {formatDateToDDMMYYYY(booking.created_at)}
+          </Text>
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Thời gian:</Text>
+          <Text style={styles.value}>
+            {formatDateToDDMMYYYY(booking.time_start)} -{" "}
+            {formatDateToDDMMYYYY(booking.time_end)}
+          </Text>
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Giá trị hợp đồng:</Text>
+          <Text style={styles.value}>
+            {formatNumber(booking.total_price)} VND
+          </Text>
         </View>
 
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Trạng thái:</Text>
-          <Text style={styles.value}>Chấp nhận</Text>
+          <Text style={styles.value}>
+            {" "}
+            {booking.status === "completed" && "Đang hiệu lực"}
+            {booking.status === "pending" && "Đang xử lý"}
+            {booking.status === "pending_contract" && "Chờ phê duyệt"}
+            {booking.status === "pending_payment" && "Chờ thanh toán"}
+            {booking.status === "pending_sign" && "Chờ ký"}
+            {booking.status === "canceled" && "Hủy"}
+            {booking.status === "expired" && "Hết hạn"}
+            {booking.status === "rejected" && "Đã từ chối"}
+          </Text>
         </View>
 
         <Divider style={styles.divider} />
@@ -49,27 +102,28 @@ export default function RequestContractDetailScreen({ navigation }) {
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Ghi chú:</Text>
-          <Text style={styles.value}>
-            Đây là ghi chú dài, và nó cũng có thể cần hiển thị trên nhiều dòng
-            tùy thuộc vào kích thước màn hình và nội dung.
-          </Text>
+          <Text style={styles.label}>Mục đích thuê:</Text>
+          <Text style={styles.value}>{booking.purpose_rental}</Text>
         </View>
 
         <Divider style={styles.divider} />
 
         {/* Section title */}
-        <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
-
-        {/* Image contract - Click to open modal display contract */}
-        <TouchableOpacity onPress={() => setModalVisible(true)}>
-          <Image
-            source={{
-              uri: "https://th.bing.com/th/id/OIP.FKkP-bE7nQTjz6oMT_DD6QHaKk?rs=1&pid=ImgDetMain",
-            }} // Replace with actual image URL
-            style={styles.contractImage}
-          />
-        </TouchableOpacity>
+        {booking.contract_image ? (
+          <View>
+            <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
+            <TouchableOpacity onPress={() => setModalVisible(true)}>
+              <Image
+                source={{
+                  uri: convertImageURL(booking.contract_image),
+                }}
+                style={styles.contractImage}
+              />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Text style={styles.sectionTitle}>Chưa có hợp đồng</Text>
+        )}
 
         <Modal visible={modalVisible} transparent={true} animationType="fade">
           <View style={styles.modalContainer}>
@@ -81,14 +135,14 @@ export default function RequestContractDetailScreen({ navigation }) {
             </TouchableOpacity>
             <Image
               source={{
-                uri: "https://th.bing.com/th/id/OIP.FKkP-bE7nQTjz6oMT_DD6QHaKk?rs=1&pid=ImgDetMain",
-              }} // Replace with actual image URL
+                uri: convertImageURL(booking.contract_image),
+              }}
               style={styles.modalImage}
             />
           </View>
         </Modal>
 
-        <View style={styles.checkboxContainer}>
+        {/* <View style={styles.checkboxContainer}>
           <Checkbox
             status={checked ? "checked" : "unchecked"}
             onPress={() => setChecked(!checked)}
@@ -102,10 +156,9 @@ export default function RequestContractDetailScreen({ navigation }) {
               </Text>
             </Text>
           </View>
-        </View>
+        </View> */}
 
-        {/* Button */}
-        <Button
+        {/* <Button
           mode="contained"
           style={styles.button}
           disabled={!checked}
@@ -114,7 +167,7 @@ export default function RequestContractDetailScreen({ navigation }) {
           }}
         >
           Tiến hành thanh toán
-        </Button>
+        </Button> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -155,6 +208,7 @@ const styles = StyleSheet.create({
     height: 700,
     resizeMode: "cover",
     marginTop: 10,
+    objectFit: "cover",
   },
   modalContainer: {
     flex: 1,

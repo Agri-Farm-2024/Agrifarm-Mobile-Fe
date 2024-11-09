@@ -183,7 +183,15 @@ function HomeScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
             </View>
-            <View style={styles.iconContainer}></View>
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("TransactionScreen")}
+              >
+                <MaterialCommunityIcons name="cash" size={40} color="#7FB640" />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Danh sách giao dịch</Text>
+            </View>
           </View>
         </View>
       </ScrollView>

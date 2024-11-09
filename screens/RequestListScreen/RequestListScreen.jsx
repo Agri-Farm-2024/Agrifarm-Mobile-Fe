@@ -10,90 +10,17 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { TouchableRipple } from "react-native-paper";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
-
-const fetchRequestsByType = async (type) => {
-  // Replace this with actual API calls, e.g., `fetch("https://api.example.com/requests?type=" + type)`
-  switch (type) {
-    case "land lease":
-      return [
-        {
-          type: "land lease",
-          title: "Yêu cầu thuê đất",
-          desc: "Yêu cầu thuê mảnh đất có ID MD001",
-          status: "processing",
-        },
-      ];
-    case "services":
-      return [
-        {
-          type: "services",
-          title: "Yêu cầu gói dịch vụ",
-          desc: "Yêu cầu sử dụng gói dịch vụ VietGap",
-          status: "accept",
-        },
-      ];
-    case "purchasing":
-      return [
-        {
-          type: "purchasing",
-          title: "Yêu cầu thu mua",
-          desc: "Yêu cầu thu mua cho dịch vụ DV001",
-          status: "reject",
-        },
-      ];
-    default:
-      return [];
-  }
-};
+import { useDispatch, useSelector } from "react-redux";
+import { getListOfBookingLand } from "../../redux/slices/requestSlice";
+import {
+  ItemRequestLandLease,
+  ItemsRequestLandLease,
+} from "./ItemRequest/ItemRequestLandLease";
+import ItemsRequestServices from "./ItemRequest/ItemsRequestServices";
+import ItemsRequetsPurchase from "./ItemRequest/ItemsRequetsPurchase";
 
 const RequestListScreen = ({ navigation }) => {
   const [selectedFilter, setSelectedFilter] = useState("land lease");
-  const [requests, setRequests] = useState([
-    {
-      type: "land lease",
-      title: "Yêu cầu thuê đất",
-      desc: "Yêu cầu thuê mảnh đất có ID MD001",
-      status: "processing",
-    },
-  ]);
-
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (selectedFilter === "land lease") {
-      fetchRequestsLandLease();
-    }
-    if (selectedFilter === "services") {
-      fetchRequestsServices();
-    }
-    if (selectedFilter === "purchasing") {
-      fetchRequestsPurchase();
-    }
-  }, [selectedFilter]);
-
-  const fetchRequestsLandLease = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    console.log("fetchRequestsLandLease");
-  };
-
-  const fetchRequestsServices = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    console.log("fetchRequestsServices");
-  };
-
-  const fetchRequestsPurchase = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-    console.log("fetchRequestsPurchase");
-  };
 
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
@@ -149,51 +76,15 @@ const RequestListScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={{ paddingHorizontal: 20 }}>
-        {loading ? (
-          <ActivityIndicatorComponent />
-        ) : (
-          <View>
-            {requests.map((request, index) => (
-              <TouchableRipple
-                key={index}
-                rippleColor="rgba(127, 182, 64, 0.2)"
-                onPress={() => {
-                  if (request.type === "land lease") {
-                    navigation.navigate("RequestContractDetailScreen");
-                  } else if (request.type === "services") {
-                    navigation.navigate("RequestServicesDetailScreen");
-                  } else {
-                    navigation.navigate("RequestPurchaseScreen");
-                  }
-                }}
-                style={styles.diaryContainer}
-              >
-                <>
-                  <View style={styles.contentWrapper}>
-                    <Text style={styles.title}>{request.title}</Text>
-                    <Text style={styles.plantType}>{request.desc}</Text>
-                    <Text
-                      style={[
-                        styles.status,
-                        request.status === "processing" && { color: "#FFA756" },
-                        request.status === "reject" && { color: "red" },
-                      ]}
-                    >
-                      {request.status === "processing" && "Đang xử lí"}
-                      {request.status === "accept" && "Đã hoàn thành"}
-                      {request.status === "reject" && "Đã từ chối"}
-                    </Text>
-                  </View>
-                  <MaterialIcons
-                    name="arrow-forward-ios"
-                    size={24}
-                    color="#707070"
-                  />
-                </>
-              </TouchableRipple>
-            ))}
-          </View>
-        )}
+        <ScrollView contentContainerStyle={{ paddingBottom: 50 }}>
+          {selectedFilter === "land lease" ? (
+            <ItemsRequestLandLease />
+          ) : selectedFilter === "services" ? (
+            <ItemsRequestServices />
+          ) : (
+            <ItemsRequetsPurchase />
+          )}
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -240,6 +131,7 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingHorizontal: 20,
     elevation: 5,
+    marginBottom: 20,
   },
   contentWrapper: {
     gap: 10,
@@ -255,6 +147,7 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 14,
     color: "#7FB640",
+    fontWeight: "bold",
   },
 });
 

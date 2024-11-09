@@ -27,7 +27,7 @@ const TransactionScreen = () => {
     }
   }, [transactionID]);
 
-  if (loading && !transactionData) {
+  if (loading || !transactionData) {
     return <ActivityIndicatorComponent />;
   }
 
@@ -51,19 +51,19 @@ const TransactionScreen = () => {
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Tên khách hàng</Text>
               <Text style={styles.textValue}>
-                {transactionData.user.full_name}
+                {transactionData?.user?.full_name}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Mảnh đất</Text>
               <Text style={styles.textValue}>
-                {transactionData.booking_land.land.name}
+                {transactionData?.booking_land?.land?.name}
               </Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Lượt thanh toán</Text>
               <Text style={styles.textValue}>
-                {transactionData.booking_land.payment_frequency === "single"
+                {transactionData?.booking_land?.payment_frequency === "single"
                   ? "Một lần"
                   : "Nhiều lần"}
               </Text>
@@ -71,8 +71,11 @@ const TransactionScreen = () => {
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Thời gian thuê</Text>
               <Text style={styles.textValue}>
-                {formatDateToDDMMYYYY(transactionData.booking_land.time_start)}{" "}
-                - {formatDateToDDMMYYYY(transactionData.booking_land.time_end)}
+                {formatDateToDDMMYYYY(
+                  transactionData?.booking_land?.time_start
+                )}{" "}
+                -{" "}
+                {formatDateToDDMMYYYY(transactionData?.booking_land?.time_end)}
               </Text>
             </View>
           </View>

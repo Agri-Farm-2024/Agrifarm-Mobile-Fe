@@ -9,7 +9,6 @@ const LandItem = ({ item }) => {
   const navigation = useNavigation();
 
   const image = item.url.find((item) => item.type === "image")?.string_url;
-  console.log(convertImageURL(image));
 
   return (
     <View style={styles.itemContainer}>

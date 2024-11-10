@@ -13,7 +13,7 @@ export const getListOfLand = createAsyncThunk(
         `/lands?status=${status}&page_size=${page_size}&page_index=${page_index}`
       );
 
-      // console.log("getListOfLand data:", data);
+      // console.log("getListOfLand data:", data.data);
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -85,7 +85,7 @@ export const landSlice = createSlice({
       })
       .addCase(getListOfLand.fulfilled, (state, action) => {
         state.loading = false;
-        state.booking = action.payload;
+        state.landList = action.payload;
       })
       .addCase(getListOfLand.rejected, (state, action) => {
         state.loading = false;

@@ -73,7 +73,7 @@ export default function TransactionScreen() {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView style={styles.container}>
         {transactionList?.transactions &&
-          transactionList?.transactions.map((transaction) => (
+          transactionList?.transactions?.map((transaction) => (
             <TouchableOpacity
               onPress={() =>
                 navigation.navigate("TransactionDetailScreen", {
@@ -87,6 +87,10 @@ export default function TransactionScreen() {
                 <Text style={styles.transactionTitle}>
                   {transaction.purpose === "booking_land"
                     ? "Thanh toán thuê đất"
+                    : transaction.purpose === "order"
+                    ? "Thanh toán đơn hàng"
+                    : transaction.purpose === "service"
+                    ? "Thanh toán dịch vụ"
                     : "Chưa rõ"}
                 </Text>
                 <Text style={styles.transactionexpired_at}>
@@ -94,7 +98,10 @@ export default function TransactionScreen() {
                 </Text>
               </View>
               <Text style={styles.landName}>
-                Tên mảnh đất: {transaction.booking_land.land.name}
+                Tên mảnh đất:{" "}
+                {transaction?.booking_land?.land?.name
+                  ? transaction?.booking_land?.land?.name
+                  : "Không có"}
               </Text>
               <Text style={[styles.transactionAmount]}>
                 Số tiền: {formatNumber(transaction.total_price)} VND

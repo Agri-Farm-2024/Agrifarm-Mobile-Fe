@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
-    username: "landrenter@gmail.com",
+    username: "expert@gmail.com",
     password: "123",
   });
   const [errorMessage, setErrorMessage] = useState(null);
@@ -68,7 +68,7 @@ const LoginScreen = ({ navigation }) => {
     dispatch(login({ email: loginForm.username, password: loginForm.password }))
       .unwrap()
       .then((res) => {
-        console.log(res);
+        console.log("res: " + JSON.stringify(res));
         Toast.hide();
         if (res.statusCode === 201 && res.metadata.user.role >= 3) {
           Toast.show({
@@ -91,7 +91,16 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => {
         Toast.hide(); // Hide the loading toast
-        console.log(error);
+        console.log("error.message: " + error);
+        if (!error.message) {
+          Toast.show({
+            type: "error",
+            text1: "Đăng nhập thất bại!",
+            text2: "Lỗi hệ thống !!!",
+          });
+          return;
+        }
+
         if (error.message === "Invalid password") {
           Toast.show({
             type: "error",

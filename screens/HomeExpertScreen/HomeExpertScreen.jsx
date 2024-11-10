@@ -158,7 +158,7 @@ function HomeExpertScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
+              <Text style={styles.iconLabel}>Danh sách công việc</Text>
             </View>
             <View style={styles.iconContainer}></View>
           </View>

@@ -87,6 +87,14 @@ export default function LandLeaseScreen({ navigation, route }) {
           });
         }
 
+        if (response.payload.statusCode === 500) {
+          Toast.show({
+            type: "error",
+            text1: "Đơn chưa được gửi",
+            text2: `Lỗi hệ thống !!!`,
+          });
+        }
+
         if (response.payload.statusCode === 201) {
           Toast.show({
             type: "success",

@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
   },
   taskContent: {
     paddingHorizontal: 10,
+    paddingBottom: 60,
   },
 });
 

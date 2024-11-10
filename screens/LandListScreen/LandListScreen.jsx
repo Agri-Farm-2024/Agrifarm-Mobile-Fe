@@ -54,11 +54,12 @@ export default function LandListScreen() {
     },
   ];
 
-  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("free");
   const [modalVisible, setModalVisible] = useState(false);
   const dispatch = useDispatch();
 
   const { landList, loading, error } = useSelector((state) => state.landSlice);
+
 
   useEffect(() => {
     dispatch(
@@ -142,7 +143,7 @@ export default function LandListScreen() {
         <ActivityIndicatorComponent />
       ) : (
         <FlatList
-          data={landList.lands}
+          data={landList?.metadata?.lands}
           renderItem={renderItem}
           keyExtractor={(item) => item.land_id}
         />

@@ -52,7 +52,7 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Ngày gửi yêu cầu:</Text>
           <Text style={styles.value}>
-            {formatDateToDDMMYYYY(booking.created_at)}
+            {formatDateToDDMMYYYY(booking?.created_at)}
           </Text>
         </View>
 
@@ -61,8 +61,8 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Thời gian:</Text>
           <Text style={styles.value}>
-            {formatDateToDDMMYYYY(booking.time_start)} -{" "}
-            {formatDateToDDMMYYYY(booking.time_end)}
+            {formatDateToDDMMYYYY(booking?.time_start)} -{" "}
+            {formatDateToDDMMYYYY(booking?.time_end)}
           </Text>
         </View>
 
@@ -71,7 +71,7 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Giá trị hợp đồng:</Text>
           <Text style={styles.value}>
-            {formatNumber(booking.total_price)} VND
+            {formatNumber(booking?.total_price)} VND
           </Text>
         </View>
 
@@ -81,14 +81,14 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           <Text style={styles.label}>Trạng thái:</Text>
           <Text style={styles.value}>
             {" "}
-            {booking.status === "completed" && "Đang hiệu lực"}
-            {booking.status === "pending" && "Đang xử lý"}
-            {booking.status === "pending_contract" && "Chờ phê duyệt"}
-            {booking.status === "pending_payment" && "Chờ thanh toán"}
-            {booking.status === "pending_sign" && "Chờ ký"}
-            {booking.status === "canceled" && "Hủy"}
-            {booking.status === "expired" && "Hết hạn"}
-            {booking.status === "rejected" && "Đã từ chối"}
+            {booking?.status === "completed" && "Đang hiệu lực"}
+            {booking?.status === "pending" && "Đang xử lý"}
+            {booking?.status === "pending_contract" && "Chờ phê duyệt"}
+            {booking?.status === "pending_payment" && "Chờ thanh toán"}
+            {booking?.status === "pending_sign" && "Chờ ký"}
+            {booking?.status === "canceled" && "Hủy"}
+            {booking?.status === "expired" && "Hết hạn"}
+            {booking?.status === "rejected" && "Đã từ chối"}
           </Text>
         </View>
 
@@ -103,19 +103,19 @@ export default function RequestContractDetailScreen({ navigation, route }) {
 
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Mục đích thuê:</Text>
-          <Text style={styles.value}>{booking.purpose_rental}</Text>
+          <Text style={styles.value}>{booking?.purpose_rental}</Text>
         </View>
 
         <Divider style={styles.divider} />
 
         {/* Section title */}
-        {booking.contract_image ? (
+        {booking?.contract_image ? (
           <View>
             <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
             <TouchableOpacity onPress={() => setModalVisible(true)}>
               <Image
                 source={{
-                  uri: convertImageURL(booking.contract_image),
+                  uri: convertImageURL(booking?.contract_image),
                 }}
                 style={styles.contractImage}
               />
@@ -135,7 +135,7 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             </TouchableOpacity>
             <Image
               source={{
-                uri: convertImageURL(booking.contract_image),
+                uri: convertImageURL(booking?.contract_image),
               }}
               style={styles.modalImage}
             />

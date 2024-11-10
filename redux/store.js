@@ -12,6 +12,7 @@ import serviceSlice from "./slices/serviceSlice";
 import plantSlice from "./slices/plantSlice";
 import transactionSlice from "./slices/transactionSlice";
 import requestSlice from "./slices/requestSlice";
+import taskSlice from "./slices/taskSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
   serviceSlice: serviceSlice.reducer,
   plantSlice: plantSlice.reducer,
   requestSlice: requestSlice.reducer,
+  taskSlice: taskSlice.reducer,
 
   transactionSlice: transactionSlice.reducer,
 

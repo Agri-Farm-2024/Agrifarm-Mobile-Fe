@@ -30,7 +30,7 @@ const StandardProcessSchema = Yup.object().shape({
   plantSeason: Yup.string().required("Vui lòng chọn loại cây!"),
 });
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 export default function CreateStandardProcessScreen() {
   const [openStandardProcess, setOpenStandardProcess] = useState(false);
@@ -147,7 +147,8 @@ export default function CreateStandardProcessScreen() {
                 text1: "Tạo quy trình thất bại!",
               });
             }
-          } else {
+          }
+          if (response.payload.statusCode == 201) {
             Toast.show({
               type: "success",
               text1: "Tạo quy trình thành công!",

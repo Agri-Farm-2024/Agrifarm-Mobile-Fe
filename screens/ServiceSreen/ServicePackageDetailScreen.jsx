@@ -8,10 +8,16 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { formatNumber } from "../../utils";
+import { calculateMonthsBetween, formatDate, formatNumber } from "../../utils";
 import DropdownComponent from "../../components/DropdownComponent";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useDispatch, useSelector } from "react-redux";
+import { getBookingList } from "../../redux/slices/landSlice";
+import { getBookingSelector } from "../../redux/selectors";
+import { getPlantSeasonList } from "../../redux/slices/plantSlice";
+import { buyService } from "../../redux/slices/serviceSlice";
 
 const service = {
   id: "SV001",
@@ -72,28 +78,229 @@ const plantTypeOptions = [
   },
 ];
 
-const ServicePackageDetailScreen = () => {
+console.log("Render service");
+
+const ServicePackageDetailScreen = ({ route }) => {
   const [formInput, setFormInput] = useState({
     plot: "",
     cultivatedArea: "",
-    plantType: "",
+    dateStart: new Date(new Date().setDate(new Date().getDate() + 1)), // Default to tomorrow
     plantSeason: "",
   });
+  const [bookingOptions, setBookingOptions] = useState([]);
+  const [isShowDatePicker, setIsShowDatePicker] = useState(false);
+  const [plantSeasonOptions, setPlantSeasonOptions] = useState([]);
+  const [pageNumberPlantSeason, setPageNumberPlantSeason] = useState(1);
+  const [hasMorePlantSeason, setHasMorePlantSeason] = useState(true);
+  const [isLoadingPlantSeason, setIsLoadingPlantSeason] = useState(false);
+  const [showPreviewParams, setShowPreviewParams] = useState({
+    total_month: 0,
+    time_start: 0,
+  });
+
+  const { serviceDetail } = route.params;
+
+  const dispatch = useDispatch();
+  const bookingSelector = useSelector(getBookingSelector);
+
+  const fetchUserBookings = () => {
+    try {
+      const formData = {
+        page_index: 1,
+        page_size: 30,
+        type: "booking",
+        status: "completed",
+      };
+      dispatch(getBookingList(formData)).then((response) => {
+        console.log("booking response: " + JSON.stringify(response));
+        if (response.payload.statusCode !== 200) {
+          console.log("Fetch booking fail");
+        }
+        if (response.payload.statusCode === 200) {
+          const newBookingOptions =
+            response.payload?.metadata?.bookings &&
+            response.payload?.metadata?.bookings.map((booking) => ({
+              label: booking?.land?.name,
+              value: booking?.booking_id,
+            }));
+          setBookingOptions(newBookingOptions);
+        }
+      });
+    } catch (error) {
+      console.log("Error fetching user bookings", error);
+    }
+  };
+
+  const fetchPlantSeasonOptions = (pageIndex, total_month, time_start) => {
+    const params = {
+      page_size: 20,
+      page_index: pageIndex,
+      time_start: time_start || showPreviewParams.time_start,
+      total_month: total_month || showPreviewParams.total_month,
+    };
+    console.log("prams", params);
+    setIsLoadingPlantSeason(true);
+    dispatch(getPlantSeasonList(params))
+      .then((response) => {
+        console.log("response plantSeasonOptions: " + JSON.stringify(response));
+        if (response.payload && response.payload.statusCode === 200) {
+          setIsLoadingPlantSeason(false);
+          if (
+            response.payload.metadata &&
+            response.payload.metadata.plant_seasons
+          ) {
+            if (response.payload.metadata.plant_seasons.length == 0) {
+              Toast.show({
+                type: "error",
+                text1: "Không có mùa vụ phù hợp",
+                text2: "Hãy đổi tháng bắt đầu canh tác",
+              });
+              setPlantSeasonOptions([]);
+            } else {
+              //Filter the process that have the standard process with status is accepted
+              const bookingObject =
+                bookingSelector?.bookings &&
+                bookingSelector?.bookings.filter(
+                  (booking) => booking.booking_id == formInput.plot
+                )[0];
+
+              const seasonOptions =
+                response.payload.metadata.plant_seasons.filter(
+                  (season) =>
+                    season.process_technical_standard &&
+                    season.process_technical_standard.status == "accepted" &&
+                    season.plant.land_type_id == bookingObject.land.land_type_id
+                );
+              console.log("season options", seasonOptions);
+              if (!seasonOptions || seasonOptions.length == 0) {
+                Toast.show({
+                  type: "error",
+                  text1: "Không có mùa vụ phù hợp",
+                  text2: "Hãy đổi tháng bắt đầu canh tác hoặc mảnh đất",
+                });
+                setPlantSeasonOptions([]);
+              } else {
+                const optionData =
+                  seasonOptions &&
+                  seasonOptions.length > 0 &&
+                  seasonOptions.map((season) => ({
+                    value: season.plant_season_id,
+                    label: `Mùa vụ ${season.plant.name} Tháng ${season.month_start}`,
+                  }));
+                console.log("Option data: " + JSON.stringify(optionData));
+                setPlantSeasonOptions(optionData);
+                setPageNumberPlantSeason(pageIndex);
+
+                //Check whether has more options to fetch
+                if (
+                  response.payload.metadata.pagination.total_page == pageIndex
+                ) {
+                  setHasMorePlantSeason(false);
+                }
+              }
+            }
+          }
+        }
+      })
+      .catch((error) => {
+        setIsLoadingPlantSeason(false);
+        console.log("Error loading plant season options", error);
+      });
+  };
+
+  const handleScrollPlantSeasonOption = ({ nativeEvent }) => {
+    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
+    const isCloseToBottom =
+      contentOffset.y + layoutMeasurement.height >= contentSize.height * 0.75;
+
+    if (isCloseToBottom && !isLoading) {
+      if (!isLoadingPlantSeason && hasMorePlantSeason) {
+        fetchPlantSeasonOptions(pageNumberPlantSeason + 1);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUserBookings();
+  }, []);
+
+  //function will get seasons the user can cultivate
+  const showPreviewSeason = (bookingId, dateStart) => {
+    if (bookingId != "" && dateStart > new Date()) {
+      //find the booking object by id from booking list
+      const bookingObject =
+        bookingSelector?.bookings &&
+        bookingSelector?.bookings.filter(
+          (booking) => booking.booking_id == bookingId
+        )[0];
+
+      const totalDateAvailable =
+        bookingObject &&
+        calculateMonthsBetween(dateStart, bookingObject.time_end);
+
+      setShowPreviewParams({
+        total_month: totalDateAvailable,
+        time_start: new Date(dateStart).getMonth() + 1,
+      });
+      fetchPlantSeasonOptions(
+        1,
+        totalDateAvailable,
+        new Date(dateStart).getMonth() + 1
+      );
+    }
+  };
 
   const handleSubmit = () => {
-    if (
-      formInput.plot === "" ||
-      formInput.cultivatedArea === "" ||
-      formInput.plantType === "" ||
-      formInput.plantSeason === ""
-    ) {
-      Toast.show({
-        type: "error",
-        text1: "Mua dịch vụ thất bại thất bại",
-        text2: "Vui lòng điền đầy đủ thông tin!",
-      });
+    try {
+      if (
+        formInput.plot === "" ||
+        formInput.cultivatedArea === "" ||
+        formInput.plantSeason === "" ||
+        showPreviewParams.time_start == 0 ||
+        showPreviewParams.total_month == 0
+      ) {
+        Toast.show({
+          type: "error",
+          text1: "Vui lòng điền đầy đủ thông tin!",
+        });
+      } else {
+        const formData = {
+          plant_season_id: formInput.plantSeason,
+          booking_id: formInput.plot,
+          service_package_id: serviceDetail.service_package_id,
+          acreage_land: formInput.cultivatedArea - 0,
+          time_start: formatDate(formInput.dateStart, 1),
+        };
+        console.log("FormData", formData);
+        dispatch(buyService(formData)).then((response) => {
+          console.log("Buy service response", JSON.stringify(response));
+          if (response.payload.statusCode != 201) {
+            if (
+              response.payload.statusCode == 400 &&
+              response.payload.message == "Acreage land is not enough"
+            ) {
+              Toast.show({
+                type: "error",
+                text1: "Diện tích mảnh đất có sẵn không đủ!",
+              });
+            } else {
+              Toast.show({
+                type: "error",
+                text1: "Mua dịch vụ thất bại!",
+              });
+            }
+          }
+          if (response.payload.statusCode == 201) {
+            Toast.show({
+              type: "success",
+              text1: "Mua dịch vụ thành công!",
+            });
+          }
+        });
+      }
+    } catch (error) {
+      console.log("Buy service failed", error);
     }
-    console.log("Submit", formInput);
   };
 
   return (
@@ -104,106 +311,140 @@ const ServicePackageDetailScreen = () => {
           keyboardDismissMode="on-drag"
           showsVerticalScrollIndicator={false}
         >
-          <Text style={styles.title}>{service.serviceTitle}</Text>
-          <Text style={styles.description}>{service.serviceDescription}</Text>
-          <Text style={styles.header}>Chi tiết gói dịch vụ</Text>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Gói dịch vụ</Text>
-            <Text style={styles.detailContent}>{service.serviceTitle}</Text>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Giá thuê</Text>
-            <Text style={styles.detailContent}>
-              {formatNumber(service.servicePrice)} VND / năm
-            </Text>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Bao tiêu</Text>
-            <Text style={styles.detailContent}>
-              {service.isPurchase == true ? "Có" : "Không"}
-            </Text>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Bao vật tư</Text>
-            <Text style={styles.detailContent}>
-              {service.isMaterial == true ? "Có" : "Không"}
-            </Text>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Áp dụng cho mảnh đất</Text>
-            <View style={styles.detailContentInput}>
-              <DropdownComponent
-                styleValue={{
-                  height: 40,
-                }}
-                placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                options={plotOptions}
-                placeholder="Chọn mảnh đất"
-                value={formInput.plot}
-                setValue={(value) =>
-                  setFormInput({ ...formInput, plot: value })
-                }
-              />
-            </View>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Áp dụng cho loại cây</Text>
-            <View style={styles.detailContentInput}>
-              <DropdownComponent
-                styleValue={{
-                  height: 40,
-                }}
-                placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                options={plantTypeOptions}
-                placeholder="Chọn loại cây"
-                value={formInput.plantType}
-                setValue={(value) => {
-                  if (formInput.plantType != value) {
-                    setFormInput({
-                      ...formInput,
-                      plantType: value,
-                      plantSeason: "",
-                    });
-                  }
-                }}
-              />
-            </View>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Mùa vụ</Text>
-            <View style={styles.detailContentInput}>
-              <DropdownComponent
-                isDisabled={formInput.plantType == "" ? true : false}
-                styleValue={{
-                  height: 40,
-                }}
-                placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                options={plantSeasonOptions}
-                placeholder="Chọn mùa vụ"
-                value={formInput.plantSeason}
-                setValue={(value) =>
-                  setFormInput({ ...formInput, plantSeason: value })
-                }
-              />
-            </View>
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailName}>Diện tích canh tác (ha)</Text>
-            <View style={styles.detailContent}>
-              <TextInput
-                keyboardType="decimal-pad"
-                placeholder="Diện tích canh tác"
-                style={styles.input}
-                value={formInput.cultivatedArea}
-                onChangeText={(text) =>
-                  setFormInput({ ...formInput, cultivatedArea: text })
-                }
-              ></TextInput>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.submitButtonText}>Mua gói dịch vụ</Text>
-          </TouchableOpacity>
+          {!serviceDetail && <Text>Không tìm thấy dịch vụ</Text>}
+          {serviceDetail && (
+            <>
+              <Text style={styles.title}>{serviceDetail.name}</Text>
+              <Text style={styles.description}>
+                {serviceDetail.description}
+              </Text>
+              <Text style={styles.header}>Chi tiết gói dịch vụ</Text>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Gói dịch vụ</Text>
+                <Text style={styles.detailContent}>{serviceDetail.name}</Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Giá thuê</Text>
+                <Text style={styles.detailContent}>
+                  {formatNumber(serviceDetail.price)} VND / năm
+                </Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Bao tiêu</Text>
+                <Text style={styles.detailContent}>
+                  {serviceDetail.purchase == true ? "Có" : "Không"}
+                </Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Bao vật tư</Text>
+                <Text style={styles.detailContent}>
+                  {serviceDetail.material == true ? "Có" : "Không"}
+                </Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Áp dụng cho mảnh đất</Text>
+                <View style={styles.detailContentInput}>
+                  <DropdownComponent
+                    styleValue={{
+                      height: 40,
+                    }}
+                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+                    options={bookingOptions}
+                    placeholder="Chọn mảnh đất"
+                    value={formInput.plot}
+                    setValue={(value) => {
+                      setFormInput({ ...formInput, plot: value });
+                      showPreviewSeason(value, formInput.dateStart);
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Ngày bắt đầu canh tác</Text>
+                <View style={styles.detailContentInput}>
+                  <TouchableOpacity
+                    style={[styles.inputDate]}
+                    onPress={() => {
+                      setIsShowDatePicker(true);
+                    }}
+                  >
+                    <Text>{formatDate(formInput.dateStart, 0)}</Text>
+                  </TouchableOpacity>
+                  {isShowDatePicker && (
+                    <DateTimePicker
+                      testID="dateTimePicker"
+                      value={new Date(formInput.dateStart)}
+                      open={isShowDatePicker}
+                      timeZoneName="Asia/Ho_Chi_Minh"
+                      mode="date"
+                      display="spinner"
+                      onChange={(event, selectedDate) => {
+                        setIsShowDatePicker(false);
+                        if (selectedDate <= new Date()) {
+                          Toast.show({
+                            type: "error",
+                            text1: "Ngày bắt đầu phải lớn hơn ngày hôm nay!",
+                          });
+                        } else {
+                          setFormInput((prevState) => ({
+                            ...prevState,
+                            dateStart: selectedDate,
+                          }));
+                          showPreviewSeason(formInput.plot, selectedDate);
+                        }
+                      }}
+                      textColor="#7FB640"
+                    />
+                  )}
+                </View>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Mùa vụ</Text>
+                <View style={styles.detailContentInput}>
+                  <DropdownComponent
+                    isDisabled={
+                      showPreviewParams.time_start != 0 &&
+                      !showPreviewParams.total_month != 0
+                        ? true
+                        : false
+                    }
+                    styleValue={{
+                      height: 40,
+                    }}
+                    isLoading={isLoadingPlantSeason}
+                    onScroll={handleScrollPlantSeasonOption}
+                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+                    options={plantSeasonOptions}
+                    placeholder="Chọn mùa vụ"
+                    value={formInput.plantSeason}
+                    setValue={(value) =>
+                      setFormInput({ ...formInput, plantSeason: value })
+                    }
+                  />
+                </View>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Diện tích canh tác (ha)</Text>
+                <View style={styles.detailContent}>
+                  <TextInput
+                    keyboardType="decimal-pad"
+                    placeholder="Diện tích canh tác"
+                    style={styles.input}
+                    value={formInput.cultivatedArea}
+                    onChangeText={(text) =>
+                      setFormInput({ ...formInput, cultivatedArea: text })
+                    }
+                  ></TextInput>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.submitButton}
+                onPress={handleSubmit}
+              >
+                <Text style={styles.submitButtonText}>Mua gói dịch vụ</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -263,7 +504,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: 40,
     paddingLeft: 10,
-    borderColor: "#D9D9D9",
+    borderRadius: 7,
+    borderColor: "#cacaca",
+  },
+  inputDate: {
+    height: 40,
+    lineHeight: 40,
+    backgroundColor: "transparent",
+    marginVertical: 10,
+    borderRadius: 7,
+    borderColor: "#cacaca",
+    alignItems: "left",
+    paddingLeft: 10,
+    justifyContent: "center",
+    borderWidth: 1,
   },
   submitButton: {
     backgroundColor: "#7FB640",

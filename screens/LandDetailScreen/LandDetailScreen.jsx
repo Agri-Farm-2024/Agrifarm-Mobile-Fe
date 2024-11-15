@@ -56,7 +56,7 @@ export default function LandDetailScreen({ navigation, route }) {
   const { width } = useWindowDimensions();
 
   const openModal = (image) => {
-    setSelectedImage(convertImageURL(image.string_url));
+    setSelectedImage(convertImageURL(image?.string_url));
     setModalVisible(true);
   };
 

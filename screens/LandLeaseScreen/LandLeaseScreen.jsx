@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { Button, Checkbox, Icon, Text } from "react-native-paper";
 import LandLeaseInput from "./LandLeaseInput/LandLeaseInput";
 import LandLeaseSign from "./LandLeaseSign/LandLeaseSign";
@@ -7,6 +7,7 @@ import Toast from "react-native-toast-message";
 import LandLeaseReview from "./LandLeaseReview/LandLeaseReview";
 import { useDispatch } from "react-redux";
 import { bookingLand } from "../../redux/slices/landSlice";
+import { TouchableOpacity } from "react-native";
 
 export default function LandLeaseScreen({ navigation, route }) {
   const { land } = route.params;
@@ -115,7 +116,10 @@ export default function LandLeaseScreen({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={{ paddingBottom: 30 }}
+      style={styles.container}
+    >
       <View style={styles.stepIndicator}>
         <Icon source="circle" size={20} color="#007AFF" />
         <Icon source="minus" size={20} color="#b9b9c3" />
@@ -148,9 +152,17 @@ export default function LandLeaseScreen({ navigation, route }) {
               color="#7fb640"
             />
             <Text style={styles.checkboxText}>
-              Tôi đã đọc và{" "}
-              <Text style={styles.checkboxLink}>
-                đồng ý với các điều khoản của hợp đồng
+              Tôi đã đọc và đồng ý với{" "}
+              <Text
+                style={styles.checkboxLink}
+                onPress={() =>
+                  navigation.navigate("ReviewContractScreen", {
+                    land: { land },
+                    formData: { formData },
+                  })
+                }
+              >
+                các điều khoản của hợp đồng
               </Text>
             </Text>
           </View>
@@ -189,7 +201,7 @@ export default function LandLeaseScreen({ navigation, route }) {
           )}
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

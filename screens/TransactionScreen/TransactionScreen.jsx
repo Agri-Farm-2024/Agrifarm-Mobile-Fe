@@ -61,13 +61,15 @@ export default function TransactionScreen() {
     dispatch(getListOfTransactions());
   }, [dispatch]);
 
-  if (loading) {
+  if (loading || !transactionList.transactions) {
     return <ActivityIndicatorComponent />;
   }
 
   if (error) {
     return <Text>Error: {error}</Text>;
   }
+
+  console.log(error);
 
   return (
     <SafeAreaView style={styles.safeArea}>

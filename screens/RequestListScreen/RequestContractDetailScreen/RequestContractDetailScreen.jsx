@@ -17,6 +17,7 @@ import {
   formatDateToDDMMYYYY,
   formatNumber,
 } from "../../../utils";
+import ContractComponent from "./ContractComponent";
 
 export default function RequestContractDetailScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,26 +39,36 @@ export default function RequestContractDetailScreen({ navigation, route }) {
 
   if (loading || !booking) return <ActivityIndicatorComponent />;
 
+  const contract = {
+    createAt: booking?.created_at,
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: Trịnh Gia Hân",
+    landrenter: booking?.land_renter?.full_name,
+    totalMonth: booking?.total_month,
+    purpose: booking?.purpose_rental,
+    area: booking?.land?.acreage_land,
+    position: booking?.land?.name,
+    pricePerMonth: booking?.land?.price_booking_per_month,
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 60 }}
+      >
         {/* Request details */}
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Mảnh đất:</Text>
           <Text style={styles.value}>{booking?.land?.name}</Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Ngày gửi yêu cầu:</Text>
           <Text style={styles.value}>
             {formatDateToDDMMYYYY(booking?.created_at)}
           </Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Thời gian:</Text>
           <Text style={styles.value}>
@@ -65,18 +76,14 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             {formatDateToDDMMYYYY(booking?.time_end)}
           </Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Giá trị hợp đồng:</Text>
           <Text style={styles.value}>
-            {formatNumber(booking?.total_price)} VND
+            {booking?.total_price && formatNumber(booking?.total_price)} VND
           </Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Trạng thái:</Text>
           <Text style={styles.value}>
@@ -91,40 +98,34 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             {booking?.status === "rejected" && "Đã từ chối"}
           </Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Nội dung yêu cầu:</Text>
           <Text style={styles.value}>Yêu cầu thuê mảnh đất MD001</Text>
         </View>
-
         <Divider style={styles.divider} />
-
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Mục đích thuê:</Text>
           <Text style={styles.value}>{booking?.purpose_rental}</Text>
         </View>
+        <Divider style={styles.divider} />
+        <View>
+          <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
+
+          <ContractComponent contract={contract} isDownload={true} />
+        </View>
 
         <Divider style={styles.divider} />
-
-        {/* Section title */}
         {booking?.contract_image ? (
           <View>
-            <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Image
-                source={{
-                  uri: convertImageURL(booking?.contract_image),
-                }}
-                style={styles.contractImage}
-              />
-            </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
+            <Button onPress={() => setModalVisible(true)} mode="contained">
+              Xem hình ảnh đã ký
+            </Button>
           </View>
         ) : (
-          <Text style={styles.sectionTitle}>Chưa có hợp đồng</Text>
+          <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
         )}
-
         <Modal visible={modalVisible} transparent={true} animationType="fade">
           <View style={styles.modalContainer}>
             <TouchableOpacity
@@ -141,7 +142,6 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             />
           </View>
         </Modal>
-
         {/* <View style={styles.checkboxContainer}>
           <Checkbox
             status={checked ? "checked" : "unchecked"}
@@ -157,7 +157,6 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             </Text>
           </View>
         </View> */}
-
         {/* <Button
           mode="contained"
           style={styles.button}
@@ -199,6 +198,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginTop: 20,
+    marginBottom: 10,
     fontWeight: "bold",
     fontSize: 16,
     color: "#666",

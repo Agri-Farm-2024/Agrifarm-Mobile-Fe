@@ -1,7 +1,7 @@
 import React from "react";
 import { ScrollView, Text, StyleSheet } from "react-native";
 
-export default function ContractContainer() {
+export default function ContractContainer({ content }) {
   return (
     <ScrollView
       style={styles.contractContainer}

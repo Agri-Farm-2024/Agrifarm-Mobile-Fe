@@ -17,7 +17,7 @@ import taskSlice from "./slices/taskSlice";
 const rootPersistConfig = {
   key: "root",
   storage,
-  safelist: ["userSlice"], // name of reducer which will be stored in the local storage
+  whitelist: ["userSlice"], 
 };
 
 const rootReducer = combineReducers({

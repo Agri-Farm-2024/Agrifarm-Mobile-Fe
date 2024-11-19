@@ -96,7 +96,7 @@ function HomeScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Yêu cầu dịch vụ</Text>
+              <Text style={styles.iconLabel}>Gói dịch vụ</Text>
             </View>
 
             <View style={styles.iconContainer}>

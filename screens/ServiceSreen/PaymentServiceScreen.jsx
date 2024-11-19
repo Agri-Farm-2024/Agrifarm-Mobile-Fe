@@ -2,14 +2,21 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
 import { Appbar } from "react-native-paper";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
-import { getTransactionByID } from "../../redux/slices/transactionSlice";
+import {
+  cancelTransaction,
+  getTransactionByID,
+} from "../../redux/slices/transactionSlice";
 import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
+import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
 
-const PaymentScreen = ({ navigation, route }) => {
+const PaymentServiceScreen = ({ navigation, route }) => {
   const [timeLeft, setTimeLeft] = useState(300);
-  const { payment_link, transactionID } = route.params;
+  const [isOpenConfirm, setIsOpenConfirm] = useState(false);
+  const { paymentInfo } = route.params;
   const dispatch = useDispatch();
+  const { payment_link, transactionID } = paymentInfo;
+  console.log("paymentInfo", paymentInfo);
 
   if (!payment_link || !transactionID) {
     return <ActivityIndicatorComponent />;
@@ -44,19 +51,30 @@ const PaymentScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     if (timeLeft === 0) {
-      Toast.show({
-        type: "info",
-        text1: "Hãy thanh toán sớm nhé !!!",
-      });
-      navigation.navigate("HomeScreen");
+      handleCancelTransaction();
     }
   }, [timeLeft]);
+
+  const handleCancelTransaction = () => {
+    console.log("Cancelling transaction...");
+    dispatch(cancelTransaction(paymentInfo.transactionID)).then((response) => {
+      console.log("cancel transaction response", response);
+      Toast.show({
+        type: "error",
+        text1: "Giao dịch đã huỷ!",
+      });
+      navigation.goBack();
+    });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Header with Back Button */}
       <Appbar.Header style={{ backgroundColor: "#76B947" }}>
-        <Appbar.BackAction color="white" onPress={() => navigation.goBack()} />
+        <Appbar.BackAction
+          color="white"
+          onPress={() => setIsOpenConfirm(true)}
+        />
         <Appbar.Content title="Thanh Toán" color="white" />
       </Appbar.Header>
 
@@ -75,9 +93,20 @@ const PaymentScreen = ({ navigation, route }) => {
         <Text style={styles.accountText}>Ngân hàng TMCP Ngoại thương VN</Text> */}
       </View>
 
-      {/* <Text style={styles.countdown}>
+      <Text style={styles.countdown}>
         Thời gian còn lại: {formatTime(timeLeft)}
-      </Text> */}
+      </Text>
+
+      <ConfirmationModal
+        visible={isOpenConfirm}
+        onDismiss={() => setIsOpenConfirm(false)}
+        onConfirm={() => {
+          setIsOpenConfirm(false);
+          handleCancelTransaction();
+        }}
+        title={"Huỷ giao dịch"}
+        content={"Bạn muốn huỷ giao dịch này?"}
+      />
     </SafeAreaView>
   );
 };
@@ -122,4 +151,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PaymentScreen;
+export default PaymentServiceScreen;

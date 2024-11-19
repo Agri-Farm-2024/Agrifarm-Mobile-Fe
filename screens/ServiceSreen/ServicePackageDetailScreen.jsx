@@ -277,14 +277,14 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           booking_id: formInput.plot,
           service_package_id: serviceDetail.service_package_id,
           acreage_land: formInput.cultivatedArea - 0,
-          time_start: formatDate(formInput.dateStart, 1),
+          time_start: formInput.dateStart.toISOString(),
           service_name: serviceDetail.name,
-          service_price: formatNumber(serviceDetail.price),
+          service_price: serviceDetail.price,
           plot_name: bookingObject ? bookingObject?.land?.name : "",
           season_name: seasonObject
             ? `Mùa vụ ${seasonObject?.plant?.name} Tháng ${seasonObject?.month_start}`
             : "",
-          seasonPrice: formatNumber(priceSeason),
+          seasonPrice: priceSeason,
         };
         navigation.navigate("PreviewBuyingServiceScreen", {
           serviceInfo: serviceInfo,

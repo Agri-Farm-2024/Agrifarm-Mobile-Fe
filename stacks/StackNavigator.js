@@ -38,6 +38,7 @@ import TransactionDetailScreen from "../screens/TransactionDetailScreen/Transact
 import ReviewContractScreen from "../screens/ReviewContractScreen/ReviewContractScreen";
 import PreviewBuyingServiceScreen from "../screens/ServiceSreen/PreviewBuyingServiceScreen";
 import { ReportTaskScreen } from "../screens/MyTaskScreen/ReportTaskScreen";
+import PaymentServiceScreen from "../screens/ServiceSreen/PaymentServiceScreen";
 
 const Stack = createStackNavigator();
 
@@ -319,6 +320,33 @@ const StackNavigator = () => (
       component={TransactionDetailScreen}
       options={{
         headerTitle: "Thông tin hóa đơn",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="PreviewBuyingServiceScreen"
+      component={PreviewBuyingServiceScreen}
+      options={{
+        headerTitle: "Thông tin dịch vụ",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="ReportTaskScreen"
+      component={ReportTaskScreen}
+      options={{
+        headerTitle: "Báo cáo công việc",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="PaymentServiceScreen"
+      component={PaymentServiceScreen}
+      options={{
+        headerTitle: "Thanh toán dịch vụ",
         headerTitleAlign: "center",
       }}
     />

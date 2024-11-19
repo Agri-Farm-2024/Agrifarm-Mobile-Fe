@@ -2,9 +2,10 @@ const api = `https://api.agrifarm.site`;
 
 //Format number
 export function formatNumber(number) {
-  return number
+  const numberformated = number
     ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
     : number;
+  return numberformated;
 }
 
 //Format date

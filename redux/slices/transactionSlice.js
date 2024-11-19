@@ -1,6 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { api } from "../../services/api";
 
+export const cancelTransaction = createAsyncThunk(
+  "transactionSlice/cancelTransaction",
+  async (transactionId, { rejectWithValue }) => {
+    try {
+      const response = await api.delete(`/transactions/${transactionId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getListOfTransactions = createAsyncThunk(
   "transactionSlice/getListOfTransactions",
   async (_, { rejectWithValue }) => {
@@ -63,6 +75,17 @@ export const transactionSlice = createSlice({
         state.transaction = action.payload;
       })
       .addCase(getTransactionByID.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(cancelTransaction.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(cancelTransaction.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(cancelTransaction.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

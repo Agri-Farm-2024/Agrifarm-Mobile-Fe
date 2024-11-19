@@ -1,21 +1,23 @@
 import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { getTransactionByID } from "../../redux/slices/transactionSlice";
-import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
-import { formatDateToDDMMYYYY, formatNumber } from "../../utils";
+import { formatDate, formatNumber } from "../../utils";
 import { Button } from "react-native-paper";
 import { getUserSelector } from "../../redux/selectors";
 import { buyService } from "../../redux/slices/serviceSlice";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 
-export default function PreviewBuyingServiceScreen({ route }) {
+export default function PreviewBuyingServiceScreen({ route, navigation }) {
   const { serviceInfo } = route.params;
+  console.log("serviceInfo: " + JSON.stringify(serviceInfo));
 
   const userSelector = useSelector(getUserSelector);
 
   const dispatch = useDispatch();
+
+  const totalPrice =
+    serviceInfo.service_price +
+    (serviceInfo.seasonPrice / 1000) * serviceInfo.acreage_land;
 
   const handleBuyService = () => {
     try {
@@ -24,7 +26,7 @@ export default function PreviewBuyingServiceScreen({ route }) {
         booking_id: serviceInfo.booking_id,
         service_package_id: serviceInfo.service_package_id,
         acreage_land: serviceInfo.acreage_land,
-        time_start: serviceInfo.time_start,
+        time_start: formatDate(serviceInfo.time_start, 1),
       };
       console.log("FormData buy service: " + formData);
       dispatch(buyService(formData)).then((response) => {
@@ -50,6 +52,13 @@ export default function PreviewBuyingServiceScreen({ route }) {
           Toast.show({
             type: "success",
             text1: "Mua dịch vụ thành công!",
+          });
+
+          navigation.navigate("PaymentServiceScreen", {
+            paymentInfo: {
+              transactionID: response?.payload?.metadata?.transaction_id,
+              payment_link: response?.payload?.metadata?.payment_link,
+            },
           });
         }
       });
@@ -92,7 +101,7 @@ export default function PreviewBuyingServiceScreen({ route }) {
                 <View style={styles.infoRow}>
                   <Text style={styles.textLabel}>Giá gói dịch vụ</Text>
                   <Text style={styles.textValue}>
-                    {serviceInfo.service_price}
+                    {formatNumber(serviceInfo.service_price)} VND
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
@@ -109,12 +118,14 @@ export default function PreviewBuyingServiceScreen({ route }) {
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.textLabel}>Ngày bắt đầu canh tác</Text>
-                  <Text style={styles.textValue}>{serviceInfo.time_start}</Text>
+                  <Text style={styles.textValue}>
+                    {formatDate(serviceInfo.time_start, 0)}
+                  </Text>
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.textLabel}>Giá quy trình mùa vụ</Text>
                   <Text style={styles.textValue}>
-                    {serviceInfo.seasonPrice} VND/1000 m²
+                    {formatNumber(serviceInfo.seasonPrice)} VND/1000 m²
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
@@ -122,7 +133,7 @@ export default function PreviewBuyingServiceScreen({ route }) {
                     Tổng tiền thanh toán
                   </Text>
                   <Text style={{ color: "#313638", fontWeight: "bold" }}>
-                    {formatNumber(200000)} VND
+                    {totalPrice && formatNumber(totalPrice)} VND
                   </Text>
                 </View>
               </View>

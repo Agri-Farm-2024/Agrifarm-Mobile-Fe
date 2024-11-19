@@ -30,7 +30,7 @@ export const plantSlice = createSlice({
       })
       .addCase(getPlantSeasonList.fulfilled, (state, action) => {
         state.loading = false;
-        state.plantSeason = action.payload;
+        state.plantSeason = action.payload.metadata;
       })
       .addCase(getPlantSeasonList.rejected, (state, action) => {
         state.loading = false;

@@ -13,23 +13,18 @@ import TextEditor from "../../components/TextEditor";
 import { getMaterial } from "../../redux/slices/materialSlice";
 import { useDispatch } from "react-redux";
 
-const materialOptions = [
-  { label: "Cuốc", value: "VT001" },
-  { label: "Xẻng", value: "VT002" },
-  { label: "Phân bón", value: "VT003" },
-];
-
 const PAGE_SIZE = 10;
 
 const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   const dispatch = useDispatch();
 
-  const [stages, setStages] = useState(props.plantStages);
+  const [stages, setStages] = useState(props.plantStages || []);
   const [materialOptions, setMaterialOptions] = useState([]);
   const [pageNumberMaterial, setPageNumberMaterial] = useState(1);
   const [hasMoreMaterial, setHasMoreMaterial] = useState(true);
   const [isLoadingMaterial, setIsLoadingMaterial] = useState(false);
 
+  console.log("typeof", typeof stages, JSON.stringify(stages));
   useEffect(() => {
     fetchMaterialOptions(1);
   }, []);
@@ -369,189 +364,161 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
     <View>
       <Text style={styles.sub_header}>Kế hoạch trồng trọt:</Text>
 
-      {stages.map((stage, indexStage) => (
-        <View key={stage.id} style={styles.inputStageContainer}>
-          <View style={styles.inputRow}>
-            <Text
-              style={[
-                styles.sub_header,
-                { color: "#7FB640", fontWeight: "bold" },
-              ]}
-            >
-              Giai đoạn {indexStage + 1}:
-            </Text>
-            <TextInput
-              mode="outlined"
-              activeOutlineColor="#7FB640"
-              textColor="black"
-              inputMode="text"
-              style={styles.input}
-              placeholder={`Tên giai đoạn`}
-              value={stage.title}
-              onChangeText={(text) => {
-                setStages((prevStages) =>
-                  prevStages.map((stageItem) =>
-                    stageItem.id === stage.id
-                      ? {
-                          ...stageItem,
-                          title: text,
-                        }
-                      : stageItem
-                  )
-                );
-              }}
-            />
-            {indexStage === stages.length - 1 && (
-              <TouchableOpacity style={styles.iconButton} onPress={addStage}>
-                <MaterialCommunityIcons
-                  name="plus-circle-outline"
-                  size={25}
-                  color="#7fb640"
-                />
-              </TouchableOpacity>
-            )}
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => {
-                if (stages.length > 1) {
-                  removeStage(stage.id);
-                } else {
-                  Toast.show({
-                    type: "error",
-                    text1: "Phải có giai đoạn",
-                  });
-                }
-              }}
-            >
-              <MaterialCommunityIcons
-                name="delete-outline"
-                size={25}
-                color="#d91515"
-              />
-            </TouchableOpacity>
-          </View>
-
-          {/* Dynamic Input Blocks for this stage */}
-          {stage.inputs.map((input, inputIndex) => (
-            <View key={inputIndex} style={styles.inputDateContainer}>
-              <View style={[styles.inputRow, styles.marginTop]}>
-                <Text style={styles.label}>Từ ngày</Text>
-                <TextInput
-                  mode="outlined"
-                  activeOutlineColor="#7FB640"
-                  textColor="black"
-                  inputMode="numeric"
-                  keyboardType="number"
-                  style={[styles.input, styles.marginHorizontal]}
-                  value={input.from + ""}
-                  onChangeText={(text) => {
-                    setStages((prevStages) =>
-                      prevStages.map((stageItem) =>
-                        stageItem.id === stage.id
-                          ? {
-                              ...stageItem,
-                              inputs: stageItem.inputs.map((inputItem, idx) =>
-                                idx === inputIndex
-                                  ? { ...inputItem, from: text }
-                                  : inputItem
-                              ),
-                            }
-                          : stageItem
-                      )
-                    );
-                  }}
-                  placeholder="Từ"
-                />
-                <Text style={styles.label}>đến ngày</Text>
-                <TextInput
-                  mode="outlined"
-                  activeOutlineColor="#7FB640"
-                  textColor="black"
-                  inputMode="numeric"
-                  keyboardType="numeric"
-                  style={[styles.input, styles.marginHorizontal]}
-                  value={input.to + ""}
-                  onChangeText={(text) => {
-                    setStages((prevStages) =>
-                      prevStages.map((stageItem) =>
-                        stageItem.id === stage.id
-                          ? {
-                              ...stageItem,
-                              inputs: stageItem.inputs.map((inputItem, idx) =>
-                                idx === inputIndex
-                                  ? { ...inputItem, to: text }
-                                  : inputItem
-                              ),
-                            }
-                          : stageItem
-                      )
-                    );
-                  }}
-                  placeholder="Đến"
-                />
-                {inputIndex === stage.inputs.length - 1 && (
-                  <TouchableOpacity
-                    style={styles.iconButton}
-                    onPress={() => addInputBlock(stage.id)}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus-circle-outline"
-                      size={25}
-                      color="#7fb640"
-                    />
-                  </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  style={styles.iconButton}
-                  onPress={() => removeInputBlock(stage.id, inputIndex)}
-                >
-                  <MaterialCommunityIcons
-                    name="delete-outline"
-                    size={25}
-                    color="#d91515"
-                  />
-                </TouchableOpacity>
-              </View>
-
-              {/* Additional single line input */}
+      {stages &&
+        stages?.length > 0 &&
+        stages.map((stage, indexStage) => (
+          <View key={stage.id} style={styles.inputStageContainer}>
+            <View style={styles.inputRow}>
+              <Text
+                style={[
+                  styles.sub_header,
+                  { color: "#7FB640", fontWeight: "bold" },
+                ]}
+              >
+                Giai đoạn {indexStage + 1}:
+              </Text>
               <TextInput
                 mode="outlined"
                 activeOutlineColor="#7FB640"
                 textColor="black"
                 inputMode="text"
-                style={[styles.input, styles.marginVertical]}
-                value={input.single}
+                style={styles.input}
+                placeholder={`Tên giai đoạn`}
+                value={stage.title}
                 onChangeText={(text) => {
                   setStages((prevStages) =>
                     prevStages.map((stageItem) =>
                       stageItem.id === stage.id
                         ? {
                             ...stageItem,
-                            inputs: stageItem.inputs.map((inputItem, idx) =>
-                              idx === inputIndex
-                                ? { ...inputItem, single: text }
-                                : inputItem
-                            ),
+                            title: text,
                           }
                         : stageItem
                     )
                   );
                 }}
-                placeholder="Tiêu đề"
               />
-
-              <View
-                style={{
-                  marginBottom: 20,
-                  borderRadius: 8,
-                  borderColor: "#aaa",
-                  borderWidth: 0.5,
-                  minHeight: 200,
+              {indexStage === stages.length - 1 && (
+                <TouchableOpacity style={styles.iconButton} onPress={addStage}>
+                  <MaterialCommunityIcons
+                    name="plus-circle-outline"
+                    size={25}
+                    color="#7fb640"
+                  />
+                </TouchableOpacity>
+              )}
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => {
+                  if (stages.length > 1) {
+                    removeStage(stage.id);
+                  } else {
+                    Toast.show({
+                      type: "error",
+                      text1: "Phải có giai đoạn",
+                    });
+                  }
                 }}
               >
-                <TextEditor
-                  value={input.multiline}
-                  onValueChange={(text) => {
+                <MaterialCommunityIcons
+                  name="delete-outline"
+                  size={25}
+                  color="#d91515"
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Dynamic Input Blocks for this stage */}
+            {stage.inputs.map((input, inputIndex) => (
+              <View key={inputIndex} style={styles.inputDateContainer}>
+                <View style={[styles.inputRow, styles.marginTop]}>
+                  <Text style={styles.label}>Từ ngày</Text>
+                  <TextInput
+                    mode="outlined"
+                    activeOutlineColor="#7FB640"
+                    textColor="black"
+                    inputMode="numeric"
+                    keyboardType="number"
+                    style={[styles.input, styles.marginHorizontal]}
+                    value={input.from + ""}
+                    onChangeText={(text) => {
+                      setStages((prevStages) =>
+                        prevStages.map((stageItem) =>
+                          stageItem.id === stage.id
+                            ? {
+                                ...stageItem,
+                                inputs: stageItem.inputs.map((inputItem, idx) =>
+                                  idx === inputIndex
+                                    ? { ...inputItem, from: text }
+                                    : inputItem
+                                ),
+                              }
+                            : stageItem
+                        )
+                      );
+                    }}
+                    placeholder="Từ"
+                  />
+                  <Text style={styles.label}>đến ngày</Text>
+                  <TextInput
+                    mode="outlined"
+                    activeOutlineColor="#7FB640"
+                    textColor="black"
+                    inputMode="numeric"
+                    keyboardType="numeric"
+                    style={[styles.input, styles.marginHorizontal]}
+                    value={input.to + ""}
+                    onChangeText={(text) => {
+                      setStages((prevStages) =>
+                        prevStages.map((stageItem) =>
+                          stageItem.id === stage.id
+                            ? {
+                                ...stageItem,
+                                inputs: stageItem.inputs.map((inputItem, idx) =>
+                                  idx === inputIndex
+                                    ? { ...inputItem, to: text }
+                                    : inputItem
+                                ),
+                              }
+                            : stageItem
+                        )
+                      );
+                    }}
+                    placeholder="Đến"
+                  />
+                  {inputIndex === stage.inputs.length - 1 && (
+                    <TouchableOpacity
+                      style={styles.iconButton}
+                      onPress={() => addInputBlock(stage.id)}
+                    >
+                      <MaterialCommunityIcons
+                        name="plus-circle-outline"
+                        size={25}
+                        color="#7fb640"
+                      />
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity
+                    style={styles.iconButton}
+                    onPress={() => removeInputBlock(stage.id, inputIndex)}
+                  >
+                    <MaterialCommunityIcons
+                      name="delete-outline"
+                      size={25}
+                      color="#d91515"
+                    />
+                  </TouchableOpacity>
+                </View>
+
+                {/* Additional single line input */}
+                <TextInput
+                  mode="outlined"
+                  activeOutlineColor="#7FB640"
+                  textColor="black"
+                  inputMode="text"
+                  style={[styles.input, styles.marginVertical]}
+                  value={input.single}
+                  onChangeText={(text) => {
                     setStages((prevStages) =>
                       prevStages.map((stageItem) =>
                         stageItem.id === stage.id
@@ -559,7 +526,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                               ...stageItem,
                               inputs: stageItem.inputs.map((inputItem, idx) =>
                                 idx === inputIndex
-                                  ? { ...inputItem, multiline: text }
+                                  ? { ...inputItem, single: text }
                                   : inputItem
                               ),
                             }
@@ -567,69 +534,99 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                       )
                     );
                   }}
-                  placeholder="Nội dung"
+                  placeholder="Tiêu đề"
                 />
+
+                <View
+                  style={{
+                    marginBottom: 20,
+                    borderRadius: 8,
+                    borderColor: "#aaa",
+                    borderWidth: 0.5,
+                    minHeight: 200,
+                  }}
+                >
+                  <TextEditor
+                    value={input.multiline}
+                    onValueChange={(text) => {
+                      setStages((prevStages) =>
+                        prevStages.map((stageItem) =>
+                          stageItem.id === stage.id
+                            ? {
+                                ...stageItem,
+                                inputs: stageItem.inputs.map((inputItem, idx) =>
+                                  idx === inputIndex
+                                    ? { ...inputItem, multiline: text }
+                                    : inputItem
+                                ),
+                              }
+                            : stageItem
+                        )
+                      );
+                    }}
+                    placeholder="Nội dung"
+                  />
+                </View>
               </View>
+            ))}
 
-              {/* Multiline input */}
-              {/* <TextInput
-                mode="outlined"
-                activeOutlineColor="#7FB640"
-                textColor="black"
-                inputMode="text"
-                style={[styles.input, styles.multilineInput]}
-                multiline={true}
-                numberOfLines={5}
-                value={input.multiline}
-                onChangeText={(text) => {
-                  setStages((prevStages) =>
-                    prevStages.map((stageItem) =>
-                      stageItem.id === stage.id
-                        ? {
-                            ...stageItem,
-                            inputs: stageItem.inputs.map((inputItem, idx) =>
-                              idx === inputIndex
-                                ? { ...inputItem, multiline: text }
-                                : inputItem
-                            ),
-                          }
-                        : stageItem
-                    )
-                  );
+            <Text style={styles.sub_header}>
+              Vật tư cần cho giai đoạn {indexStage + 1}:
+            </Text>
+            {stage.materials.length == 0 && (
+              <Button
+                style={{
+                  borderRadius: 7,
+                  borderColor: "#7FB640",
+                  borderStyle: "dashed",
                 }}
-                placeholder="Nội dung"
-              /> */}
-            </View>
-          ))}
-
-          <Text style={styles.sub_header}>
-            Vật tư cần cho giai đoạn {indexStage + 1}:
-          </Text>
-          {stage.materials.length == 0 && (
-            <Button
-              style={{
-                borderRadius: 7,
-                borderColor: "#7FB640",
-                borderStyle: "dashed",
-              }}
-              mode="outlined"
-              onPress={() => addMaterialBlock(stage.id)}
-              icon={"plus"}
-            >
-              Thêm vât tư
-            </Button>
-          )}
-          {/* Dynamic Input Materials for this stage */}
-          {stage.materials.map((material, materialIndex) => (
-            <View key={materialIndex} style={styles.inputDateContainer}>
-              <View style={styles.inputMaterialContainer}>
-                <View style={[styles.materialInput]}>
-                  <DropdownComponent
-                    styleValue={{ marginTop: 0 }}
-                    value={material.materialId}
-                    options={materialOptions}
-                    onScroll={handleScrollMaterialOption}
-                    setValue={(value) => {
+                mode="outlined"
+                onPress={() => addMaterialBlock(stage.id)}
+                icon={"plus"}
+              >
+                Thêm vât tư
+              </Button>
+            )}
+            {/* Dynamic Input Materials for this stage */}
+            {stage.materials.map((material, materialIndex) => (
+              <View key={materialIndex} style={styles.inputDateContainer}>
+                <View style={styles.inputMaterialContainer}>
+                  <View style={[styles.materialInput]}>
+                    <DropdownComponent
+                      styleValue={{ marginTop: 0 }}
+                      value={material.materialId}
+                      options={materialOptions}
+                      onScroll={handleScrollMaterialOption}
+                      setValue={(value) => {
+                        setStages((prevStages) =>
+                          prevStages.map((stageItem) =>
+                            stageItem.id === stage.id
+                              ? {
+                                  ...stageItem,
+                                  materials: stageItem.materials.map(
+                                    (materialItem, idx) =>
+                                      idx === materialIndex
+                                        ? {
+                                            ...materialItem,
+                                            materialId: value,
+                                          }
+                                        : materialItem
+                                  ),
+                                }
+                              : stageItem
+                          )
+                        );
+                      }}
+                      placeholder={"Chọn vật tư"}
+                    />
+                  </View>
+                  <TextInput
+                    mode="outlined"
+                    activeOutlineColor="#7FB640"
+                    textColor="black"
+                    inputMode="decimal"
+                    value={material.materialQuantity + ""}
+                    onChangeText={(text) => {
                       setStages((prevStages) =>
                         prevStages.map((stageItem) =>
                           stageItem.id === stage.id
@@ -640,7 +637,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                                     idx === materialIndex
                                       ? {
                                           ...materialItem,
-                                          materialId: value,
+                                          materialQuantity: text,
                                         }
                                       : materialItem
                                 ),
@@ -649,61 +646,34 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                         )
                       );
                     }}
-                    placeholder={"Chọn vật tư"}
+                    placeholder="Số lượng"
+                    style={[styles.materialInput]}
                   />
-                </View>
-                <TextInput
-                  mode="outlined"
-                  activeOutlineColor="#7FB640"
-                  textColor="black"
-                  inputMode="decimal"
-                  value={material.materialQuantity + ""}
-                  onChangeText={(text) => {
-                    setStages((prevStages) =>
-                      prevStages.map((stageItem) =>
-                        stageItem.id === stage.id
-                          ? {
-                              ...stageItem,
-                              materials: stageItem.materials.map(
-                                (materialItem, idx) =>
-                                  idx === materialIndex
-                                    ? {
-                                        ...materialItem,
-                                        materialQuantity: text,
-                                      }
-                                    : materialItem
-                              ),
-                            }
-                          : stageItem
-                      )
-                    );
-                  }}
-                  placeholder="Số lượng"
-                  style={[styles.materialInput]}
-                />
-                {materialIndex === stage.materials.length - 1 && (
-                  <TouchableOpacity onPress={() => addMaterialBlock(stage.id)}>
+                  {materialIndex === stage.materials.length - 1 && (
+                    <TouchableOpacity
+                      onPress={() => addMaterialBlock(stage.id)}
+                    >
+                      <MaterialCommunityIcons
+                        name="plus-circle-outline"
+                        size={25}
+                        color="#7fb640"
+                      />
+                    </TouchableOpacity>
+                  )}
+                  <TouchableOpacity
+                    onPress={() => removeMaterialBlock(stage.id, materialIndex)}
+                  >
                     <MaterialCommunityIcons
-                      name="plus-circle-outline"
+                      name="delete-outline"
                       size={25}
-                      color="#7fb640"
+                      color="#d91515"
                     />
                   </TouchableOpacity>
-                )}
-                <TouchableOpacity
-                  onPress={() => removeMaterialBlock(stage.id, materialIndex)}
-                >
-                  <MaterialCommunityIcons
-                    name="delete-outline"
-                    size={25}
-                    color="#d91515"
-                  />
-                </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          ))}
-        </View>
-      ))}
+            ))}
+          </View>
+        ))}
     </View>
   );
 });

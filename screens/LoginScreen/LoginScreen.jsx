@@ -149,6 +149,7 @@ const LoginScreen = ({ navigation }) => {
               { borderColor: invalidInput ? "#4878D9" : "red" },
             ]}
             mode="outlined"
+            inputMode="email"
             placeholder="Tên đăng nhập"
             activeOutlineColor="#7FB640"
             onChangeText={(text) => {
@@ -248,7 +249,6 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     height: 50,
-    lineHeight: 30,
     backgroundColor: "white",
     marginVertical: 12,
     marginBottom: 12,

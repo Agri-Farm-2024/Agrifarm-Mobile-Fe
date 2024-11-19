@@ -17,6 +17,21 @@ export const getListTaskByUser = createAsyncThunk(
   }
 );
 
+export const reportTask = createAsyncThunk(
+  "taskSlice/reportTask",
+  async (reportData, { rejectWithValue }) => {
+    const { taskId, formData } = reportData;
+    try {
+      const data = await api.post(`/reports/${taskId}`, formData);
+
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const startTaskByID = createAsyncThunk(
   "taskSlice/startTaskByID",
   async ({ task_id }, { rejectWithValue }) => {
@@ -68,6 +83,16 @@ export const taskSlice = createSlice({
         state.task = action.payload.metadata;
       })
       .addCase(startTaskByID.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(reportTask.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(reportTask.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(reportTask.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

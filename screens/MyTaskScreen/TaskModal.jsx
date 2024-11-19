@@ -2,12 +2,12 @@ import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { formatDateToDDMMYYYY } from "../../utils";
+import { useNavigation } from "@react-navigation/native";
 
 const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
-  console.log("taskData: " + JSON.stringify(taskData));
+  const navigation = useNavigation();
 
   const filterStatus = (status) => {
-    console.log(status);
     if (status === "assigned") {
       return "Chờ bắt đầu";
     }
@@ -107,7 +107,15 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 <Text style={styles.buttonText}>Bắt đầu</Text>
               </TouchableOpacity>
             ) : taskData?.request?.status === "in_progress" ? (
-              <TouchableOpacity style={styles.closeButton}>
+              <TouchableOpacity
+                onPress={() => {
+                  onClose();
+                  navigation.navigate("ReportTaskScreen", {
+                    taskInfo: taskData,
+                  });
+                }}
+                style={styles.closeButton}
+              >
                 <Text style={styles.buttonText}>Báo cáo</Text>
               </TouchableOpacity>
             ) : null}

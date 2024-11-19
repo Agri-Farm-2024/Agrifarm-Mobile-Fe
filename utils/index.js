@@ -75,7 +75,7 @@ export function convertTo12HourFormat(isoString) {
   const minutes = date.getUTCMinutes();
   const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12;
-  hours = hours ? hours : 12; 
+  hours = hours ? hours : 12;
   const minutesFormatted = minutes < 10 ? "0" + minutes : minutes;
   return `${hours}:${minutesFormatted} ${ampm}`;
 }
@@ -89,13 +89,13 @@ export function formatDateToDDMMYYYY(dateString) {
   return `${day}/${month}/${year}`;
 }
 
-// Example usage
-const formattedDate = formatDateToDDMMYYYY("2024-11-07T11:21:22.263Z");
-console.log(formattedDate); // Output: "07/11/2024"
-
 // 1200000 to 1.200.000
 export function formatNumberToVND(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  if (number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+  }
+
+  return number;
 }
 
 export function convertImageURL(relativePath) {

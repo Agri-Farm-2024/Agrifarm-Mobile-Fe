@@ -2,7 +2,9 @@ const api = `https://api.agrifarm.site`;
 
 //Format number
 export function formatNumber(number) {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return number
+    ? number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    : number;
 }
 
 //Format date
@@ -89,6 +91,15 @@ export function formatDateToDDMMYYYY(dateString) {
   return `${day}/${month}/${year}`;
 }
 
+// 2024-11-07T11:21:22.263Z  => Ngày 7 tháng 11 năm 2024
+export function formatDateToVN(isoDateString) {
+  const date = new Date(isoDateString);
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  return `Ngày ${day} tháng ${month} năm ${year}`;
+}
+
 // 1200000 to 1.200.000
 export function formatNumberToVND(number) {
   if (number) {
@@ -98,9 +109,14 @@ export function formatNumberToVND(number) {
   return number;
 }
 
+// export function convertImageURL(relativePath) {
+//   const formattedPath = relativePath.startsWith("/")
+//     ? relativePath
+//     : `/${relativePath}`;
+//   return `${api}${formattedPath}`;
+// }
+
 export function convertImageURL(relativePath) {
-  const formattedPath = relativePath.startsWith("/")
-    ? relativePath
-    : `/${relativePath}`;
-  return `${api}${formattedPath}`;
+  console.log(relativePath);
+  return `${api}${relativePath}`;
 }

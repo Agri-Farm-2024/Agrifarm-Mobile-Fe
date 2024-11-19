@@ -46,6 +46,7 @@ export default function CreateStandardProcessScreen() {
       page_size: PAGE_SIZE,
       page_index: pageIndex,
     };
+
     setIsLoadingPlantSeason(true);
     dispatch(getPlantSeason(params))
       .then((response) => {

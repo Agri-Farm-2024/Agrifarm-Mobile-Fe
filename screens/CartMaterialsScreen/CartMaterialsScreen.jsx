@@ -135,106 +135,106 @@ export default function CartMaterialsScreen({ navigation }) {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.container}>
-        <Appbar.Header style={styles.appbar}>
-          <Appbar.BackAction
-            onPress={() => navigation.goBack()}
-            color="white"
-          />
-          <Appbar.Content
-            title="Giỏ Hàng"
-            color="white"
-            titleStyle={styles.appbarTitle}
-          />
-          <Appbar.Action
-            icon="delete-outline"
-            onPress={() => setComfirmVisibleClearAll(true)}
-            color="white"
-          />
-        </Appbar.Header>
+    <>
+      <Appbar.Header style={styles.appbar}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} color="white" />
+        <Appbar.Content
+          title="Giỏ Hàng"
+          color="white"
+          titleStyle={styles.appbarTitle}
+        />
+        <Appbar.Action
+          icon="delete-outline"
+          onPress={() => setComfirmVisibleClearAll(true)}
+          color="white"
+        />
+      </Appbar.Header>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
+          <ScrollView contentContainerStyle={styles.scrollViewContent}>
+            <View>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Mua vật tư</Text>
+                <Checkbox
+                  status={checkedBuy ? "checked" : "unchecked"}
+                  onPress={() => setcheckedBuy(!checkedBuy)}
+                  color="#7fb640"
+                />
+              </View>
+              <View style={styles.sectionItems}>
+                {cartBuy.length > 0 ? (
+                  cartBuy.map((item) => renderItem(item))
+                ) : (
+                  <Text style={styles.emptyText}>
+                    Không có sản phẩm mua trong giỏ hàng
+                  </Text>
+                )}
+              </View>
+            </View>
 
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Mua vật tư</Text>
-              <Checkbox
-                status={checkedBuy ? "checked" : "unchecked"}
-                onPress={() => setcheckedBuy(!checkedBuy)}
-                color="#7fb640"
-              />
+            <View>
+              <View style={styles.sectionHeader}>
+                <Text style={styles.sectionTitle}>Thuê thiết bị</Text>
+                <Checkbox
+                  status={checkedRent ? "checked" : "unchecked"}
+                  onPress={() => setcheckedRent(!checkedRent)}
+                  color="#7fb640"
+                />
+              </View>
+              <View style={styles.sectionItems}>
+                {cartRent.length > 0 ? (
+                  cartRent.map((item) => renderItem(item))
+                ) : (
+                  <Text style={styles.emptyText}>
+                    Không có thiết bị thuê trong giỏ hàng
+                  </Text>
+                )}
+              </View>
             </View>
-            <View style={styles.sectionItems}>
-              {cartBuy.length > 0 ? (
-                cartBuy.map((item) => renderItem(item))
-              ) : (
-                <Text style={styles.emptyText}>
-                  Không có sản phẩm mua trong giỏ hàng
-                </Text>
-              )}
-            </View>
-          </View>
+          </ScrollView>
 
-          <View>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Thuê thiết bị</Text>
-              <Checkbox
-                status={checkedRent ? "checked" : "unchecked"}
-                onPress={() => setcheckedRent(!checkedRent)}
-                color="#7fb640"
-              />
+          <View style={styles.footer}>
+            <View style={styles.totalContainer}>
+              <Text style={styles.totalLabel}>Tổng thanh toán:</Text>
+              <Text style={styles.totalPrice}>
+                {formatNumberToVND(totalPrice)} VND
+              </Text>
             </View>
-            <View style={styles.sectionItems}>
-              {cartRent.length > 0 ? (
-                cartRent.map((item) => renderItem(item))
-              ) : (
-                <Text style={styles.emptyText}>
-                  Không có thiết bị thuê trong giỏ hàng
-                </Text>
-              )}
-            </View>
+            <TouchableOpacity
+              style={[
+                styles.checkoutButton,
+                checkedBuy === false && checkedRent === false
+                  ? { opacity: 0.7 }
+                  : null,
+              ]}
+              onPress={handleCheckout}
+              disabled={checkedBuy === false && checkedRent === false}
+            >
+              <Text style={styles.checkoutButtonText}>
+                Tiến hành thanh toán
+              </Text>
+            </TouchableOpacity>
           </View>
-        </ScrollView>
-
-        <View style={styles.footer}>
-          <View style={styles.totalContainer}>
-            <Text style={styles.totalLabel}>Tổng thanh toán:</Text>
-            <Text style={styles.totalPrice}>
-              {formatNumberToVND(totalPrice)} VND
-            </Text>
-          </View>
-          <TouchableOpacity
-            style={[
-              styles.checkoutButton,
-              checkedBuy === false && checkedRent === false
-                ? { opacity: 0.7 }
-                : null,
-            ]}
-            onPress={handleCheckout}
-            disabled={checkedBuy === false && checkedRent === false}
-          >
-            <Text style={styles.checkoutButtonText}>Tiến hành thanh toán</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-      <ConfirmationModal
-        title="Xác nhận xóa"
-        content="Bạn có muốn xóa toàn bộ sản phẩm"
-        visible={comfirmVisibleClearAll}
-        onDismiss={() => setComfirmVisibleClearAll(false)}
-        onConfirm={() => {
-          setComfirmVisibleClearAll(false);
-          setcheckedBuy(false);
-          setcheckedRent(false);
-          dispatch(clearCart());
-          Toast.show({
-            type: "success",
-            text1: "Đã xóa",
-            text2: "Xóa toàn toàn bộ sản phẩm trong giỏ",
-          });
-        }}
-      />
-    </SafeAreaView>
+        <ConfirmationModal
+          title="Xác nhận xóa"
+          content="Bạn có muốn xóa toàn bộ sản phẩm"
+          visible={comfirmVisibleClearAll}
+          onDismiss={() => setComfirmVisibleClearAll(false)}
+          onConfirm={() => {
+            setComfirmVisibleClearAll(false);
+            setcheckedBuy(false);
+            setcheckedRent(false);
+            dispatch(clearCart());
+            Toast.show({
+              type: "success",
+              text1: "Đã xóa",
+              text2: "Xóa toàn toàn bộ sản phẩm trong giỏ",
+            });
+          }}
+        />
+      </SafeAreaView>
+    </>
   );
 }
 

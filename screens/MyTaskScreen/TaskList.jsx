@@ -8,6 +8,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicatorCompon
 import { TouchableOpacity } from "react-native";
 import TaskModal from "./TaskModal";
 import Toast from "react-native-toast-message";
+import { useIsFocused } from "@react-navigation/native";
 
 const notStartTasks = [
   {
@@ -190,6 +191,8 @@ const TaskList = ({ taskType }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
 
+  const isFocused = useIsFocused();
+
   const dispatch = useDispatch();
   const { taskList, loading, error } = useSelector((state) => state.taskSlice);
 
@@ -217,12 +220,15 @@ const TaskList = ({ taskType }) => {
   }, [taskType]);
 
   useEffect(() => {
-    dispatch(
-      getListTaskByUser({
-        status: taskType,
-      })
-    );
-  }, [taskType]);
+    if (isFocused) {
+      console.log("Fetching tasks...");
+      dispatch(
+        getListTaskByUser({
+          status: taskType,
+        })
+      );
+    }
+  }, [taskType, isFocused]);
 
   const openModal = (task) => {
     setSelectedTask(task);

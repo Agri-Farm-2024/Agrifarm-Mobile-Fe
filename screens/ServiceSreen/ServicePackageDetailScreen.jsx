@@ -15,19 +15,11 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { useDispatch, useSelector } from "react-redux";
 import { getBookingList } from "../../redux/slices/landSlice";
-import { getBookingSelector } from "../../redux/selectors";
+import {
+  getBookingSelector,
+  getPlantSeasonSelector,
+} from "../../redux/selectors";
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
-import { buyService } from "../../redux/slices/serviceSlice";
-
-const service = {
-  id: "SV001",
-  serviceTitle: "Gói dịch vụ số 1",
-  serviceDescription:
-    "Gói quy trình canh tác theo chuẩn VietGap của giống cây. Dịch vụ này sẽ cung cấp quy trình cụ thể để trồng trọt theo chuẩn VietGAP. Dịch vụ sẽ cung cấp cung cấp vật tư cần thiết để trồng trọt như: phân bón, thuốc trừ sâu, các dụng cụ trồng trọt và các nguyên vật liệu để cải tạo đất và xây dựng mô hình đạt chuẩn VietGAP để trồng cây.",
-  servicePrice: 2000000,
-  isPurchase: true,
-  isMaterial: true,
-};
 
 const plotOptions = [
   {
@@ -78,9 +70,7 @@ const plantTypeOptions = [
   },
 ];
 
-console.log("Render service");
-
-const ServicePackageDetailScreen = ({ route }) => {
+const ServicePackageDetailScreen = ({ navigation, route }) => {
   const [formInput, setFormInput] = useState({
     plot: "",
     cultivatedArea: "",
@@ -97,11 +87,13 @@ const ServicePackageDetailScreen = ({ route }) => {
     total_month: 0,
     time_start: 0,
   });
+  const [priceSeason, setPriceSeason] = useState(0);
 
   const { serviceDetail } = route.params;
 
   const dispatch = useDispatch();
   const bookingSelector = useSelector(getBookingSelector);
+  const plantSeasonSelector = useSelector(getPlantSeasonSelector);
 
   const fetchUserBookings = () => {
     try {
@@ -263,39 +255,39 @@ const ServicePackageDetailScreen = ({ route }) => {
           type: "error",
           text1: "Vui lòng điền đầy đủ thông tin!",
         });
+      } else if (formInput.cultivatedArea - 0 < 1000) {
+        Toast.show({
+          type: "error",
+          text1: "Diện tích canh tác phải lớn hơn 1000 m²!",
+        });
       } else {
-        const formData = {
+        const bookingObject =
+          bookingSelector?.bookings &&
+          bookingSelector?.bookings.filter(
+            (booking) => booking.booking_id == formInput.plot
+          )[0];
+
+        const seasonObject =
+          plantSeasonSelector &&
+          plantSeasonSelector?.plant_seasons?.find(
+            (season) => season.plant_season_id == formInput.plantSeason
+          );
+        const serviceInfo = {
           plant_season_id: formInput.plantSeason,
           booking_id: formInput.plot,
           service_package_id: serviceDetail.service_package_id,
           acreage_land: formInput.cultivatedArea - 0,
           time_start: formatDate(formInput.dateStart, 1),
+          service_name: serviceDetail.name,
+          service_price: formatNumber(serviceDetail.price),
+          plot_name: bookingObject ? bookingObject?.land?.name : "",
+          season_name: seasonObject
+            ? `Mùa vụ ${seasonObject?.plant?.name} Tháng ${seasonObject?.month_start}`
+            : "",
+          seasonPrice: formatNumber(priceSeason),
         };
-        console.log("FormData", formData);
-        dispatch(buyService(formData)).then((response) => {
-          console.log("Buy service response", JSON.stringify(response));
-          if (response.payload.statusCode != 201) {
-            if (
-              response.payload.statusCode == 400 &&
-              response.payload.message == "Acreage land is not enough"
-            ) {
-              Toast.show({
-                type: "error",
-                text1: "Diện tích mảnh đất có sẵn không đủ!",
-              });
-            } else {
-              Toast.show({
-                type: "error",
-                text1: "Mua dịch vụ thất bại!",
-              });
-            }
-          }
-          if (response.payload.statusCode == 201) {
-            Toast.show({
-              type: "success",
-              text1: "Mua dịch vụ thành công!",
-            });
-          }
+        navigation.navigate("PreviewBuyingServiceScreen", {
+          serviceInfo: serviceInfo,
         });
       }
     } catch (error) {
@@ -324,9 +316,9 @@ const ServicePackageDetailScreen = ({ route }) => {
                 <Text style={styles.detailContent}>{serviceDetail.name}</Text>
               </View>
               <View style={styles.detail}>
-                <Text style={styles.detailName}>Giá thuê</Text>
+                <Text style={styles.detailName}>Giá gói dịch vụ</Text>
                 <Text style={styles.detailContent}>
-                  {formatNumber(serviceDetail.price)} VND / năm
+                  {formatNumber(serviceDetail.price)} VND
                 </Text>
               </View>
               <View style={styles.detail}>
@@ -417,14 +409,33 @@ const ServicePackageDetailScreen = ({ route }) => {
                     options={plantSeasonOptions}
                     placeholder="Chọn mùa vụ"
                     value={formInput.plantSeason}
-                    setValue={(value) =>
-                      setFormInput({ ...formInput, plantSeason: value })
-                    }
+                    setValue={(value) => {
+                      setFormInput({ ...formInput, plantSeason: value });
+                      console.log(
+                        "season selector",
+                        JSON.stringify(plantSeasonSelector)
+                      );
+                      const seasonObject =
+                        plantSeasonSelector &&
+                        plantSeasonSelector?.plant_seasons?.find(
+                          (season) => season.plant_season_id == value
+                        );
+                      const processPrice = seasonObject.price_process;
+                      setPriceSeason(processPrice);
+                    }}
                   />
                 </View>
               </View>
               <View style={styles.detail}>
-                <Text style={styles.detailName}>Diện tích canh tác (ha)</Text>
+                <Text style={styles.detailName}>Giá quy trình của mùa vụ</Text>
+                <Text style={styles.detailContent}>
+                  {priceSeason && priceSeason != 0
+                    ? `${formatNumber(priceSeason)} VND/1000 m²`
+                    : "Hãy chọn mùa vụ"}
+                </Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.detailName}>Diện tích canh tác (m²)</Text>
                 <View style={styles.detailContent}>
                   <TextInput
                     keyboardType="decimal-pad"

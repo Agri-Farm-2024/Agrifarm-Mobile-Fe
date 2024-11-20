@@ -7,6 +7,7 @@ import { getListOfTransactions } from "../../redux/slices/transactionSlice";
 import { ActivityIndicator } from "react-native-paper";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import { formatDateToDDMMYYYY, formatNumber } from "../../utils";
+import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 
 const transactions = [
   {
@@ -55,7 +56,10 @@ export default function TransactionScreen() {
     (state) => state.transactionSlice
   );
 
-  console.log(JSON.stringify(transactionList.transactions));
+  console.log(
+    "transactionList.transactions: " +
+      JSON.stringify(transactionList.transactions)
+  );
 
   useEffect(() => {
     dispatch(getListOfTransactions());
@@ -127,6 +131,9 @@ export default function TransactionScreen() {
               </Text>
             </TouchableOpacity>
           ))}
+        {transactionList.transactions.length <= 0 && (
+          <EmptyComponent message="Không tìm thấy dữ liệu nào" />
+        )}
       </ScrollView>
     </SafeAreaView>
   );

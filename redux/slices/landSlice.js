@@ -47,6 +47,26 @@ export const bookingLand = createAsyncThunk(
   }
 );
 
+export const bookingExtendLand = createAsyncThunk(
+  "landSlice/bookingExtendLand",
+  async ({ booking_land_id, total_month }, { rejectWithValue }) => {
+    console.log({ booking_land_id, total_month });
+
+    try {
+      const data = await api.post(`/extends`, {
+        booking_land_id,
+        total_month,
+      });
+
+      console.log("bookingExtendLand data:", data);
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getBookingList = createAsyncThunk(
   "landSlice/getBookingList",
   async (params, { rejectWithValue }) => {
@@ -111,6 +131,18 @@ export const landSlice = createSlice({
         state.msg = action.payload.metadata;
       })
       .addCase(bookingLand.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      .addCase(bookingExtendLand.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(bookingExtendLand.fulfilled, (state, action) => {
+        state.loading = false;
+        state.msg = action.payload.metadata;
+      })
+      .addCase(bookingExtendLand.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

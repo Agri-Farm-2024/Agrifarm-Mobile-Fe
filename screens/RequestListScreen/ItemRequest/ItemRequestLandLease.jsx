@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getListOfBookingLand } from "../../../redux/slices/requestSlice";
 import { useEffect, useState } from "react";
 import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
+import EmptyComponent from "../../../components/EmptyComponent/EmptyComponent";
 
 export const ItemsRequestLandLease = () => {
   const navigation = useNavigation();
@@ -95,6 +96,9 @@ export const ItemsRequestLandLease = () => {
             </>
           </TouchableRipple>
         ))}
+      {requests.length <= 0 && (
+        <EmptyComponent message="Không có yêu cầu thuê đất" />
+      )}
     </View>
   );
 };

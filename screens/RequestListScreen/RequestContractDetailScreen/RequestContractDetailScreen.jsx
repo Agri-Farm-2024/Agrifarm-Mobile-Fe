@@ -18,6 +18,7 @@ import {
   formatNumber,
 } from "../../../utils";
 import ContractComponent from "./ContractComponent";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function RequestContractDetailScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
@@ -142,6 +143,7 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             />
           </View>
         </Modal>
+
         {/* <View style={styles.checkboxContainer}>
           <Checkbox
             status={checked ? "checked" : "unchecked"}
@@ -168,6 +170,14 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           Tiến hành thanh toán
         </Button> */}
       </ScrollView>
+      <TouchableOpacity
+        style={styles.buttonAdd}
+        onPress={() =>
+          navigation.navigate("ExtendFormScreen", { booking: booking })
+        }
+      >
+        <MaterialIcons name="add" size={28} color="white" />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -250,5 +260,23 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#7fb640",
     marginBottom: 30,
+  },
+  buttonAdd: {
+    position: "absolute",
+    right: 15,
+    bottom: 15,
+    borderRadius: 60,
+    width: 60,
+    height: 60,
+    backgroundColor: "#7fb640",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textAdd: {
+    width: 25,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "white",
   },
 });

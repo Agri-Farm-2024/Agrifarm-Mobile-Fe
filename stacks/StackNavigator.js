@@ -39,6 +39,7 @@ import ReviewContractScreen from "../screens/ReviewContractScreen/ReviewContract
 import PreviewBuyingServiceScreen from "../screens/ServiceSreen/PreviewBuyingServiceScreen";
 import { ReportTaskScreen } from "../screens/MyTaskScreen/ReportTaskScreen";
 import PaymentServiceScreen from "../screens/ServiceSreen/PaymentServiceScreen";
+import ExtendFormScreen from "../screens/ExtendFormScreen/ExtendFormScreen";
 
 const Stack = createStackNavigator();
 
@@ -347,6 +348,15 @@ const StackNavigator = () => (
       component={PaymentServiceScreen}
       options={{
         headerTitle: "Thanh toán dịch vụ",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="ExtendFormScreen"
+      component={ExtendFormScreen}
+      options={{
+        headerTitle: "Gia hạn hợp đồng",
         headerTitleAlign: "center",
       }}
     />

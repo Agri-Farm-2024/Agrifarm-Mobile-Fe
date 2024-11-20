@@ -52,8 +52,11 @@ const ContractComponent = ({ contract, isDownload }) => {
             mode="contained"
             onPress={() => console.log("press")}
             style={{
-              backgroundColor: "orange",
+              borderColor: "orange",
+              backgroundColor: "white",
+              borderWidth: 1,
             }}
+            textColor="orange"
           >
             Tải PDF
           </Button>

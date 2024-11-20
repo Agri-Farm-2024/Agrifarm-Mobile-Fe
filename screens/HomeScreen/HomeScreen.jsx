@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Image,
   SafeAreaView,
@@ -13,9 +13,39 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import { useSelector } from "react-redux";
 import SlideImageComponent from "../../components/SlideImageComponent/SlideImageComponent";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import NotificationComponent from "../../services/notification";
+import socket from "../../services/socket";
+import Toast from "react-native-toast-message";
 
 function HomeScreen({ navigation }) {
+  const { triggerNotification } = NotificationComponent();
   const cartCount = useSelector((state) => state.cartSlice.cartCount);
+
+  const user_id = useSelector((state) => state.userSlice?.userInfo?.user_id);
+  console.log(user_id);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    socketRef.current = socket;
+
+    socketRef.current.emit("online-user", user_id);
+    socketRef.current.on("notification", async (data) => {
+      console.log(data);
+
+      // Toast.show({
+      //   type: "info",
+      //   text1: "Thông báo",
+      //   text2: data.message.content,
+      // });
+      await triggerNotification(data?.message?.content);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("notification");
+      }
+    };
+  }, [user_id]);
 
   return (
     <SafeAreaView>
@@ -29,10 +59,15 @@ function HomeScreen({ navigation }) {
                   uri: "https://th.bing.com/th/id/OIP.EX4-Ntrsq26D7rjZEhky0gHaHN?rs=1&pid=ImgDetMain",
                 }}
               />
-              <View style={styles.userDetails}>
+              <TouchableOpacity
+                style={styles.userDetails}
+                onPress={async () => {
+                  await triggerNotification("Thong bao");
+                }}
+              >
                 <Text style={styles.welcomeText}>CHÀO MỪNG</Text>
                 <Text style={styles.userName}>Gia Hân</Text>
-              </View>
+              </TouchableOpacity>
             </View>
             <TouchableOpacity
               onPress={() => navigation.navigate("CartMaterialsScreen")}

@@ -40,6 +40,8 @@ import PreviewBuyingServiceScreen from "../screens/ServiceSreen/PreviewBuyingSer
 import { ReportTaskScreen } from "../screens/MyTaskScreen/ReportTaskScreen";
 import PaymentServiceScreen from "../screens/ServiceSreen/PaymentServiceScreen";
 import ExtendFormScreen from "../screens/ExtendFormScreen/ExtendFormScreen";
+import ExtendListScreen from "../screens/ExtendListScreen/ExtendListScreen";
+import ExtendItemScreen from "../screens/ExtendItemScreen/ExtendItemScreen";
 
 const Stack = createStackNavigator();
 
@@ -357,6 +359,22 @@ const StackNavigator = () => (
       component={ExtendFormScreen}
       options={{
         headerTitle: "Gia hạn hợp đồng",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="ExtendListScreen"
+      component={ExtendListScreen}
+      options={{
+        headerTitle: "Danh sách gia hạn",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="ExtendItemScreen"
+      component={ExtendItemScreen}
+      options={{
+        headerTitle: "Chi tiết gia hạn",
         headerTitleAlign: "center",
       }}
     />

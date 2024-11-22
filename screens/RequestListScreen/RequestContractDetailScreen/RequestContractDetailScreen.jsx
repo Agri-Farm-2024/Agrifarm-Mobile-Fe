@@ -110,6 +110,27 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           <Text style={styles.value}>{booking?.purpose_rental}</Text>
         </View>
         <Divider style={styles.divider} />
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Gia hạn:</Text>
+          <Text style={styles.value}>
+            <Button
+              mode="outlined"
+              loading={
+                booking?.extends?.filter((item) => item.status === "pending")
+                  .length >= 1
+              }
+              onPress={() =>
+                navigation.navigate("ExtendListScreen", {
+                  booking: booking,
+                })
+              }
+              style={{ borderColor: "#7FB640", borderRaidus: 0 }}
+            >
+              Lịch sử gia hạn
+            </Button>
+          </Text>
+        </View>
+        <Divider style={styles.divider} />
         <View>
           <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
 
@@ -170,14 +191,16 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           Tiến hành thanh toán
         </Button> */}
       </ScrollView>
-      <TouchableOpacity
-        style={styles.buttonAdd}
-        onPress={() =>
-          navigation.navigate("ExtendFormScreen", { booking: booking })
-        }
-      >
-        <MaterialIcons name="add" size={28} color="white" />
-      </TouchableOpacity>
+      {booking?.status === "completed" && (
+        <TouchableOpacity
+          style={styles.buttonAdd}
+          onPress={() =>
+            navigation.navigate("ExtendFormScreen", { booking: booking })
+          }
+        >
+          <MaterialIcons name="add" size={28} color="white" />
+        </TouchableOpacity>
+      )}
     </SafeAreaView>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Image,
   SafeAreaView,
@@ -12,9 +12,40 @@ import { Avatar, Badge } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { useSelector } from "react-redux";
 import AgricultureExpertEfficiency from "./AgricultureExpertEfficiency/AgricultureExpertEfficiency";
+import socket from "../../services/socket";
+import NotificationComponent from "../../services/notification";
 
 function HomeExpertScreen({ navigation }) {
+  const { triggerNotification } = NotificationComponent();
   const cartCount = useSelector((state) => state.cartSlice.cartCount);
+  const user_id = useSelector((state) => state.userSlice?.userInfo?.user_id);
+  const userInfo = useSelector((state) => state.userSlice?.userInfo);
+
+  console.log(user_id);
+  const socketRef = useRef(null);
+
+  useEffect(() => {
+    socketRef.current = socket;
+
+    socketRef.current.emit("online-user", user_id);
+    socketRef.current.on("notification", async (data) => {
+      console.log(data);
+
+      // Toast.show({
+      //   type: "info",
+      //   text1: "Thông báo",
+      //   text2: data.message.content,
+      // });
+      await triggerNotification(data?.message?.content);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.off("notification");
+      }
+    };
+  }, [user_id]);
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -29,7 +60,9 @@ function HomeExpertScreen({ navigation }) {
               />
               <View style={styles.userDetails}>
                 <Text style={styles.welcomeText}>CHÀO MỪNG</Text>
-                <Text style={styles.userName}>Chuyên viên</Text>
+                <Text style={styles.userName}>
+                  Chuyên viên {userInfo?.full_name}
+                </Text>
               </View>
             </View>
             <TouchableOpacity

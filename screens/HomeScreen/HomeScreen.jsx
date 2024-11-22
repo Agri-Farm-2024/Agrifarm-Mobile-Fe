@@ -22,7 +22,9 @@ function HomeScreen({ navigation }) {
   const cartCount = useSelector((state) => state.cartSlice.cartCount);
 
   const user_id = useSelector((state) => state.userSlice?.userInfo?.user_id);
-  console.log(user_id);
+  const userInfo = useSelector((state) => state.userSlice?.userInfo);
+
+  console.log(user_id, userInfo);
   const socketRef = useRef(null);
 
   useEffect(() => {
@@ -66,7 +68,7 @@ function HomeScreen({ navigation }) {
                 }}
               >
                 <Text style={styles.welcomeText}>CHÀO MỪNG</Text>
-                <Text style={styles.userName}>Gia Hân</Text>
+                <Text style={styles.userName}>{userInfo?.full_name}</Text>
               </TouchableOpacity>
             </View>
             <TouchableOpacity

@@ -134,7 +134,7 @@ function HomeExpertScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Quy trình canh tác</Text>
+              <Text style={styles.iconLabel}>Quy trình canh tác cụ thể</Text>
             </View>
 
             <View style={styles.iconContainer}>

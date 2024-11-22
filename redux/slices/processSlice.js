@@ -27,11 +27,59 @@ export const getPlantSeason = createAsyncThunk(
   }
 );
 
+export const getSpecificProcess = createAsyncThunk(
+  "processSlice/getSpecificProcess",
+  async (params, { rejectWithValue }) => {
+    try {
+      const data = await api.get(`/processes/getListProcessSpecific`, {
+        params,
+      });
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateSpecificProcess = createAsyncThunk(
+  "processSlice/updateSpecificProcess",
+  async (params, { rejectWithValue }) => {
+    try {
+      const { formData, processId } = params;
+      const data = await api.put(
+        `/processes/updateProcessSpecific/${processId}`,
+        formData
+      );
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const approveSpecificProcess = createAsyncThunk(
+  "processSlice/approveSpecificProcess",
+  async (processId, { rejectWithValue }) => {
+    try {
+      const data = await api.put(
+        `/processes/updateStatusProcessSpecific/${processId}`
+      );
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const processSlice = createSlice({
   name: "processSlice",
   initialState: {
     process: {},
     plantSeason: {},
+    specificProcess: {},
     loading: false,
     error: null,
   },
@@ -48,6 +96,26 @@ export const processSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(updateSpecificProcess.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateSpecificProcess.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(updateSpecificProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(approveSpecificProcess.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(approveSpecificProcess.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(approveSpecificProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(getPlantSeason.pending, (state, action) => {
         state.loading = true;
       })
@@ -56,6 +124,25 @@ export const processSlice = createSlice({
         state.plantSeason = action.payload;
       })
       .addCase(getPlantSeason.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getSpecificProcess.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getSpecificProcess.fulfilled, (state, action) => {
+        state.loading = false;
+        //handle whether load a new list or paging
+        if (action.payload.metadata?.pagination?.page_index > 1) {
+          state.specificProcess = {
+            ...state.specificProcess,
+            ...action.payload.metadata,
+          };
+        } else {
+          state.specificProcess = action.payload.metadata;
+        }
+      })
+      .addCase(getSpecificProcess.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

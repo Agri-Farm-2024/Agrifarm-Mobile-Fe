@@ -51,7 +51,7 @@ export default function HomeTabsExpert() {
           name="SpecificProcessListScreen"
           component={SpecificProcessListScreen}
           options={{
-            headerTitle: "Quy trình canh tác",
+            headerTitle: "Quy trình canh tác cụ thể",
             headerTitleAlign: "center",
           }}
         />

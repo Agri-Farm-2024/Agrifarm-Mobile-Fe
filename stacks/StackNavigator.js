@@ -42,6 +42,7 @@ import PaymentServiceScreen from "../screens/ServiceSreen/PaymentServiceScreen";
 import ExtendFormScreen from "../screens/ExtendFormScreen/ExtendFormScreen";
 import ExtendListScreen from "../screens/ExtendListScreen/ExtendListScreen";
 import ExtendItemScreen from "../screens/ExtendItemScreen/ExtendItemScreen";
+import UpdateSpecificProcessScreen from "../screens/SpecificProcessListScreen/UpdateSpecificProcess/UpdateSpecificProcessScreen";
 
 const Stack = createStackNavigator();
 
@@ -375,6 +376,14 @@ const StackNavigator = () => (
       component={ExtendItemScreen}
       options={{
         headerTitle: "Chi tiết gia hạn",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="UpdateSpecificProcessScreen"
+      component={UpdateSpecificProcessScreen}
+      options={{
+        headerTitle: "Chi tiết quy trình",
         headerTitleAlign: "center",
       }}
     />

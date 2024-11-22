@@ -13,7 +13,7 @@ import TextEditor from "../../components/TextEditor";
 import { getMaterial } from "../../redux/slices/materialSlice";
 import { useDispatch } from "react-redux";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 30;
 
 const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   const dispatch = useDispatch();
@@ -161,8 +161,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   };
 
   const removeMaterialBlock = (stageId, index) => {
-    const lengthOfThisStage = stages.filter((stage) => stage.id === stageId)[0]
-      .materials.length;
     setStages((prevStages) =>
       prevStages.map((stage) =>
         stage.id === stageId
@@ -314,7 +312,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
               text1: `Kiểm tra lại ngày của giai đoạn ${idxStage} và ${
                 idxStage + 1
               }`,
-              text2: `Thòi gian cuối của giai đoạn ${idxStage} và thời gian đầu của ${
+              text2: `Thời gian cuối của giai đoạn ${idxStage} và thời gian đầu của ${
                 idxStage + 1
               } `,
             });

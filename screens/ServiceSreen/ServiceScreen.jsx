@@ -96,7 +96,7 @@ const ServiceScreen = ({ navigation }) => {
         {loading && <ActivityIndicatorComponent />}
         {!loading && (
           <>
-            <View style={styles.sectionContainer}>
+            {/* <View style={styles.sectionContainer}>
               <Text style={styles.headerLabel}>Dịch vụ đang sử dụng</Text>
               {myService.map((service, index) => (
                 <TouchableRipple
@@ -135,7 +135,7 @@ const ServiceScreen = ({ navigation }) => {
                   </>
                 </TouchableRipple>
               ))}
-            </View>
+            </View> */}
             <View style={[styles.sectionContainer, { paddingBottom: 50 }]}>
               <Text style={styles.headerLabel}>Các gói dịch vụ</Text>
               {serviceList?.metadata &&

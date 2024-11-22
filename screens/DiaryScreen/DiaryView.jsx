@@ -64,26 +64,39 @@ const diaryContent = [
   },
 ];
 
-const DiaryView = () => {
+const DiaryView = ({ diary }) => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.infoContainer}>
-        <Text style={styles.diaryTitle}>
-          Nhật ký trồng dưa lưới 28/4 - 28/6
-        </Text>
-        <Text style={styles.diaryInfo}>ID: 123895711</Text>
-        <Text style={styles.diaryInfo}>Người trồng: Nguyen Van A</Text>
-        <Text style={styles.diaryInfo}>Giống cây: Dưa lưới Taki</Text>
         <Text style={styles.diaryInfo}>
-          Loại dịch vụ sử dụng: Canh Tác VietGAP + Vật Tư
+          <Text
+            style={{
+              color: "#707070",
+              fontWeight: "bold",
+            }}
+          >
+            Giống cây:
+          </Text>{" "}
+          {diary?.process_technical_standard?.plant_season?.plant?.name}
         </Text>
-        <Text style={styles.diaryInfo}>Ngày tạo: 28/08/2024</Text>
+        <Text style={styles.diaryInfo}>
+          <Text style={{ color: "#707070", fontWeight: "bold" }}>Mùa vụ:</Text>{" "}
+          {diary?.process_technical_standard?.plant_season?.type == "in_season"
+            ? "Mùa thuận"
+            : "Mùa nghịch"}
+        </Text>
+        <Text style={styles.diaryInfo}>
+          <Text style={{ color: "#707070", fontWeight: "bold" }}>
+            Phạm vi hiển thị:
+          </Text>{" "}
+          {diary.is_public ? "Công khai" : "Riêng tư"}
+        </Text>
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         style={styles.diaryProgress}
       >
-        <DiaryProgress diaryProgress={diaryContent} />
+        <DiaryProgress diaryProgress={diary} />
       </ScrollView>
     </SafeAreaView>
   );

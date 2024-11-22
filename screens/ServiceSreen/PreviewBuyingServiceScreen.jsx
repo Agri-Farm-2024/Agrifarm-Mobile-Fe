@@ -34,11 +34,23 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
         if (response.payload.statusCode != 201) {
           if (
             response.payload.statusCode == 400 &&
-            response.payload.message == "Acreage land is not enough"
+            response.payload.message.includes("Acreage land is not enough")
           ) {
             Toast.show({
               type: "error",
               text1: "Diện tích mảnh đất có sẵn không đủ!",
+            });
+          } else if (
+            response.payload.statusCode == 400 &&
+            response.payload.message.includes("Time is not valid")
+          ) {
+            const timeStr = response.payload.message.split(" ").pop();
+            const [month, day, year] = timeStr.split("/");
+            const convertedDate = `${day}/${month}/${year}`;
+            Toast.show({
+              type: "error",
+              text1: "Không đủ thời hạn thuê đất!",
+              text2: `Thời gian thuê đất sẽ hết hạn vào ${convertedDate}`,
             });
           } else {
             Toast.show({

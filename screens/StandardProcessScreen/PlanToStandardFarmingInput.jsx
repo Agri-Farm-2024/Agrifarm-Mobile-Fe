@@ -24,7 +24,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
   const [hasMoreMaterial, setHasMoreMaterial] = useState(true);
   const [isLoadingMaterial, setIsLoadingMaterial] = useState(false);
 
-  console.log("typeof", typeof stages, JSON.stringify(stages));
   useEffect(() => {
     fetchMaterialOptions(1);
   }, []);
@@ -542,6 +541,8 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                     borderColor: "#aaa",
                     borderWidth: 0.5,
                     minHeight: 200,
+                    padding: 10,
+                    backgroundColor: "#fff",
                   }}
                 >
                   <TextEditor

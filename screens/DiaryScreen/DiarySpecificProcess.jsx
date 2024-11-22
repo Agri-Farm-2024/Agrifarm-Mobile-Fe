@@ -72,7 +72,7 @@ const process = {
   ],
 };
 
-const DiarySpecificProcess = () => {
+const DiarySpecificProcess = ({ diary }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleOpenModal = () => {
@@ -85,12 +85,36 @@ const DiarySpecificProcess = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.diaryInfoContainer}>
-        <Text style={styles.diaryInfo}>Giống cây: {process.plantType}</Text>
-        <Text style={styles.diaryInfo}>
-          Người tạo quy trình: {process.authorProcess}
-        </Text>
-        <Button
+      {diary && (
+        <>
+          <View style={styles.diaryInfoContainer}>
+            <Text style={styles.diaryInfo}>
+              <Text
+                style={{
+                  color: "#707070",
+                  fontWeight: "bold",
+                }}
+              >
+                Giống cây:
+              </Text>{" "}
+              {diary?.process_technical_standard?.plant_season?.plant?.name}
+            </Text>
+            <Text style={styles.diaryInfo}>
+              <Text style={{ color: "#707070", fontWeight: "bold" }}>
+                Mùa vụ:
+              </Text>{" "}
+              {diary?.process_technical_standard?.plant_season?.type ==
+              "in_season"
+                ? "Mùa thuận"
+                : "Mùa nghịch"}
+            </Text>
+            <Text style={styles.diaryInfo}>
+              <Text style={{ color: "#707070", fontWeight: "bold" }}>
+                Phạm vi hiển thị:
+              </Text>{" "}
+              {diary.is_public ? "Công khai" : "Riêng tư"}
+            </Text>
+            {/* <Button
           mode="contained"
           style={{
             width: 200,
@@ -101,17 +125,22 @@ const DiarySpecificProcess = () => {
           onPress={handleOpenModal}
         >
           Yêu cầu thu mua
-        </Button>
-      </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.progressContainer}
-      >
-        <DiaryProgress diaryProgress={process.processContent} />
-      </ScrollView>
+        </Button> */}
+          </View>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={styles.progressContainer}
+          >
+            <DiaryProgress diaryProgress={diary} />
+          </ScrollView>
 
-      {/* Use the PurchaseRequestModal */}
-      <PurchaseRequestModal visible={modalVisible} onClose={handleCloseModal} />
+          {/* Use the PurchaseRequestModal */}
+          <PurchaseRequestModal
+            visible={modalVisible}
+            onClose={handleCloseModal}
+          />
+        </>
+      )}
     </View>
   );
 };
@@ -125,11 +154,12 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomColor: "#D9D9D9",
     borderBottomWidth: 1,
-    gap: 5,
+    gap: 10,
     marginBottom: 20,
   },
   diaryInfo: {
     fontSize: 14,
+    color: "#707070",
   },
   progressContainer: {
     paddingHorizontal: 10,

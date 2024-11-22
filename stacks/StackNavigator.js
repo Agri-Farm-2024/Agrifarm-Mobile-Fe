@@ -43,6 +43,7 @@ import ExtendFormScreen from "../screens/ExtendFormScreen/ExtendFormScreen";
 import ExtendListScreen from "../screens/ExtendListScreen/ExtendListScreen";
 import ExtendItemScreen from "../screens/ExtendItemScreen/ExtendItemScreen";
 import UpdateSpecificProcessScreen from "../screens/SpecificProcessListScreen/UpdateSpecificProcess/UpdateSpecificProcessScreen";
+import SpecificProcessDetailScreen from "../screens/DiaryScreen/SpecificProcessDetailScreen";
 
 const Stack = createStackNavigator();
 
@@ -352,6 +353,7 @@ const StackNavigator = () => (
       options={{
         headerTitle: "Thanh toán dịch vụ",
         headerTitleAlign: "center",
+        headerShown: false,
       }}
     />
 
@@ -382,6 +384,14 @@ const StackNavigator = () => (
     <Stack.Screen
       name="UpdateSpecificProcessScreen"
       component={UpdateSpecificProcessScreen}
+      options={{
+        headerTitle: "Duyệt quy trình",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="SpecificProcessDetailScreen"
+      component={SpecificProcessDetailScreen}
       options={{
         headerTitle: "Chi tiết quy trình",
         headerTitleAlign: "center",

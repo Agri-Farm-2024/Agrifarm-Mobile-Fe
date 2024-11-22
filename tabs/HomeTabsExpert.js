@@ -5,6 +5,7 @@ import HomeExpertScreen from "../screens/HomeExpertScreen/HomeExpertScreen";
 import SpecificProcessListScreen from "../screens/SpecificProcessListScreen/SpecificProcessListScreen";
 import MyTaskScreen from "../screens/MyTaskScreen/MyTaskScreen";
 import StandardProcessScreen from "../screens/StandardProcessScreen/StandardProcessScreen";
+import DiaryScreen from "../screens/DiaryScreen/DiaryScreen";
 export default function HomeTabsExpert() {
   const Stack = createStackNavigator();
 
@@ -44,6 +45,14 @@ export default function HomeTabsExpert() {
           component={MyTaskScreen}
           options={{
             headerTitle: "Xử lý yêu cầu",
+            headerTitleAlign: "center",
+          }}
+        />
+        <Stack.Screen
+          name="DiaryScreen"
+          component={DiaryScreen}
+          options={{
+            headerTitle: "Nhật ký canh tác",
             headerTitleAlign: "center",
           }}
         />

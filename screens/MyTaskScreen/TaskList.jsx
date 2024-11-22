@@ -9,6 +9,7 @@ import { TouchableOpacity } from "react-native";
 import TaskModal from "./TaskModal";
 import Toast from "react-native-toast-message";
 import { useIsFocused } from "@react-navigation/native";
+import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 
 const notStartTasks = [
   {
@@ -350,17 +351,16 @@ const TaskList = ({ taskType }) => {
   );
 
   return (
-    <View>
-      {taskListData.length > 0 ? (
+    <View style={{ minHeight: 120 }}>
+      {taskListData.length > 0 && (
         <FlatList
           keyExtractor={(item, index) => item.task_id + index}
           data={taskListData}
           renderItem={renderItem}
         />
-      ) : (
-        <Text style={{ textAlign: "center", fontSize: 18 }}>
-          Không có nhiệm vụ
-        </Text>
+      )}
+      {taskListData.length <= 0 && (
+        <EmptyComponent message="Không có nhiệm vụ nào" />
       )}
       <TaskModal
         isVisible={isModalVisible}

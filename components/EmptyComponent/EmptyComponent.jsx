@@ -5,6 +5,10 @@ import { Text } from "react-native-paper";
 export default function EmptyComponent({ message = "Không có dữ liệu" }) {
   return (
     <View style={styles.container}>
+      <Image
+        style={styles.image}
+        source={require("../../assets/empty-image.png")}
+      />
       <Text style={styles.text}>{message}</Text>
     </View>
   );

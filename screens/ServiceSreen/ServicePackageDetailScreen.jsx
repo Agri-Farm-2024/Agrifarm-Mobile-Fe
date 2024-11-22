@@ -369,7 +369,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                       open={isShowDatePicker}
                       timeZoneName="Asia/Ho_Chi_Minh"
                       mode="date"
-                      display="spinner"
+                      display="default"
                       onChange={(event, selectedDate) => {
                         setIsShowDatePicker(false);
                         if (selectedDate <= new Date()) {

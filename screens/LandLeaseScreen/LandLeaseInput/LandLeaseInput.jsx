@@ -110,7 +110,7 @@ const LandLeaseInput = forwardRef((props, ref) => {
               <DateTimePicker
                 value={startTime}
                 mode="date"
-                display="default"
+                display="spinner"
                 onChange={(e, selectedDate) =>
                   handleDateChange(e, selectedDate, setFieldValue)
                 }

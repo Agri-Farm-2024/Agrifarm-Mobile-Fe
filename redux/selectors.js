@@ -16,3 +16,8 @@ export const plantLoadingSelector = (state) => state.plantSlice.loading;
 //land
 export const getBookingSelector = (state) => state.landSlice.booking;
 export const landLoadingSelector = (state) => state.landSlice.loading;
+
+//process
+export const getSpecificProcessSelector = (state) =>
+  state.processSlice.specificProcess;
+export const processLoadingSelector = (state) => state.processSlice.loading;

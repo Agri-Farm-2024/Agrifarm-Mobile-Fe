@@ -19,6 +19,11 @@ export function formatDate(timestamp, formatType) {
     // Format to "YYYY/MM/DD"
     const formattedYYYYMMDD = date.toLocaleDateString("en-CA");
     return formattedYYYYMMDD;
+  } else if (formatType === 2) {
+    // Format to "DD/MM"
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    return `${day}/${month}`;
   } else {
     return timestamp;
   }

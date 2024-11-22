@@ -15,8 +15,10 @@ export default function ExtendListScreen({ route }) {
 
   const navigation = useNavigation();
   const { booking } = route.params;
-  const reversedExtends = [...(booking?.extends || [])].reverse();
-  console.log(`Extending: ` + JSON.stringify(reversedExtends));
+  const sortedBookings = [...(booking?.extends || [])].sort(
+    (a, b) => new Date(a.created_at) - new Date(b.created_at)
+  );
+  console.log(`Extending: ` + JSON.stringify(sortedBookings));
   if (!booking) return <ActivityIndicatorComponent />;
 
   const handleExtendByBookingExtend = (extend) => {
@@ -42,7 +44,7 @@ export default function ExtendListScreen({ route }) {
         }}
       >
         {booking?.extends?.length >= 1 &&
-          reversedExtends?.map((extend, index) => (
+          sortedBookings?.map((extend, index) => (
             <TouchableRipple
               key={index}
               rippleColor="rgba(127, 182, 64, 0.2)"
@@ -50,7 +52,7 @@ export default function ExtendListScreen({ route }) {
                 // navigation.navigate("RequestContractDetailScreen", {
                 //   requestID: request.booking_id,
                 // });
-                if (extend.status === "pending_contract") {
+                if (extend.status === "pending") {
                   setConfirmVisible(extend);
                 } else {
                   navigation.navigate("ExtendItemScreen", {

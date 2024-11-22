@@ -7,6 +7,7 @@ import {
   formatDateToVN,
   formatNumber,
 } from "../../../utils";
+import EmptyComponent from "../../../components/EmptyComponent/EmptyComponent";
 
 const ContractComponent = ({ contract, isDownload }) => {
   const [textSize, setTextSize] = useState(16);
@@ -34,7 +35,8 @@ const ContractComponent = ({ contract, isDownload }) => {
     }
   };
 
-  if (!contract) return <Text>Khong co hop dong</Text>;
+  if (!contract) return;
+  <EmptyComponent message="Không có hợp đồng" />;
 
   return (
     <View>

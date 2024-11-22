@@ -20,6 +20,8 @@ import {
   getPlantSeasonSelector,
 } from "../../redux/selectors";
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
+import { Checkbox } from "react-native-paper";
+import ContractServicesDialog from "../../components/ContractServicesDialog/ContractServicesDialog";
 
 const plotOptions = [
   {
@@ -77,6 +79,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
     dateStart: new Date(new Date().setDate(new Date().getDate() + 1)), // Default to tomorrow
     plantSeason: "",
   });
+  const [isChecked, setIsChecked] = useState(false);
   const [bookingOptions, setBookingOptions] = useState([]);
   const [isShowDatePicker, setIsShowDatePicker] = useState(false);
   const [plantSeasonOptions, setPlantSeasonOptions] = useState([]);
@@ -88,6 +91,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
     time_start: 0,
   });
   const [priceSeason, setPriceSeason] = useState(0);
+  const [visibleContract, setVisibleContract] = useState(false);
 
   const { serviceDetail } = route.params;
 
@@ -259,6 +263,11 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
         Toast.show({
           type: "error",
           text1: "Diện tích canh tác phải lớn hơn 1000 m²!",
+        });
+      } else if (!isChecked) {
+        Toast.show({
+          type: "error",
+          text1: "Hãy chọn đồng ý với điều khoản!",
         });
       } else {
         const bookingObject =
@@ -448,6 +457,28 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                   ></TextInput>
                 </View>
               </View>
+              <View style={styles.checkboxContainer}>
+                <Checkbox
+                  status={isChecked ? "checked" : "unchecked"}
+                  onPress={() => setIsChecked(!isChecked)}
+                  color="#7fb640"
+                />
+                <Text style={styles.checkboxText}>
+                  Tôi đã đọc và đồng ý với{" "}
+                  <Text
+                    style={styles.checkboxLink}
+                    onPress={
+                      () => setVisibleContract(true)
+                      // navigation.navigate("ReviewContractScreen", {
+                      //   land: { land },
+                      //   formData: { formData },
+                      // })
+                    }
+                  >
+                    các điều khoản của hợp đồng
+                  </Text>
+                </Text>
+              </View>
               <TouchableOpacity
                 style={styles.submitButton}
                 onPress={handleSubmit}
@@ -458,6 +489,10 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
+      <ContractServicesDialog
+        isVisible={visibleContract}
+        onDismiss={() => setVisibleContract(false)}
+      />
     </SafeAreaView>
   );
 };
@@ -542,6 +577,20 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "white",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  checkboxText: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  checkboxLink: {
+    color: "#7fb640",
     fontWeight: "bold",
   },
 });

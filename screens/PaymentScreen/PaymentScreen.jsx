@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 import { Appbar } from "react-native-paper";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import { getTransactionByID } from "../../redux/slices/transactionSlice";
@@ -60,20 +67,22 @@ const PaymentScreen = ({ navigation, route }) => {
         <Appbar.Content title="Thanh Toán" color="white" />
       </Appbar.Header>
 
-      <View style={styles.qrContainer}>
-        <Text style={styles.title}>QUÉT ĐỂ THANH TOÁN</Text>
-        <Image
-          source={{
-            uri: payment_link,
-          }} // Replace with actual URL of the QR code image
-          style={styles.qrImage}
-        />
-        {/* <Text style={styles.accountText}>Tên chủ TK: AgriFarm</Text>
+      <ScrollView contentContainerStyle={{ paddingBottom: 30 }}>
+        <View style={styles.qrContainer}>
+          <Text style={styles.title}>QUÉT ĐỂ THANH TOÁN</Text>
+          <Image
+            source={{
+              uri: payment_link,
+            }}
+            style={styles.qrImage}
+          />
+          {/* <Text style={styles.accountText}>Tên chủ TK: AgriFarm</Text>
         <Text style={styles.accountText}>
           STK: <Text style={styles.accountHighlight}>4940116348275</Text>
         </Text>
         <Text style={styles.accountText}>Ngân hàng TMCP Ngoại thương VN</Text> */}
-      </View>
+        </View>
+      </ScrollView>
 
       {/* <Text style={styles.countdown}>
         Thời gian còn lại: {formatTime(timeLeft)}

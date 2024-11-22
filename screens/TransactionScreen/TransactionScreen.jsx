@@ -77,7 +77,10 @@ export default function TransactionScreen() {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      >
         {transactionList?.transactions &&
           transactionList?.transactions?.map((transaction) => (
             <TouchableOpacity

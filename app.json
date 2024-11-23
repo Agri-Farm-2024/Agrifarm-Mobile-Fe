@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "agrifarm-mobile-fe",
+    "name": "AgriFarm",
     "slug": "agrifarm-mobile-fe",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/agrifarm-logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/agrifarm-logo.png",
+      "image": "./assets/icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +25,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/agrifarm-logo.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": ["android.permission.RECORD_AUDIO"],

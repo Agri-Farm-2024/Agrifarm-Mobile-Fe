@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import NotificationComponent from "../../services/notification";
 import socket from "../../services/socket";
 import Toast from "react-native-toast-message";
+import { convertImageURL } from "../../utils";
 
 function HomeScreen({ navigation }) {
   const { triggerNotification } = NotificationComponent();
@@ -58,7 +59,7 @@ function HomeScreen({ navigation }) {
               <Avatar.Image
                 size={76}
                 source={{
-                  uri: "https://th.bing.com/th/id/OIP.EX4-Ntrsq26D7rjZEhky0gHaHN?rs=1&pid=ImgDetMain",
+                  uri: convertImageURL(userInfo?.avatar_url),
                 }}
               />
               <TouchableOpacity

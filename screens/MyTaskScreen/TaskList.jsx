@@ -227,7 +227,9 @@ const TaskList = ({ taskType }) => {
         getListTaskByUser({
           status: taskType,
         })
-      );
+      ).then((res) => {
+        console.log("Fetch task response: " + JSON.stringify(res));
+      });
     }
   }, [taskType, isFocused]);
 

@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
-    username: "expert@gmail.com",
+    username: "landrenter@gmail.com",
     password: "123",
   });
   const [errorMessage, setErrorMessage] = useState(null);
@@ -131,7 +131,10 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
-      <ScrollView keyboardDismissMode="on-drag">
+      <ScrollView
+        keyboardDismissMode="on-drag"
+        contentContainerStyle={{ paddingBottom: 30 }}
+      >
         <View style={styles.container}>
           <Image
             style={styles.logo}

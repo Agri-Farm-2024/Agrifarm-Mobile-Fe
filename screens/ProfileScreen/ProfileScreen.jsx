@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
+import { convertImageURL } from "../../utils";
 
 const user = {
   avatar:
@@ -23,13 +25,18 @@ const user = {
 };
 
 const ProfileScreen = ({ navigation }) => {
+  const userInfo = useSelector((state) => state.userSlice?.userInfo);
+
   return (
     <SafeAreaView>
       <View style={styles.container}>
         <View style={styles.headerContainer}>
-          <Image style={styles.avatar} source={{ uri: user.avatar }}></Image>
-          <Text style={styles.userName}>{user.name}</Text>
-          <Text style={styles.userRole}>{user.email}</Text>
+          <Image
+            style={styles.avatar}
+            source={{ uri: convertImageURL(userInfo?.avatar_url) }}
+          ></Image>
+          <Text style={styles.userName}>{userInfo.full_name}</Text>
+          <Text style={styles.userRole}>{userInfo.email}</Text>
         </View>
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Thông tin cá nhân</Text>
@@ -48,7 +55,7 @@ const ProfileScreen = ({ navigation }) => {
         </View>
         <View style={styles.userInfoContainer}>
           <Text style={styles.infoTitle}>Ngày sinh:</Text>
-          <Text style={styles.info}>{user.dob}</Text>
+          <Text style={styles.info}>{userInfo.dob}</Text>
         </View>
         <View style={styles.userInfoContainer}>
           <Text style={styles.infoTitle}>Giới tính:</Text>
@@ -62,7 +69,9 @@ const ProfileScreen = ({ navigation }) => {
         </View>
         <View style={styles.userInfoContainer}>
           <Text style={styles.infoTitle}>Số điện thoại:</Text>
-          <Text style={styles.info}>{user.phone}</Text>
+          <Text style={styles.info}>
+            {userInfo.phone ? userInfo.phone : "Chưa có"}
+          </Text>
         </View>
         <TouchableHighlight
           underlayColor="#7FB640"

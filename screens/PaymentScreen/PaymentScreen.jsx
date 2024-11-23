@@ -61,7 +61,6 @@ const PaymentScreen = ({ navigation, route }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header with Back Button */}
       <Appbar.Header style={{ backgroundColor: "#76B947" }}>
         <Appbar.BackAction color="white" onPress={() => navigation.goBack()} />
         <Appbar.Content title="Thanh Toán" color="white" />

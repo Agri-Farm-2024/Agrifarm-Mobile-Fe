@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import AgricultureExpertEfficiency from "./AgricultureExpertEfficiency/AgricultureExpertEfficiency";
 import socket from "../../services/socket";
 import NotificationComponent from "../../services/notification";
+import { convertImageURL } from "../../utils";
 
 function HomeExpertScreen({ navigation }) {
   const { triggerNotification } = NotificationComponent();
@@ -55,7 +56,7 @@ function HomeExpertScreen({ navigation }) {
               <Avatar.Image
                 size={76}
                 source={{
-                  uri: "https://th.bing.com/th/id/OIP.EX4-Ntrsq26D7rjZEhky0gHaHN?rs=1&pid=ImgDetMain",
+                  uri: convertImageURL(userInfo?.avatar_url),
                 }}
               />
               <View style={styles.userDetails}>

@@ -10,13 +10,17 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { SafeAreaView, View } from "react-native";
-import { FAB, TextInput } from "react-native-paper";
+import { FAB, IconButton, TextInput } from "react-native-paper";
 import * as Yup from "yup";
 import DropdownComponent from "../../components/DropdownComponent";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import * as ImagePicker from "expo-image-picker";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { formatDate } from "../../utils";
+import { useDispatch } from "react-redux";
+import { uploadFile } from "../../services/uploadService";
+import { writeDiary } from "../../redux/slices/processSlice";
 
 const stageOptions = [
   {
@@ -34,16 +38,19 @@ const stageOptions = [
 ];
 
 const DiarySchema = Yup.object().shape({
-  dateWrite: Yup.date().required("Vui lòng không bỏ trống!"),
-  stage: Yup.string().required("Vui lòng không bỏ trống!"),
-  dateFrom: Yup.date().required("Vui lòng không bỏ trống!"),
-  dateTo: Yup.date().required("Vui lòng không bỏ trống!"),
-  actionTitle: Yup.string().required("Vui lòng không bỏ trống!"),
+  quality: Yup.number()
+    .required("Vui lòng không bỏ trống!")
+    .min(0, "Chất lượng không hợp lệ!")
+    .max(100, "Chất lượng không hợp lệ!"),
   actionDescription: Yup.string().required("Vui lòng không bỏ trống!"),
   imageReport: Yup.array().of(Yup.string()),
 });
 
-const WriteDiaryScreen = () => {
+const WriteDiaryScreen = ({ route, navigation }) => {
+  const { diary } = route.params;
+
+  const dispatch = useDispatch();
+
   const [isShowDatePicker, setIsShowDatePicker] = useState({
     dateWrite: false,
     fromDate: false,
@@ -68,15 +75,80 @@ const WriteDiaryScreen = () => {
     if (!result.canceled) {
       let imageArr = [...result.assets];
       console.log("imageArr", imageArr);
-      let imagesSelect = imageArr.map((image) => image.uri);
 
-      console.log("images: " + imagesSelect);
-      setImageReports([...imageReports, ...imagesSelect]);
-      Toast.show({
-        type: "success",
-        text1: "Thêm ảnh thành công!",
-      });
+      if (imageArr.length > 3) {
+        Toast.show({
+          type: "error",
+          text1: "Chỉ được chọn 3 ảnh!",
+        });
+      } else {
+        setImageReports([...imageArr]);
+        Toast.show({
+          type: "success",
+          text1: "Thêm ảnh thành công!",
+        });
+      }
     }
+  };
+
+  const handleWriteDinary = async (values) => {
+    console.log("submit value", values);
+    let uploadedImages = null;
+    if (imageReports.length > 0) {
+      console.log("Upload images...");
+      uploadedImages = await Promise.all(
+        imageReports.map(async (file, index) => {
+          const formData = new FormData();
+          console.log("file add formData", {
+            uri: file.uri,
+            name: file.fileName,
+            type: file.mimeType,
+          });
+          formData.append("file", {
+            uri: file.uri,
+            name: file.fileName || `image_${index}.jpg`,
+            type: file.mimeType || "image/jpeg",
+          });
+          const response = await uploadFile(formData);
+          console.log("upload image", response);
+          return response.metadata.folder_path;
+        })
+      );
+    }
+    const params = {
+      processId: diary.process_technical_specific_stage_content_id,
+      formData: {
+        content: values.actionDescription,
+        quality_report: values.quality,
+        dinaries_image:
+          uploadedImages && uploadedImages?.length > 0
+            ? uploadedImages.map((image) => ({
+                url_link: image,
+                type: "image",
+              }))
+            : null,
+      },
+    };
+
+    console.log("params write dinary", JSON.stringify(params));
+    dispatch(writeDiary(params)).then((response) => {
+      console.log("Response write diary", JSON.stringify(response));
+
+      if (response.payload.statusCode != 201) {
+        Toast.show({
+          type: "error",
+          text1: "Ghi nhật ký không thành công!",
+        });
+      }
+
+      if (response.payload.statusCode == 201) {
+        Toast.show({
+          type: "success",
+          text1: "Ghi nhật ký thành công!",
+        });
+        navigation.goBack();
+      }
+    });
   };
 
   return (
@@ -88,18 +160,12 @@ const WriteDiaryScreen = () => {
         >
           <Formik
             initialValues={{
-              dateWrite: new Date(),
-              stage: "",
-              dateFrom: new Date(),
-              dateTo: new Date(),
-              actionTitle: "",
               actionDescription: "",
+              quality: 0,
               imageReport: [],
             }}
             validationSchema={DiarySchema}
-            onSubmit={(values) => {
-              console.log(values, stageList);
-            }}
+            onSubmit={handleWriteDinary}
           >
             {({
               handleChange,
@@ -111,135 +177,51 @@ const WriteDiaryScreen = () => {
               touched,
             }) => (
               <View style={styles.container}>
-                <View style={styles.dateContainer}>
-                  <Text style={styles.textTitle}>Ngày ghi nhật ký</Text>
-                  <TouchableOpacity style={styles.inputDate} onPress={() => {}}>
-                    <Text>{new Date().toLocaleDateString()}</Text>
-                  </TouchableOpacity>
-                </View>
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={styles.title}>{diary.actionTitle}</Text>
 
-                <Text style={styles.label}>Loại cây trồng</Text>
-                <DropdownComponent
-                  options={stageOptions}
-                  placeholder="Chọn loại cây"
-                  value={values.stage}
-                  setValue={handleChange("stage")}
-                />
-
-                <Text style={styles.errorMessage}>
-                  {touched.stage && errors.stage && errors.stage}
-                </Text>
-
-                <View style={styles.dateContainer}>
-                  <Text style={styles.textTitle}>Ngày bắt đầu</Text>
-                  <TouchableOpacity
-                    style={styles.inputDate}
-                    onPress={() =>
-                      setIsShowDatePicker({
-                        ...isShowDatePicker,
-                        dateFrom: true,
-                      })
-                    }
-                  >
-                    <Text>
-                      {new Date(values.dateFrom).toLocaleDateString()}
+                  <View style={styles.diaryInfo}>
+                    <Text style={styles.infoTitle}>Ngày bắt đầu</Text>
+                    <Text style={styles.infoContent}>
+                      {formatDate(diary.dayFrom, 0)}
                     </Text>
-                  </TouchableOpacity>
-                  {isShowDatePicker.dateFrom && (
-                    <DateTimePicker
-                      testID="dateTimePicker"
-                      value={new Date(values.dateFrom)}
-                      mode="date"
-                      is24Hour={true}
-                      display="spinner"
-                      maximumDate={new Date()}
-                      onChange={(event, selectedDate) => {
-                        console.log(selectedDate);
-                        const currentDate =
-                          selectedDate || new Date(values.dateFrom);
-                        setIsShowDatePicker({
-                          ...isShowDatePicker,
-                          dateFrom: false,
-                        });
-                        setFieldValue("dateFrom", currentDate.toISOString());
-                      }}
-                      textColor="#7FB640"
-                    />
-                  )}
-                  {touched.dateFrom && errors.dateFrom && (
-                    <Text style={styles.errorText}>{errors.dateFrom}</Text>
-                  )}
-                </View>
+                  </View>
 
-                <View style={styles.dateContainer}>
-                  <Text style={styles.textTitle}>Ngày kết thúc</Text>
-                  <TouchableOpacity
-                    style={styles.inputDate}
-                    onPress={() =>
-                      setIsShowDatePicker({
-                        ...isShowDatePicker,
-                        dateFrom: true,
-                      })
-                    }
-                  >
-                    <Text>{new Date(values.dateTo).toLocaleDateString()}</Text>
-                  </TouchableOpacity>
-                  {isShowDatePicker.dateTo && (
-                    <DateTimePicker
-                      testID="dateTimePicker"
-                      value={new Date(values.dateTo)}
-                      mode="date"
-                      is24Hour={true}
-                      display="spinner"
-                      maximumDate={new Date()}
-                      onChange={(event, selectedDate) => {
-                        console.log(selectedDate);
-                        const currentDate =
-                          selectedDate || new Date(values.dateTo);
-                        setIsShowDatePicker({
-                          ...isShowDatePicker,
-                          dateTo: false,
-                        });
-                        setFieldValue("dateTo", currentDate.toISOString());
-                      }}
-                      textColor="#7FB640"
-                    />
-                  )}
-                  {touched.dateTo && errors.dateTo && (
-                    <Text style={styles.errorText}>{errors.dateTo}</Text>
-                  )}
+                  <View style={styles.diaryInfo}>
+                    <Text style={styles.infoTitle}>Ngày kết thúc</Text>
+                    <Text style={styles.infoContent}>
+                      {formatDate(diary.dayTo, 0)}
+                    </Text>
+                  </View>
                 </View>
-
-                <Text style={[styles.label]}>Tên hoạt động canh tác</Text>
+                <Text style={[styles.label]}>Chất lượng canh tác</Text>
                 <TextInput
                   style={styles.input}
-                  textColor="black"
+                  textColor="#707070"
                   activeOutlineColor="#7FB640"
                   mode="outlined"
-                  inputMode="text"
-                  placeholder="Tên hoạt động canh tác"
-                  onChangeText={handleChange("actionTitle")}
-                  onBlur={handleBlur("actionTitle")}
-                  value={values.actionTitle}
-                  outlineColor={
-                    touched.actionTitle && errors.actionTitle && "red"
-                  }
+                  placeholderTextColor={"#707070"}
+                  inputMode="numeric"
+                  placeholder="Chất lượng canh tác"
+                  onChangeText={handleChange("quality")}
+                  onBlur={handleBlur("quality")}
+                  value={values.quality}
+                  outlineColor={touched.quality && errors.quality && "red"}
                 />
                 <Text style={styles.errorMessage}>
-                  {touched.actionTitle &&
-                    errors.actionTitle &&
-                    errors.actionTitle}
+                  {touched.quality && errors.quality && errors.quality}
                 </Text>
 
                 <Text style={[styles.label]}>Nội dung canh tác</Text>
                 <TextInput
                   style={[styles.input, styles.descriptionInput]}
-                  textColor="black"
+                  textColor="#707070"
                   activeOutlineColor="#7FB640"
                   mode="outlined"
                   inputMode="text"
                   multiline={true}
                   placeholder="Nội dung canh tác"
+                  placeholderTextColor={"#707070"}
                   onChangeText={handleChange("actionDescription")}
                   onBlur={handleBlur("actionDescription")}
                   value={values.actionDescription}
@@ -257,14 +239,27 @@ const WriteDiaryScreen = () => {
 
                 <View style={styles.imageReportTitleWrapper}>
                   <Text style={styles.label}>Hình ảnh báo cáo</Text>
-                  <FAB
+                  <IconButton
                     icon="image"
                     style={styles.fab}
-                    color="white"
+                    iconColor="white"
                     onPress={pickImage}
                   />
                 </View>
                 <View style={styles.imageReportContainer}>
+                  {imageReports.length == 0 && (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        color: "#cacaca",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        width: "100%",
+                      }}
+                    >
+                      Chưa có hình ảnh
+                    </Text>
+                  )}
                   {imageReports.length > 0 &&
                     imageReports.map((image, index) => {
                       console.log(image, typeof image);
@@ -273,7 +268,7 @@ const WriteDiaryScreen = () => {
                           <Image
                             style={styles.imageReport}
                             source={{
-                              uri: image,
+                              uri: image.uri,
                             }}
                           />
                           <TouchableOpacity
@@ -320,7 +315,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    position: "relative",
     marginBottom: 25,
   },
   imageReportContainer: {
@@ -339,10 +333,8 @@ const styles = StyleSheet.create({
     objectPosition: "center",
   },
   fab: {
-    right: 55,
-    bottom: 0,
     backgroundColor: "#7FB640",
-    borderRadius: 12,
+    borderRadius: 7,
   },
   closeIcon: {
     position: "absolute",
@@ -350,9 +342,10 @@ const styles = StyleSheet.create({
     right: -10,
   },
   label: {
-    width: "100%",
+    width: "70%",
     fontSize: 16,
     fontWeight: "bold",
+    color: "#707070",
   },
   secondaryText: {
     color: "#797979",
@@ -385,9 +378,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#D9D9D9",
+    color: "#707070",
   },
   descriptionInput: {
-    height: 150,
+    height: 100,
   },
   errorMessage: {
     fontSize: 14,
@@ -421,6 +415,31 @@ const styles = StyleSheet.create({
   submitButtonText: {
     color: "white",
     fontSize: 16,
+    fontWeight: "bold",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingVertical: 10,
+    borderBottomColor: "#707070",
+    borderBottomWidth: 1,
+  },
+  diaryInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderBottomColor: "#D9D9D9",
+    borderBottomWidth: 1,
+    paddingVertical: 10,
+  },
+  infoTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#707070",
+  },
+  infoContent: {
+    fontSize: 12,
+    color: "#707070",
     fontWeight: "bold",
   },
 });

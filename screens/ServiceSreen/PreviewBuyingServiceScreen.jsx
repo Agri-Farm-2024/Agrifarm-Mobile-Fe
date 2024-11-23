@@ -61,10 +61,10 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
         }
         if (response.payload.statusCode == 201) {
           console.log("buy service", JSON.stringify(response.payload));
-          Toast.show({
-            type: "success",
-            text1: "Mua dịch vụ thành công!",
-          });
+          // Toast.show({
+          //   type: "success",
+          //   text1: "Mua dịch vụ thành công!",
+          // });
 
           navigation.navigate("PaymentServiceScreen", {
             paymentInfo: {

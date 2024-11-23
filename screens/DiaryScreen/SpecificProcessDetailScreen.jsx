@@ -1,7 +1,15 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import ImageView from "react-native-image-viewing";
-import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { formatDate } from "../../utils";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const actionDetail = {
   title: "Chuẩn bị nhà màng",
@@ -11,10 +19,25 @@ const actionDetail = {
   endDate: "23/02/2022",
 };
 
-const SpecificProcessDetailScreen = ({ route }) => {
+const SpecificProcessDetailScreen = ({ route, navigation }) => {
   const [visibleImageVIew, setVisibleImageVIew] = useState(false);
   const { processDetail } = route.params;
   console.log("processDetail", JSON.stringify(processDetail));
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ padding: 10 }}
+          onPress={() =>
+            navigation.navigate("WriteDiaryScreen", { diary: processDetail })
+          }
+        >
+          <MaterialCommunityIcons name="pencil-plus" size={24} color="white" />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
@@ -30,6 +53,7 @@ const SpecificProcessDetailScreen = ({ route }) => {
               {formatDate(processDetail.dayFrom, 0)}
             </Text>
           </View>
+
           <View style={styles.diaryInfo}>
             <Text style={styles.infoTitle}>Ngày kết thúc</Text>
             <Text style={styles.infoContent}>

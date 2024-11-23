@@ -9,7 +9,6 @@ const DiaryProgress = ({ diaryProgress }) => {
   const [diaryRender, setDiaryRender] = useState(null);
   useEffect(() => {
     if (diaryProgress) {
-      console.log("diaryProgress newArr", JSON.stringify(diaryProgress));
       const newArr = diaryProgress?.process_technical_specific_stage
         .map((stage, stageIndex) => {
           return stage?.process_technical_specific_stage_content.map(
@@ -19,7 +18,9 @@ const DiaryProgress = ({ diaryProgress }) => {
               dayTo: content.time_end,
               actionTitle: content.title,
               actionDescription: content.content,
-              isDone: contentIndex < 1 ? true : false,
+              isDone: true,
+              process_technical_specific_stage_content_id:
+                content.process_technical_specific_stage_content_id,
             })
           );
         })

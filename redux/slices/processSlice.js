@@ -74,6 +74,20 @@ export const approveSpecificProcess = createAsyncThunk(
   }
 );
 
+export const writeDiary = createAsyncThunk(
+  "processSlice/writeDiary",
+  async (params, { rejectWithValue }) => {
+    try {
+      const { processId, formData } = params;
+      const data = await api.post(`/dinaries/${processId}`, formData);
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const processSlice = createSlice({
   name: "processSlice",
   initialState: {
@@ -93,6 +107,16 @@ export const processSlice = createSlice({
         state.loading = false;
       })
       .addCase(createStandardProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(writeDiary.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(writeDiary.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(writeDiary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

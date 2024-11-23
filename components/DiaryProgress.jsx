@@ -1,9 +1,33 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
+import { formatDate, shortenText } from "../utils";
+import { useEffect, useState } from "react";
 
 const DiaryProgress = ({ diaryProgress }) => {
   const navigation = useNavigation();
+  const [diaryRender, setDiaryRender] = useState(null);
+  useEffect(() => {
+    if (diaryProgress) {
+      console.log("diaryProgress newArr", JSON.stringify(diaryProgress));
+      const newArr = diaryProgress?.process_technical_specific_stage
+        .map((stage, stageIndex) => {
+          return stage?.process_technical_specific_stage_content.map(
+            (content, contentIndex) => ({
+              stageTitle: stage.stage_title,
+              dayFrom: content.time_start,
+              dayTo: content.time_end,
+              actionTitle: content.title,
+              actionDescription: content.content,
+              isDone: contentIndex < 1 ? true : false,
+            })
+          );
+        })
+        .flat();
+
+      setDiaryRender(newArr);
+    }
+  }, []);
   return (
     <View style={{ flex: 1, paddingBottom: 30 }}>
       <View style={[styles.progressItemContainer, styles.firstPoint]}>
@@ -13,56 +37,77 @@ const DiaryProgress = ({ diaryProgress }) => {
         </View>
         <View style={styles.diaryAction}></View>
       </View>
-      {diaryProgress.map((progressItem, index) => (
-        <View key={index} style={styles.progressItemContainer}>
-          <View style={styles.diaryTime}>
-            <Text style={styles.stage}>{progressItem.stageTitle}</Text>
-            <Text style={styles.dayTime}>{progressItem.dayFrom}</Text>
-            <Text style={styles.dayTime}>{progressItem.dayTo}</Text>
-          </View>
-          <View style={styles.progress}>
+      {diaryRender &&
+        diaryRender.map((progressItem, index) => (
+          <View key={index} style={styles.progressItemContainer}>
+            <View style={styles.diaryTime}>
+              <Text style={styles.stage}>{progressItem.stageTitle}</Text>
+              <Text style={styles.dayTime}>
+                {formatDate(progressItem.dayFrom, 0)}
+              </Text>
+              {!(progressItem.dayFrom == progressItem.dayTo) && (
+                <Text style={styles.dayTime}>
+                  {formatDate(progressItem.dayTo, 0)}
+                </Text>
+              )}
+            </View>
+            <View style={styles.progress}>
+              <View
+                style={[
+                  styles.progressbar,
+                  progressItem.isDone && styles.doneBackGrColor,
+                ]}
+              ></View>
+              <View
+                style={[
+                  styles.progressPoint,
+                  progressItem.isDone && styles.doneBackGrColor,
+                ]}
+              ></View>
+            </View>
             <View
               style={[
-                styles.progressbar,
-                progressItem.isDone && styles.doneBackGrColor,
+                styles.diaryAction,
+                !progressItem.isDone && { opacity: 0.7 },
               ]}
-            ></View>
-            <View
-              style={[
-                styles.progressPoint,
-                progressItem.isDone && styles.doneBackGrColor,
-              ]}
-            ></View>
-          </View>
-          <View style={styles.diaryAction}>
-            <TouchableRipple
-              style={styles.actionWrapper}
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() => navigation.navigate("DiaryDetailView")}
             >
-              <View>
-                <Text style={styles.actionTitle}>
-                  {progressItem.actionTitle}
-                </Text>
-                <Text style={styles.actionDescription}>
-                  {progressItem.actionDescription}
-                </Text>
-                {progressItem.isDone && progressItem.imageReport.length > 0 && (
-                  <View style={styles.imageReport}>
-                    {progressItem.imageReport.map((image, index1) => (
-                      <Image
-                        style={styles.imageReportItem}
-                        key={`Action${index}Img${index1}`}
-                        source={{ uri: image }}
-                      />
-                    ))}
-                  </View>
-                )}
-              </View>
-            </TouchableRipple>
+              <TouchableRipple
+                style={[
+                  styles.actionWrapper,
+                  !progressItem.isDone && { opacity: 0.7 },
+                ]}
+                rippleColor="rgba(127, 182, 64, 0.2)"
+                onPress={() =>
+                  navigation.navigate("SpecificProcessDetailScreen", {
+                    processDetail: progressItem,
+                  })
+                }
+              >
+                <View>
+                  <Text style={[styles.actionTitle]}>
+                    {progressItem.actionTitle}
+                  </Text>
+                  <Text style={[styles.actionDescription]}>
+                    {shortenText(progressItem.actionDescription, 100)}
+                  </Text>
+                  {progressItem.isDone &&
+                    progressItem?.imageReport &&
+                    progressItem?.imageReport.length > 0 && (
+                      <View style={styles.imageReport}>
+                        {progressItem.imageReport.map((image, index1) => (
+                          <Image
+                            style={styles.imageReportItem}
+                            key={`Action${index}Img${index1}`}
+                            source={{ uri: image }}
+                          />
+                        ))}
+                      </View>
+                    )}
+                </View>
+              </TouchableRipple>
+            </View>
           </View>
-        </View>
-      ))}
+        ))}
     </View>
   );
 };

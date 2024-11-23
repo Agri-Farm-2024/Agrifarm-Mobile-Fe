@@ -32,7 +32,7 @@ const StandardProcessSchema = Yup.object().shape({
 
 const PAGE_SIZE = 20;
 
-export default function CreateStandardProcessScreen() {
+export default function CreateStandardProcessScreen({ navigation }) {
   const [openStandardProcess, setOpenStandardProcess] = useState(false);
   const [plantSeasonOptions, setPlantSeasonOptions] = useState([]);
   const [pageNumberPlantSeason, setPageNumberPlantSeason] = useState(1);
@@ -154,6 +154,7 @@ export default function CreateStandardProcessScreen() {
               type: "success",
               text1: "Tạo quy trình thành công!",
             });
+            navigation.goBack();
           }
         })
         .catch((error) => {

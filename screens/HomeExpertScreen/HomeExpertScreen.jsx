@@ -139,7 +139,7 @@ function HomeExpertScreen({ navigation }) {
 
             <View style={styles.iconContainer}>
               <TouchableOpacity
-                onPress={() => console.log("press")}
+                onPress={() => navigation.navigate("DiaryScreen")}
                 style={styles.iconButton}
               >
                 <MaterialCommunityIcons

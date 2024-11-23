@@ -713,8 +713,9 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                       style={{
                         marginTop: 10,
                         borderRadius: 7,
+                        borderStyle: "dashed",
                       }}
-                      mode="contained"
+                      mode="outlined"
                       onPress={() =>
                         addInputBlock(stage.process_technical_specific_stage_id)
                       }
@@ -1000,12 +1001,23 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                             value={input.content}
                             onValueChange={(text) => {
                               console.log("Text change", text);
-                              let newArr = stages;
-                              newArr[
-                                indexStage
-                              ].process_technical_specific_stage_content[
-                                inputIndex
-                              ].content = text;
+                              let newArr = [...stages];
+
+                              let updatedStage = { ...newArr[indexStage] };
+
+                              let updatedContent = [
+                                ...updatedStage.process_technical_specific_stage_content,
+                              ];
+
+                              updatedContent[inputIndex] = {
+                                ...updatedContent[inputIndex],
+                                content: text,
+                              };
+
+                              updatedStage.process_technical_specific_stage_content =
+                                updatedContent;
+
+                              newArr[indexStage] = updatedStage;
                               setStages([...newArr]);
                             }}
                             placeholder="Nội dung"

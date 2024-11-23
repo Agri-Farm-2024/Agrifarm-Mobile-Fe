@@ -3,7 +3,9 @@ import {
   RichText,
   TenTapStartKit,
   Toolbar,
+  useBridgeState,
   useEditorBridge,
+  useEditorContent,
 } from "@10play/tentap-editor";
 import React, { useEffect, useRef } from "react";
 import {
@@ -15,14 +17,7 @@ import {
 
 const TextEditor = ({ onValueChange, value, placeholder }) => {
   const editor = useEditorBridge({
-    autofocus: true,
-    avoidIosKeyboard: true,
     initialContent: "",
-    onChange: async () => {
-      const text = await editor.getHTML(); // Await the resolved value of getText()
-      console.log("Editor changed", text);
-      onValueChange(text);
-    },
     bridgeExtensions: [
       ...TenTapStartKit,
       PlaceholderBridge.configureExtension({
@@ -31,19 +26,23 @@ const TextEditor = ({ onValueChange, value, placeholder }) => {
     ],
   });
 
+  const content = useEditorContent(editor, { type: "html" });
+  const editorState = useBridgeState(editor);
   useEffect(() => {
-    let timeoutId;
-
-    if (value != editor.getHTML()) {
-      console.log("set text when value is different", value);
-
-      timeoutId = setTimeout(() => {
-        editor.setContent(value);
-      }, 1000);
+    if (!content || content == "") {
+      return;
     }
+    console.log("content changed", content);
+    onValueChange(content);
+  }, [content]);
 
-    return () => clearTimeout(timeoutId);
-  }, [value]);
+  useEffect(() => {
+    if (!editorState.isReady) {
+      return;
+    }
+    console.log("value change", value, content);
+    editor.setContent(value);
+  }, [editorState.isReady]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -65,7 +64,6 @@ const TextEditor = ({ onValueChange, value, placeholder }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "red",
   },
   editor: {
     position: "relative",

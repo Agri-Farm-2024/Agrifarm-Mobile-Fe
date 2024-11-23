@@ -6,12 +6,12 @@ import { View } from "react-native";
 
 const diaryTabs = [
   {
-    key: "history",
-    label: "Lịch sử canh tác",
-  },
-  {
     key: "process",
     label: "Quy trình",
+  },
+  {
+    key: "diary",
+    label: "Nhật ký",
   },
 ];
 

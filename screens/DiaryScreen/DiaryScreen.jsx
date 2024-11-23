@@ -1,6 +1,12 @@
 import { MaterialIcons } from "@expo/vector-icons";
+import { useEffect, useState } from "react";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { FAB, TouchableRipple } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import { getSpecificProcess } from "../../redux/slices/processSlice";
+import { useIsFocused } from "@react-navigation/core";
+import { getSpecificProcessSelector } from "../../redux/selectors";
+import { formatDate } from "../../utils";
 
 const diaryList = [
   {
@@ -25,54 +31,145 @@ const diaryList = [
   },
 ];
 
+const PAGE_SIZE = 30;
+
 const DiaryScreen = ({ navigation }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [pageNumber, setPageNumber] = useState(1);
+  const isFocused = useIsFocused();
+
+  const dispatch = useDispatch();
+
+  const specificProcessSelector = useSelector(getSpecificProcessSelector);
+  console.log(
+    "specificProcessSelector",
+    JSON.stringify(specificProcessSelector)
+  );
+
+  useEffect(() => {
+    try {
+      if (isFocused) {
+        const formData = {
+          page_index: 1,
+          page_size: PAGE_SIZE,
+          status: "active",
+        };
+        dispatch(getSpecificProcess(formData));
+      }
+    } catch (error) {
+      console.log("Error fetch specific process: " + JSON.stringify(error));
+    }
+  }, [isFocused]);
+
+  const handleScroll = (event) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const paddingToBottom = 10;
+    if (
+      layoutMeasurement.height + contentOffset.y >=
+        contentSize.height - paddingToBottom &&
+      !isLoading
+    ) {
+      //don't load more if the page number is equal to the total page
+      if (
+        specificProcessSelector?.pagination?.total_page &&
+        pageNumber == specificProcessSelector?.pagination?.total_page
+      ) {
+        return;
+      }
+      loadMorePosts();
+    }
+  };
+
+  const loadMorePosts = () => {
+    try {
+      setIsLoading(true);
+      setPageNumber((prevState) => prevState + 1);
+      console.log("Load more process...");
+      const formData = {
+        pageNumber: pageNumber + 1,
+        pageSize: PAGE_SIZE,
+        status: "active",
+      };
+      dispatch(getSpecificProcess(formData)).then((response) => {
+        console.log("load more process", JSON.stringify(response));
+        setIsLoading(false);
+      });
+    } catch (error) {
+      setIsLoading(false);
+      console.log("Error load more specific process", error);
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {diaryList.map((diary, index) => (
-            <TouchableRipple
-              key={index}
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() =>
-                navigation.navigate("DiaryActionScreen", {
-                  diaryTitle: diary.title,
-                })
-              }
-              style={styles.diaryContainer}
-            >
-              <>
-                <View style={styles.contentWrapper}>
-                  <Text style={styles.title}>{diary.title}</Text>
-                  <Text style={styles.plantType}>{diary.plantType}</Text>
-                  <Text
-                    style={[
-                      styles.status,
-                      diary.status == "ongoing" && { color: "#FFA756" },
-                      diary.status == "cancel" && { color: "#D91515" },
-                    ]}
-                  >
-                    {diary.status == "ongoing" && "Đang thực hiện"}
-                    {diary.status == "cancel" && "Đã huỷ"}
-                    {diary.status == "done" && "Đã hoàn thành"}
-                  </Text>
-                </View>
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={24}
-                  color="#707070"
-                />
-              </>
-            </TouchableRipple>
-          ))}
+          {specificProcessSelector?.process_technical_specific &&
+            specificProcessSelector.process_technical_specific.map(
+              (diary, index) => (
+                <TouchableRipple
+                  key={index}
+                  rippleColor="rgba(127, 182, 64, 0.2)"
+                  onPress={() =>
+                    navigation.navigate("DiaryActionScreen", {
+                      diary: diary,
+                    })
+                  }
+                  style={styles.diaryContainer}
+                >
+                  <>
+                    <View style={styles.contentWrapper}>
+                      <Text style={styles.title}>{`${
+                        diary?.process_technical_standard?.plant_season?.plant
+                          ?.name || ""
+                      } ${formatDate(
+                        diary?.process_technical_specific_stage[0].time_start,
+                        2
+                      )} - ${formatDate(
+                        diary?.process_technical_specific_stage[
+                          diary?.process_technical_specific_stage?.length - 1
+                        ].time_end,
+                        2
+                      )}`}</Text>
+                      <Text style={styles.plantType}>
+                        {" "}
+                        {diary.is_public ? "Công khai" : "Riêng tư"}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.status,
+                          diary.status == "active" &&
+                            diary.service_specific.status == "expired" && {
+                              color: "#74483F",
+                            },
+                        ]}
+                      >
+                        {diary.status == "pending" && "Chờ duyệt"}
+                        {diary.status == "active" &&
+                          diary.service_specific.status == "used" &&
+                          "Đang sử dụng"}
+                        {diary.status == "active" &&
+                          diary.service_specific.status == "expired" &&
+                          "Đã hoàn thành"}
+                      </Text>
+                    </View>
+                    <MaterialIcons
+                      name="arrow-forward-ios"
+                      size={24}
+                      color="#707070"
+                    />
+                  </>
+                </TouchableRipple>
+              )
+            )}
         </View>
       </ScrollView>
-      <FAB
+      {/* <FAB
         color="#fff"
         icon="plus"
         style={styles.fab}
         onPress={() => navigation.navigate("CreateDiaryScreen")}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

@@ -59,6 +59,8 @@ const TransactionScreen = () => {
               <Text style={styles.textValue}>
                 {transactionData.service_specific
                   ? transactionData.service_specific.booking_land?.land?.name
+                  : transactionData.extend
+                  ? transactionData.extend.booking_land?.land?.name
                   : transactionData?.booking_land?.land?.name}
               </Text>
             </View>
@@ -80,6 +82,16 @@ const TransactionScreen = () => {
                   -{" "}
                   {formatDateToDDMMYYYY(
                     transactionData.service_specific?.booking_land?.time_end
+                  )}
+                </Text>
+              ) : transactionData.extend ? (
+                <Text style={styles.textValue}>
+                  {formatDateToDDMMYYYY(
+                    transactionData.extend?.booking_land?.time_start
+                  )}{" "}
+                  -{" "}
+                  {formatDateToDDMMYYYY(
+                    transactionData.extend?.booking_land?.time_end
                   )}
                 </Text>
               ) : (
@@ -107,6 +119,8 @@ const TransactionScreen = () => {
                   ? "Thuê đất"
                   : transactionData.purpose === "service"
                   ? "Dịch vụ"
+                  : transactionData.purpose === "extend"
+                  ? "Gia hạn"
                   : "Chưa rõ"}
               </Text>
             </View>

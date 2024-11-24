@@ -22,7 +22,7 @@ import ItemsRequetsPurchase from "./ItemRequest/ItemsRequetsPurchase";
 const RequestListScreen = ({ navigation }) => {
   const [selectedFilter, setSelectedFilter] = useState("land lease");
 
-  return (
+return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       {/* Filter Buttons */}
       <View style={styles.filterContainer}>

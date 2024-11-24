@@ -119,7 +119,7 @@ const NotificationComponent = () => {
         ).data;
         console.log("Expo Push Token:", token);
       } else {
-        Alert.alert("Must use physical device for Push Notifications");
+        Alert.alert("Dùng máy thật để nhận Notifications");
       }
 
       return token;

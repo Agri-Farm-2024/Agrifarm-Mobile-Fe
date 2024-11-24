@@ -1,22 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { formatDate, formatNumber } from "../../utils";
-import { Button } from "react-native-paper";
+import { Button, Checkbox } from "react-native-paper";
 import { getUserSelector } from "../../redux/selectors";
 import { buyService } from "../../redux/slices/serviceSlice";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ContractServicesDialog from "../../components/ContractServicesDialog/ContractServicesDialog";
 
 export default function PreviewBuyingServiceScreen({ route, navigation }) {
   const { serviceInfo } = route.params;
   console.log("serviceInfo: " + JSON.stringify(serviceInfo));
+  const [visibleContract, setVisibleContract] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   const userSelector = useSelector(getUserSelector);
 
   const dispatch = useDispatch();
 
   const totalPrice =
-    serviceInfo.service_price +
+    (serviceInfo.service_price / 1000) * serviceInfo.acreage_land +
     (serviceInfo.seasonPrice / 1000) * serviceInfo.acreage_land;
 
   const handleBuyService = () => {
@@ -28,6 +31,13 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
         acreage_land: serviceInfo.acreage_land,
         time_start: formatDate(serviceInfo.time_start, 1),
       };
+      if (!isChecked) {
+        Toast.show({
+          type: "error",
+          text1: "Hãy đồng ý với điều khoản!",
+        });
+        return;
+      }
       console.log("FormData buy service: " + formData);
       dispatch(buyService(formData)).then((response) => {
         console.log("Buy service response", JSON.stringify(response));
@@ -150,6 +160,22 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
                 </View>
               </View>
             </View>
+            <View style={styles.checkboxContainer}>
+              <Checkbox
+                status={isChecked ? "checked" : "unchecked"}
+                onPress={() => setIsChecked(!isChecked)}
+                color="#7fb640"
+              />
+              <Text style={styles.checkboxText}>
+                Tôi đã đọc và đồng ý với{" "}
+                <Text
+                  style={styles.checkboxLink}
+                  onPress={() => setVisibleContract(true)}
+                >
+                  các điều khoản của hợp đồng
+                </Text>
+              </Text>
+            </View>
           </ScrollView>
 
           <View style={styles.buttonContainer}>
@@ -161,6 +187,10 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
               Tiến hành thanh toán
             </Button>
           </View>
+          <ContractServicesDialog
+            isVisible={visibleContract}
+            onDismiss={() => setVisibleContract(false)}
+          />
         </View>
       )}
     </>
@@ -218,5 +248,19 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#7fb640",
     borderRadius: 5,
+  },
+
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  checkboxText: {
+    flex: 1,
+    paddingHorizontal: 10,
+  },
+  checkboxLink: {
+    color: "#7fb640",
+    fontWeight: "bold",
   },
 });

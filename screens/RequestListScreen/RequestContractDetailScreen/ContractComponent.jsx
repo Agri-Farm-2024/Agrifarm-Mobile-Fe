@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
@@ -8,8 +8,10 @@ import {
   formatNumber,
 } from "../../../utils";
 import EmptyComponent from "../../../components/EmptyComponent/EmptyComponent";
+import { DownloadPDF } from "../../../components/DownloadPDF/DownloadPDF";
 
 const ContractComponent = ({ contract, isDownload }) => {
+  const downLoadRef = useRef();
   const [textSize, setTextSize] = useState(16);
   console.log(contract);
 
@@ -52,7 +54,11 @@ const ContractComponent = ({ contract, isDownload }) => {
         {isDownload && (
           <Button
             mode="contained"
-            onPress={() => console.log("press")}
+            onPress={() => {
+              if (downLoadRef.current) {
+                downLoadRef.current.handleDownloadPdf();
+              }
+            }}
             style={{
               borderColor: "orange",
               backgroundColor: "white",
@@ -174,6 +180,7 @@ const ContractComponent = ({ contract, isDownload }) => {
           Bên cho thuê đất{"\n"}(Ký, ghi rõ họ tên, đóng dấu nếu có)
         </Text>
       </ScrollView>
+      <DownloadPDF ref={downLoadRef} />
     </View>
   );
 };

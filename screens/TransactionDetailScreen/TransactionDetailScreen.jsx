@@ -57,7 +57,9 @@ const TransactionScreen = () => {
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Mảnh đất</Text>
               <Text style={styles.textValue}>
-                {transactionData?.booking_land?.land?.name}
+                {transactionData.service_specific
+                  ? transactionData.service_specific.booking_land?.land?.name
+                  : transactionData?.booking_land?.land?.name}
               </Text>
             </View>
             <View style={styles.infoRow}>
@@ -70,13 +72,27 @@ const TransactionScreen = () => {
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Thời gian thuê</Text>
-              <Text style={styles.textValue}>
-                {formatDateToDDMMYYYY(
-                  transactionData?.booking_land?.time_start
-                )}{" "}
-                -{" "}
-                {formatDateToDDMMYYYY(transactionData?.booking_land?.time_end)}
-              </Text>
+              {transactionData.service_specific ? (
+                <Text style={styles.textValue}>
+                  {formatDateToDDMMYYYY(
+                    transactionData.service_specific?.booking_land?.time_start
+                  )}{" "}
+                  -{" "}
+                  {formatDateToDDMMYYYY(
+                    transactionData.service_specific?.booking_land?.time_end
+                  )}
+                </Text>
+              ) : (
+                <Text style={styles.textValue}>
+                  {formatDateToDDMMYYYY(
+                    transactionData?.booking_land?.time_start
+                  )}{" "}
+                  -{" "}
+                  {formatDateToDDMMYYYY(
+                    transactionData?.booking_land?.time_end
+                  )}
+                </Text>
+              )}
             </View>
           </View>
         </View>
@@ -88,7 +104,9 @@ const TransactionScreen = () => {
               <Text style={styles.textLabel}>Loại thanh toán</Text>
               <Text style={styles.textValue}>
                 {transactionData.purpose === "booking_land"
-                  ? "Gia hạn thuê đất"
+                  ? "Thuê đất"
+                  : transactionData.purpose === "service"
+                  ? "Dịch vụ"
                   : "Chưa rõ"}
               </Text>
             </View>

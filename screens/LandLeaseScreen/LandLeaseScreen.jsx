@@ -8,6 +8,7 @@ import LandLeaseReview from "./LandLeaseReview/LandLeaseReview";
 import { useDispatch } from "react-redux";
 import { bookingLand } from "../../redux/slices/landSlice";
 import { TouchableOpacity } from "react-native";
+import ContractLandLeaseDialog from "../../components/ContractLandLeaseDialog/ContractLandLeaseDialog";
 
 export default function LandLeaseScreen({ navigation, route }) {
   const { land } = route.params;
@@ -21,6 +22,7 @@ export default function LandLeaseScreen({ navigation, route }) {
     purpose: "",
     startTime: new Date(),
   });
+  const [visibleContract, setVisibleContract] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -155,12 +157,7 @@ export default function LandLeaseScreen({ navigation, route }) {
               Tôi đã đọc và đồng ý với{" "}
               <Text
                 style={styles.checkboxLink}
-                onPress={() =>
-                  navigation.navigate("ReviewContractScreen", {
-                    land: { land },
-                    formData: { formData },
-                  })
-                }
+                onPress={() => setVisibleContract(true)}
               >
                 các điều khoản của hợp đồng
               </Text>
@@ -201,6 +198,10 @@ export default function LandLeaseScreen({ navigation, route }) {
           )}
         </View>
       </View>
+      <ContractLandLeaseDialog
+        isVisible={visibleContract}
+        onDismiss={() => setVisibleContract(false)}
+      />
     </ScrollView>
   );
 }

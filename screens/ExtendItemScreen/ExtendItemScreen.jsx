@@ -57,7 +57,7 @@ export default function ExtendItemScreen({ route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Ngày bắt đầu gia hạn:</Text>
           <Text style={styles.value}>
-            {formatDateToDDMMYYYY(booking?.time_end)}
+            {formatDateToDDMMYYYY(extend?.time_start)}
           </Text>
         </View>
         <Divider style={styles.divider} />

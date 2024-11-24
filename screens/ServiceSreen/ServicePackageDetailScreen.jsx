@@ -264,11 +264,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           type: "error",
           text1: "Diện tích canh tác phải lớn hơn 1000 m²!",
         });
-      } else if (!isChecked) {
-        Toast.show({
-          type: "error",
-          text1: "Hãy chọn đồng ý với điều khoản!",
-        });
       } else {
         const bookingObject =
           bookingSelector?.bookings &&
@@ -457,28 +452,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                   ></TextInput>
                 </View>
               </View>
-              <View style={styles.checkboxContainer}>
-                <Checkbox
-                  status={isChecked ? "checked" : "unchecked"}
-                  onPress={() => setIsChecked(!isChecked)}
-                  color="#7fb640"
-                />
-                <Text style={styles.checkboxText}>
-                  Tôi đã đọc và đồng ý với{" "}
-                  <Text
-                    style={styles.checkboxLink}
-                    onPress={
-                      () => setVisibleContract(true)
-                      // navigation.navigate("ReviewContractScreen", {
-                      //   land: { land },
-                      //   formData: { formData },
-                      // })
-                    }
-                  >
-                    các điều khoản của hợp đồng
-                  </Text>
-                </Text>
-              </View>
               <TouchableOpacity
                 style={styles.submitButton}
                 onPress={handleSubmit}
@@ -489,10 +462,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-      <ContractServicesDialog
-        isVisible={visibleContract}
-        onDismiss={() => setVisibleContract(false)}
-      />
     </SafeAreaView>
   );
 };

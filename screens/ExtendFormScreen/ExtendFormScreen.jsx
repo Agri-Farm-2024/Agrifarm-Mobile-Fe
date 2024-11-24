@@ -6,11 +6,13 @@ import { formatDate, formatDateToDDMMYYYY } from "../../utils";
 import { bookingExtendLand } from "../../redux/slices/landSlice";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
+import ContractExtendDialog from "../../components/ContractExtendDialog/ContractExtendDialog";
 
 export default function ExtendFormScreen({ route }) {
   const [totalMonth, setTotalMonth] = useState("");
   const [totalMoney, setTotalMoney] = useState(0);
   const [isAgreed, setIsAgreed] = useState(false);
+  const [visibleContract, setVisibleContract] = useState(false);
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const { booking } = route.params;
@@ -34,18 +36,27 @@ export default function ExtendFormScreen({ route }) {
       visibilityTime: 0,
       autoHide: false,
     });
-    if (!isAgreed) {
-      Toast.show({
-        type: "info",
-        text1: "Vui lòng đồng ý với các điều khoản.",
-      });
-      return;
-    }
 
     if (!totalMonth) {
       Toast.show({
         type: "info",
         text1: "Vui lòng nhập số tháng.",
+      });
+      return;
+    }
+
+    if (typeof parseInt(totalMonth) !== "number") {
+      Toast.show({
+        type: "info",
+        text1: "Vui lòng nhập số tháng là số.",
+      });
+      return;
+    }
+
+    if (!isAgreed) {
+      Toast.show({
+        type: "info",
+        text1: "Vui lòng đồng ý với các điều khoản.",
       });
       return;
     }
@@ -156,6 +167,7 @@ export default function ExtendFormScreen({ route }) {
             value={formatDateToDDMMYYYY(booking?.time_end)}
             disabled
             style={styles.input}
+            
           />
         </View>
         <Text style={styles.label}>Số tháng muốn gia hạn:</Text>
@@ -183,13 +195,7 @@ export default function ExtendFormScreen({ route }) {
             Tôi đã đọc và đồng ý với{" "}
             <Text
               style={styles.checkboxLink}
-              onPress={() =>
-                // navigation.navigate("ReviewContractScreen", {
-                //   land: { land },
-                //   formData: { formData },
-                // })
-                console.log("press")
-              }
+              onPress={() => setVisibleContract(true)}
             >
               các điều khoản của hợp đồng
             </Text>
@@ -203,6 +209,10 @@ export default function ExtendFormScreen({ route }) {
         >
           GIA HẠN
         </Button>
+        <ContractExtendDialog
+          isVisible={visibleContract}
+          onDismiss={() => setVisibleContract(false)}
+        />
       </ScrollView>
     </SafeAreaView>
   );

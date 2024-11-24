@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -19,8 +19,10 @@ import {
 } from "../../../utils";
 import ContractComponent from "./ContractComponent";
 import { MaterialIcons } from "@expo/vector-icons";
+import { DownloadPDF } from "../../../components/DownloadPDF/DownloadPDF";
 
 export default function RequestContractDetailScreen({ navigation, route }) {
+  const downLoadRef = useRef();
   const [modalVisible, setModalVisible] = useState(false);
 
   const { requestID } = route.params;
@@ -81,7 +83,11 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Giá trị hợp đồng:</Text>
           <Text style={styles.value}>
-            {booking?.total_price && formatNumber(booking?.total_price)} VND
+            {formatNumber(
+              booking?.total_month * booking?.price_per_month +
+                booking?.price_deposit
+            )}{" "}
+            VND
           </Text>
         </View>
         <Divider style={styles.divider} />

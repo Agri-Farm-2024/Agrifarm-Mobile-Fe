@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { convertImageURL, formatDate } from "../../utils";
 
 const actionDetail = {
   title: "Chuẩn bị nhà màng",
@@ -25,61 +26,86 @@ const actionDetail = {
   ],
 };
 
-const DiaryDetailView = () => {
+const DiaryDetailView = ({ route }) => {
+  const { diaryDetail } = route.params;
+  console.log("diaryDetail", diaryDetail);
   const [visibleImageVIew, setVisibleImageVIew] = useState(false);
   const [imageIndexSelected, setImageIndexSelected] = useState(0);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView>
-        <View style={styles.container}>
-          <Text style={styles.title}>{actionDetail.title}</Text>
-          <Text style={styles.description}>{actionDetail.description}</Text>
+        {!diaryDetail && (
+          <Text style={{ fontSize: 16, fontWeight: "bold", color: "#707070" }}>
+            Không tìm thấy nhật ký
+          </Text>
+        )}
+        {diaryDetail && (
+          <View style={styles.container}>
+            <Text style={styles.title}>{diaryDetail.actionTitle}</Text>
 
-          <View style={styles.diaryInfo}>
-            <Text style={styles.infoTitle}>Ngày bắt đầu</Text>
-            <Text style={styles.infoContent}>{actionDetail.startDate}</Text>
-          </View>
-          <View style={styles.diaryInfo}>
-            <Text style={styles.infoTitle}>Ngày kết thúc</Text>
-            <Text style={styles.infoContent}>{actionDetail.endDate}</Text>
-          </View>
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Ngày bắt đầu</Text>
+              <Text style={styles.infoContent}>
+                {formatDate(diaryDetail.dayFrom, 0)}
+              </Text>
+            </View>
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Ngày kết thúc</Text>
+              <Text style={styles.infoContent}>
+                {formatDate(diaryDetail.dayTo, 0)}
+              </Text>
+            </View>
 
-          <Text style={styles.header}>Ghi nhật ký</Text>
-          <View style={styles.diaryInfo}>
-            <Text style={styles.infoTitle}>Người ghi</Text>
-            <Text style={styles.infoContent}>{actionDetail.diaryAuthor}</Text>
-          </View>
-          <View style={styles.diaryInfo}>
-            <Text style={styles.infoTitle}>Ngày ghi</Text>
-            <Text style={styles.infoContent}>{actionDetail.diaryDate}</Text>
-          </View>
+            <Text style={styles.header}>Ghi nhật ký</Text>
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Ghi chú</Text>
+              <Text style={styles.infoContent}>{diaryDetail?.diaryNote}</Text>
+            </View>
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Người ghi</Text>
+              <Text style={styles.infoContent}>
+                {diaryDetail?.diaryAuthor || ""}
+              </Text>
+            </View>
 
-          <Text style={styles.header}>Hình ảnh báo cáo</Text>
-          <View style={styles.imageReportContainer}>
-            {actionDetail.imageReport.map((image, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setImageIndexSelected(index);
-                  setVisibleImageVIew(true);
-                }}
-              >
-                <Image
-                  key={`Img-${index}`}
-                  style={styles.imageReportItem}
-                  source={{ uri: image }}
-                />
-              </TouchableOpacity>
-            ))}
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Ngày ghi</Text>
+              <Text style={styles.infoContent}>
+                {formatDate(diaryDetail.diaryDate, 0)}
+              </Text>
+            </View>
+
+            <Text style={styles.header}>Hình ảnh báo cáo</Text>
+            <View style={styles.imageReportContainer}>
+              {diaryDetail.imageReport &&
+                diaryDetail.imageReport.length > 0 &&
+                diaryDetail.imageReport.map((image, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => {
+                      setImageIndexSelected(index);
+                      setVisibleImageVIew(true);
+                    }}
+                  >
+                    <Image
+                      key={`Img-${index}`}
+                      style={styles.imageReportItem}
+                      source={{ uri: convertImageURL(image.url_link) }}
+                    />
+                  </TouchableOpacity>
+                ))}
+            </View>
+            <ImageView
+              images={diaryDetail.imageReport.map((image) => ({
+                uri: convertImageURL(image.url_link),
+              }))}
+              imageIndex={imageIndexSelected}
+              visible={visibleImageVIew}
+              onRequestClose={() => setVisibleImageVIew(false)}
+            />
           </View>
-          <ImageView
-            images={actionDetail.imageReport.map((image) => ({ uri: image }))}
-            imageIndex={imageIndexSelected}
-            visible={visibleImageVIew}
-            onRequestClose={() => setVisibleImageVIew(false)}
-          />
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -88,12 +114,12 @@ const DiaryDetailView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    padding: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: "bold",
-    paddingVertical: 10,
+    paddingBottom: 10,
     borderBottomColor: "#707070",
     borderBottomWidth: 1,
   },

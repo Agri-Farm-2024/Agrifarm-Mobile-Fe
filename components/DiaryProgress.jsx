@@ -1,32 +1,65 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
-import { formatDate, shortenText } from "../utils";
+import { convertImageURL, formatDate, shortenText } from "../utils";
 import { useEffect, useState } from "react";
 
-const DiaryProgress = ({ diaryProgress }) => {
+const DiaryProgress = ({ diaryProgress, isDiary }) => {
   const navigation = useNavigation();
   const [diaryRender, setDiaryRender] = useState(null);
   useEffect(() => {
     if (diaryProgress) {
-      const newArr = diaryProgress?.process_technical_specific_stage
-        .map((stage, stageIndex) => {
-          return stage?.process_technical_specific_stage_content.map(
-            (content, contentIndex) => ({
-              stageTitle: stage.stage_title,
-              dayFrom: content.time_start,
-              dayTo: content.time_end,
-              actionTitle: content.title,
-              actionDescription: content.content,
-              isDone: true,
-              process_technical_specific_stage_content_id:
-                content.process_technical_specific_stage_content_id,
-            })
-          );
-        })
-        .flat();
+      if (isDiary) {
+        //filter data to show diary
+        const newArr = diaryProgress?.process_technical_specific_stage
+          .map((stage) => {
+            return stage?.process_technical_specific_stage_content.map(
+              (content) => {
+                if (content.dinary_stage) {
+                  return {
+                    stageTitle: stage.stage_title,
+                    dayFrom: content.time_start,
+                    dayTo: content.time_end,
+                    diaryDate: content?.dinary_stage?.created_at,
+                    diaryNote: content?.dinary_stage?.content,
+                    actionQuality: content?.dinary_stage?.quality_report,
+                    actionTitle: content.title,
+                    actionDescription: content.content,
+                    isDone: true,
+                    process_technical_specific_stage_content_id:
+                      content.process_technical_specific_stage_content_id,
+                    imageReport: content?.dinary_stage?.dinaries_link,
+                  };
+                }
+              }
+            );
+          })
+          .flat()
+          .filter((item) => item != null);
+        console.log("newArr", JSON.stringify(newArr));
 
-      setDiaryRender(newArr);
+        setDiaryRender([...newArr]);
+      } else {
+        //filter data to show specific process
+        const newArr = diaryProgress?.process_technical_specific_stage
+          .map((stage, stageIndex) => {
+            return stage?.process_technical_specific_stage_content.map(
+              (content, contentIndex) => ({
+                stageTitle: stage.stage_title,
+                dayFrom: content.time_start,
+                dayTo: content.time_end,
+                actionTitle: content.title,
+                actionDescription: content.content,
+                isDone: content?.dinary_stage ? true : false,
+                process_technical_specific_stage_content_id:
+                  content.process_technical_specific_stage_content_id,
+              })
+            );
+          })
+          .flat();
+        console.log("newArr", JSON.stringify(newArr));
+        setDiaryRender(newArr);
+      }
     }
   }, []);
   return (
@@ -78,11 +111,17 @@ const DiaryProgress = ({ diaryProgress }) => {
                   !progressItem.isDone && { opacity: 0.7 },
                 ]}
                 rippleColor="rgba(127, 182, 64, 0.2)"
-                onPress={() =>
-                  navigation.navigate("SpecificProcessDetailScreen", {
-                    processDetail: progressItem,
-                  })
-                }
+                onPress={() => {
+                  if (isDiary) {
+                    navigation.navigate("DiaryDetailView", {
+                      diaryDetail: progressItem,
+                    });
+                  } else {
+                    navigation.navigate("SpecificProcessDetailScreen", {
+                      processDetail: progressItem,
+                    });
+                  }
+                }}
               >
                 <View>
                   <Text style={[styles.actionTitle]}>
@@ -93,13 +132,13 @@ const DiaryProgress = ({ diaryProgress }) => {
                   </Text>
                   {progressItem.isDone &&
                     progressItem?.imageReport &&
-                    progressItem?.imageReport.length > 0 && (
+                    progressItem?.imageReport?.length > 0 && (
                       <View style={styles.imageReport}>
                         {progressItem.imageReport.map((image, index1) => (
                           <Image
                             style={styles.imageReportItem}
                             key={`Action${index}Img${index1}`}
-                            source={{ uri: image }}
+                            source={{ uri: convertImageURL(image?.url_link) }}
                           />
                         ))}
                       </View>

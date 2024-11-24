@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const api = axios.create({
   baseURL: "https://api.agrifarm.site",
+  // baseURL: "http://192.168.1.10:3333",
 });
 
 api.interceptors.request.use(

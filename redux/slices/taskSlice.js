@@ -42,7 +42,7 @@ export const startTaskByID = createAsyncThunk(
 
       return data.data;
     } catch (error) {
-      console.log("error", error);
+      console.log("error", JSON.stringify(error));
       return rejectWithValue(error.response.data);
     }
   }

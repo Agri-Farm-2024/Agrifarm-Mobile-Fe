@@ -28,7 +28,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.ninhpdse161296.agrifarmmobilefe"
     },
     "web": {
@@ -36,7 +38,7 @@
     },
     "extra": {
       "eas": {
-        "projectId": "2ec38794-f5f4-4f2f-98a6-fe49fc13a9b4"
+        "projectId": "9703f822-39bc-425a-9fb0-c97841639a3a"
       }
     }
   }

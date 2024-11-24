@@ -1,12 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
-import { convertImageURL, formatDate, shortenText } from "../utils";
+import {
+  convertImageURL,
+  formatDate,
+  isFutureDate,
+  shortenText,
+} from "../utils";
 import { useEffect, useState } from "react";
 
 const DiaryProgress = ({ diaryProgress, isDiary }) => {
   const navigation = useNavigation();
   const [diaryRender, setDiaryRender] = useState(null);
+
   useEffect(() => {
     if (diaryProgress) {
       if (isDiary) {
@@ -50,7 +56,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                 dayTo: content.time_end,
                 actionTitle: content.title,
                 actionDescription: content.content,
-                isDone: content?.dinary_stage ? true : false,
+                isDone: isFutureDate(content?.time_start) ? false : true,
                 process_technical_specific_stage_content_id:
                   content.process_technical_specific_stage_content_id,
               })
@@ -62,15 +68,31 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
       }
     }
   }, []);
+
   return (
     <View style={{ flex: 1, paddingBottom: 30 }}>
-      <View style={[styles.progressItemContainer, styles.firstPoint]}>
-        <View style={styles.diaryTime}></View>
-        <View style={styles.progress}>
-          <View style={[styles.progressPoint, styles.doneBackGrColor]}></View>
+      {(!diaryRender || diaryRender?.length == 0) && (
+        <Text
+          style={{
+            fontSize: 16,
+            width: "100%",
+            color: "#707070",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Chưa có nhật ký
+        </Text>
+      )}
+      {diaryRender && (
+        <View style={[styles.progressItemContainer, styles.firstPoint]}>
+          <View style={styles.diaryTime}></View>
+          <View style={styles.progress}>
+            <View style={[styles.progressPoint, styles.doneBackGrColor]}></View>
+          </View>
+          <View style={styles.diaryAction}></View>
         </View>
-        <View style={styles.diaryAction}></View>
-      </View>
+      )}
       {diaryRender &&
         diaryRender.map((progressItem, index) => (
           <View key={index} style={styles.progressItemContainer}>

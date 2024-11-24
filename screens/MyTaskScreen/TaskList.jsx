@@ -198,6 +198,7 @@ const TaskList = ({ taskType }) => {
   const { taskList, loading, error } = useSelector((state) => state.taskSlice);
 
   useEffect(() => {
+    console.log("Fetching follow task type...");
     if (taskType == "Chưa bắt đầu") {
       const newData = taskList.filter(
         (task) =>
@@ -231,7 +232,7 @@ const TaskList = ({ taskType }) => {
         console.log("Fetch task response: " + JSON.stringify(res));
       });
     }
-  }, [taskType, isFocused]);
+  }, [isFocused, taskType]);
 
   const openModal = (task) => {
     setSelectedTask(task);
@@ -346,6 +347,8 @@ const TaskList = ({ taskType }) => {
       >
         {item?.request?.type === "create_process_standard"
           ? "Tạo quy trình kĩ thuật canh tác"
+          : item?.request?.type === "cultivate_process_content"
+          ? "Canh tác và ghi nhật ký"
           : "Hỗ trợ kĩ thuật"}
       </Text>
       {hadnleShowIconTask(item?.request?.status)}

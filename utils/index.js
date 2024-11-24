@@ -126,3 +126,17 @@ export function convertImageURL(relativePath) {
   console.log(relativePath);
   return `${api}${relativePath}`;
 }
+
+//compare the date with current date to exact the future date
+export const isFutureDate = (date1) => {
+  const dateObj1 = new Date(date1);
+  const currentDate = Date.now();
+  console.log("date1: " + date1);
+  if (dateObj1 > currentDate) {
+    console.log("Date in future");
+    return true;
+  } else {
+    return false;
+  }
+  return false;
+};

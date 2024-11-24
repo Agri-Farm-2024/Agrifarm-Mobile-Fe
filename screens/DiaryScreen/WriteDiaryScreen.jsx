@@ -92,63 +92,67 @@ const WriteDiaryScreen = ({ route, navigation }) => {
   };
 
   const handleWriteDinary = async (values) => {
-    console.log("submit value", values);
-    let uploadedImages = null;
-    if (imageReports.length > 0) {
-      console.log("Upload images...");
-      uploadedImages = await Promise.all(
-        imageReports.map(async (file, index) => {
-          const formData = new FormData();
-          console.log("file add formData", {
-            uri: file.uri,
-            name: file.fileName,
-            type: file.mimeType,
+    try {
+      console.log("submit value", values);
+      let uploadedImages = null;
+      if (imageReports.length > 0) {
+        console.log("Upload images...");
+        uploadedImages = await Promise.all(
+          imageReports.map(async (file, index) => {
+            const formData = new FormData();
+            console.log("file add formData", {
+              uri: file.uri,
+              name: file.fileName,
+              type: file.mimeType,
+            });
+            formData.append("file", {
+              uri: file.uri,
+              name: file.fileName || `image_${index}.jpg`,
+              type: file.mimeType || "image/jpeg",
+            });
+            const response = await uploadFile(formData);
+            console.log("upload image", response);
+            return response.metadata.folder_path;
+          })
+        );
+      }
+      const params = {
+        processId: diary.process_technical_specific_stage_content_id,
+        formData: {
+          content: values.actionDescription,
+          quality_report: values.quality,
+          dinaries_image:
+            uploadedImages && uploadedImages?.length > 0
+              ? uploadedImages.map((image) => ({
+                  url_link: image,
+                  type: "image",
+                }))
+              : null,
+        },
+      };
+
+      console.log("params write dinary", JSON.stringify(params));
+      dispatch(writeDiary(params)).then((response) => {
+        console.log("Response write diary", JSON.stringify(response));
+
+        if (response.payload.statusCode != 201) {
+          Toast.show({
+            type: "error",
+            text1: "Ghi nhật ký không thành công!",
           });
-          formData.append("file", {
-            uri: file.uri,
-            name: file.fileName || `image_${index}.jpg`,
-            type: file.mimeType || "image/jpeg",
+        }
+
+        if (response.payload.statusCode == 201) {
+          Toast.show({
+            type: "success",
+            text1: "Ghi nhật ký thành công!",
           });
-          const response = await uploadFile(formData);
-          console.log("upload image", response);
-          return response.metadata.folder_path;
-        })
-      );
+          navigation.goBack();
+        }
+      });
+    } catch (error) {
+      console.log("Error write dinary", error);
     }
-    const params = {
-      processId: diary.process_technical_specific_stage_content_id,
-      formData: {
-        content: values.actionDescription,
-        quality_report: values.quality,
-        dinaries_image:
-          uploadedImages && uploadedImages?.length > 0
-            ? uploadedImages.map((image) => ({
-                url_link: image,
-                type: "image",
-              }))
-            : null,
-      },
-    };
-
-    console.log("params write dinary", JSON.stringify(params));
-    dispatch(writeDiary(params)).then((response) => {
-      console.log("Response write diary", JSON.stringify(response));
-
-      if (response.payload.statusCode != 201) {
-        Toast.show({
-          type: "error",
-          text1: "Ghi nhật ký không thành công!",
-        });
-      }
-
-      if (response.payload.statusCode == 201) {
-        Toast.show({
-          type: "success",
-          text1: "Ghi nhật ký thành công!",
-        });
-        navigation.goBack();
-      }
-    });
   };
 
   return (

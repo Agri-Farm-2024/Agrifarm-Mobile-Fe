@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { formatDate } from "../../utils";
+import { formatDate, isFutureDate } from "../../utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const actionDetail = {
@@ -29,10 +29,15 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
         <TouchableOpacity
           style={{ padding: 10 }}
           onPress={() =>
+            !isFutureDate(processDetail?.dayFrom) &&
             navigation.navigate("WriteDiaryScreen", { diary: processDetail })
           }
         >
-          <MaterialCommunityIcons name="pencil-plus" size={24} color="white" />
+          <MaterialCommunityIcons
+            name="pencil-plus"
+            size={24}
+            color={isFutureDate(processDetail?.dayFrom) ? "#707070" : "#fff"}
+          />
         </TouchableOpacity>
       ),
     });

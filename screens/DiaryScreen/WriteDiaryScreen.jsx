@@ -73,7 +73,7 @@ const WriteDiaryScreen = ({ route, navigation }) => {
 
     console.log(result);
     if (!result.canceled) {
-      let imageArr = [...result.assets];
+      let imageArr = [...imageReports, ...result.assets];
       console.log("imageArr", imageArr);
 
       if (imageArr.length > 3) {

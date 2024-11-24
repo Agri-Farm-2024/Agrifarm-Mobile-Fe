@@ -100,18 +100,38 @@ export default function TransactionScreen() {
                     ? "Thanh toán đơn hàng"
                     : transaction.purpose === "service"
                     ? "Thanh toán dịch vụ"
+                    : transaction.purpose === "extend"
+                    ? "Thanh toán gia hạn"
                     : "Chưa rõ"}
                 </Text>
                 <Text style={styles.transactionexpired_at}>
                   Hết hạn: {formatDateToDDMMYYYY(transaction.expired_at)}
                 </Text>
               </View>
-              <Text style={styles.landName}>
-                Tên mảnh đất:{" "}
-                {transaction?.booking_land?.land?.name
-                  ? transaction?.booking_land?.land?.name
-                  : "Không có"}
-              </Text>
+              {transaction?.booking_land && (
+                <Text style={styles.landName}>
+                  Tên mảnh đất:{" "}
+                  {transaction?.booking_land?.land?.name
+                    ? transaction?.booking_land?.land?.name
+                    : "Không có"}
+                </Text>
+              )}
+              {transaction?.extend && (
+                <Text style={styles.landName}>
+                  Tên mảnh đất:{" "}
+                  {transaction?.extend?.booking_land?.land?.name
+                    ? transaction.extend.booking_land?.land?.name
+                    : "Không có"}
+                </Text>
+              )}
+              {transaction?.service_specific && (
+                <Text style={styles.landName}>
+                  Tên mảnh đất:{" "}
+                  {transaction?.service_specific?.booking_land?.land?.name
+                    ? transaction?.service_specific?.booking_land?.land?.name
+                    : "Không có"}
+                </Text>
+              )}
               <Text style={[styles.transactionAmount]}>
                 Số tiền: {formatNumber(transaction.total_price)} VND
               </Text>

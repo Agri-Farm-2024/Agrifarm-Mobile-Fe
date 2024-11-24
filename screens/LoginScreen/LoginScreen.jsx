@@ -74,6 +74,7 @@ const LoginScreen = ({ navigation }) => {
           Toast.show({
             type: "success",
             text1: "Đăng nhập thành công!",
+            visibilityTime: 1000,
           });
 
           if (res.metadata.user.role === 3) {

@@ -155,12 +155,14 @@ export const ReportTaskScreen = ({ route, navigation }) => {
     if (!result.canceled) {
       let imageArr = [...result.assets];
       console.log("imageArr", imageArr);
-
-      setImageReports(imageArr);
-      Toast.show({
-        type: "success",
-        text1: "Thêm ảnh thành công!",
-      });
+      if (imageArr.length > 3) {
+        Toast.show({
+          type: "error",
+          text1: "Chỉ được chọn tối đa 3 ảnh",
+        });
+      } else {
+        setImageReports(imageArr);
+      }
     }
   };
 
@@ -173,7 +175,16 @@ export const ReportTaskScreen = ({ route, navigation }) => {
 
     if (!result.canceled) {
       console.log("result", result);
-      setVideoReport(result.assets[0]);
+      // Set the file size limit to 20MB (20 * 1024 * 1024 bytes)
+      const fileSizeLimit = 20 * 1024 * 1024;
+      if (result?.assets[0]?.fileSize <= fileSizeLimit) {
+        setVideoReport(result.assets[0]);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Dung lượng video phải dưới 20MB!",
+        });
+      }
     }
   };
 

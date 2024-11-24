@@ -1,5 +1,6 @@
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import DiaryProgress from "../../components/DiaryProgress";
+import { useEffect, useState } from "react";
 
 const diaryContent = [
   {
@@ -96,7 +97,7 @@ const DiaryView = ({ diary }) => {
         showsVerticalScrollIndicator={false}
         style={styles.diaryProgress}
       >
-        <DiaryProgress diaryProgress={diary} />
+        <DiaryProgress isDiary={true} diaryProgress={diary} />
       </ScrollView>
     </SafeAreaView>
   );

@@ -33,9 +33,8 @@ const DiaryAction = ({ route, navigation }) => {
     <SafeAreaView style={{ flex: 1 }}>
       <>
         <DiaryActionTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-        {activeTab === "process" && <DiaryView diary={diary} />}
-        {activeTab === "diary" && <DiaryHistory />}
-        {/* {activeTab === "process" && <DiarySpecificProcess diary={diary} />} */}
+        {activeTab === "process" && <DiarySpecificProcess diary={diary} />}
+        {activeTab === "diary" && <DiaryView diary={diary} />}
       </>
     </SafeAreaView>
   );

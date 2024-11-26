@@ -46,7 +46,7 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
         >
           <Text style={styles.modalTitle}>Chi tiết công việc</Text>
           <Text style={styles.modalText}>
-            Ngày tạo: {formatDateToDDMMYYYY(taskData?.created_at)}
+            Ngày tạo: {new Date(taskData?.created_at).toLocaleString()}
           </Text>
           <Text style={styles.modalText}>
             Mô tả:{" "}
@@ -60,7 +60,7 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             Trạng thái: {filterStatus(taskData?.request?.status)}
           </Text>
           <Text style={styles.modalText}>
-            Phân công bởi: {taskData?.assign_by?.full_name || "Không có"}
+            Phân công bởi: {taskData?.assign_by?.full_name || "Hệ thống"}
           </Text>
 
           <View

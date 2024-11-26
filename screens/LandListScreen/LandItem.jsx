@@ -2,7 +2,11 @@
 
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import { convertImageURL, formatNumber } from "../../utils";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatNumber,
+} from "../../utils";
 import { useNavigation } from "@react-navigation/native";
 
 const LandItem = ({ item }) => {
@@ -18,7 +22,7 @@ const LandItem = ({ item }) => {
       />
 
       <View style={styles.itemDetails}>
-        <Text style={styles.itemTitle}>{item.name}</Text>
+        <Text style={styles.itemTitle}>{capitalizeFirstLetter(item.name)}</Text>
         <Text style={styles.itemDescription}>{item.title}</Text>
         <Text
           style={[

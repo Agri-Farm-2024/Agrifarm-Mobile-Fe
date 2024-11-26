@@ -1,4 +1,9 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, {
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useEffect,
+} from "react";
 import {
   View,
   Text,
@@ -12,7 +17,10 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { formatNumber } from "../../../utils";
+import { capitalizeFirstLetter, formatNumber } from "../../../utils";
+import { getPlantSeasonList } from "../../../redux/slices/plantSlice";
+import { useDispatch, useSelector } from "react-redux";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 // Validation schema with Yup
 // Validation schema with Yup
@@ -35,6 +43,12 @@ const LandLeaseInput = forwardRef((props, ref) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const formikRef = React.useRef();
 
+  const dispatch = useDispatch();
+  const plantSeason = useSelector(
+    (state) => state?.plantSlice?.plantSeason?.plant_seasons
+  );
+  const loading = useSelector((state) => state?.plantSlice?.loading);
+  console.log("plantSeason: " + JSON.stringify(plantSeason));
   // Expose the `submitForm` method to the parent
   useImperativeHandle(ref, () => ({
     submitForm: () => {
@@ -69,97 +83,157 @@ const LandLeaseInput = forwardRef((props, ref) => {
         errors,
         touched,
         setFieldValue,
-      }) => (
-        <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-          keyboardVerticalOffset={80}
-        >
-          <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
-            <Text style={styles.title}>Thông tin yêu cầu</Text>
+      }) => {
+        useEffect(() => {
+          console.log(
+            "handleChange: ",
+            parseInt(new Date(values.startTime).getMonth())
+          );
 
-            <Text>Mảnh đất cần thuê</Text>
-            <TextInput
-              style={styles.input}
-              value={props.land.name}
-              editable={false}
-            />
-            <Text>Tiền thuê mỗi tháng</Text>
-            <TextInput
-              style={styles.input}
-              value={`${formatNumber(props.land.price_booking_per_month)} VND`}
-              editable={false}
-            />
-            <Text>Thời gian bắt đầu</Text>
-            {touched.startTime && errors.startTime && (
-              <Text style={styles.errorText}>{errors.startTime}</Text>
-            )}
-            <TouchableOpacity
-              onPress={() => setShowDatePicker(true)}
-              style={styles.datePicker}
-            >
-              <Text>
-                {startTime.toLocaleDateString("vi-VN", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </Text>
-            </TouchableOpacity>
-            {showDatePicker && (
-              <DateTimePicker
-                value={startTime}
-                mode="date"
-                display="spinner"
-                onChange={(e, selectedDate) =>
-                  handleDateChange(e, selectedDate, setFieldValue)
-                }
-                minimumDate={new Date()} // Set the minimum date to today
+          const startMonth =
+            parseInt(new Date(values.startTime).getMonth()) + 1;
+
+          const params = {
+            page_size: 50,
+            page_index: 1,
+            time_start: startMonth,
+            total_month: parseInt(values.rentalMonths),
+          };
+          dispatch(getPlantSeasonList(params));
+        }, [values.rentalMonths, values.startTime]);
+        return (
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={80}
+          >
+            <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
+              <Text style={styles.title}>Thông tin yêu cầu</Text>
+
+              <Text>Mảnh đất cần thuê</Text>
+              <TextInput
+                style={styles.input}
+                value={props.land.name}
+                editable={false}
               />
-            )}
-            <Text>Số tháng cần thuê</Text>
-            {touched.rentalMonths && errors.rentalMonths && (
-              <Text style={styles.errorText}>{errors.rentalMonths}</Text>
-            )}
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  borderColor:
-                    touched.rentalMonths && errors.rentalMonths
-                      ? "red"
-                      : "#d4d7e3",
-                },
-              ]}
-              onChangeText={handleChange("rentalMonths")}
-              onBlur={handleBlur("rentalMonths")}
-              value={values.rentalMonths}
-              keyboardType="numeric"
-              placeholder="Số tháng cần thuê"
-            />
-            <Text>Mục đích thuê đất</Text>
-            {touched.purpose && errors.purpose && (
-              <Text style={styles.errorText}>{errors.purpose}</Text>
-            )}
-            <TextInput
-              style={[
-                styles.input,
-                {
-                  borderColor:
-                    touched.purpose && errors.purpose ? "red" : "#d4d7e3",
-                },
-              ]}
-              onChangeText={handleChange("purpose")}
-              onBlur={handleBlur("purpose")}
-              value={values.purpose}
-              placeholder="Mục đích thuê đất"
-              multiline // Enable multiline input
-              numberOfLines={4} // Adjust the number of visible lines
-              textAlignVertical="top" // Align text to the top of the TextInput
-            />
-          </ScrollView>
-        </KeyboardAvoidingView>
-      )}
+              <Text>Tiền thuê mỗi tháng</Text>
+              <TextInput
+                style={styles.input}
+                value={`${formatNumber(
+                  props.land.price_booking_per_month
+                )} VND`}
+                editable={false}
+              />
+              <Text>Thời gian bắt đầu</Text>
+              {touched.startTime && errors.startTime && (
+                <Text style={styles.errorText}>{errors.startTime}</Text>
+              )}
+              <TouchableOpacity
+                onPress={() => setShowDatePicker(true)}
+                style={styles.datePicker}
+              >
+                <Text>
+                  {startTime.toLocaleDateString("vi-VN", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </Text>
+              </TouchableOpacity>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={startTime}
+                  mode="date"
+                  display="spinner"
+                  onChange={(e, selectedDate) =>
+                    handleDateChange(e, selectedDate, setFieldValue)
+                  }
+                  minimumDate={new Date()}
+                />
+              )}
+              <Text>Số tháng cần thuê (ít nhất 6 tháng)</Text>
+              {touched.rentalMonths && errors.rentalMonths && (
+                <Text style={styles.errorText}>{errors.rentalMonths}</Text>
+              )}
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    borderColor:
+                      touched.rentalMonths && errors.rentalMonths
+                        ? "red"
+                        : "#d4d7e3",
+                  },
+                ]}
+                onChangeText={handleChange("rentalMonths")}
+                onBlur={handleBlur("rentalMonths")}
+                value={values.rentalMonths}
+                keyboardType="numeric"
+                placeholder="Số tháng cần thuê"
+              />
+
+              <Text>Mục đích thuê đất</Text>
+              {touched.purpose && errors.purpose && (
+                <Text style={styles.errorText}>{errors.purpose}</Text>
+              )}
+              <TextInput
+                style={[
+                  styles.input,
+                  {
+                    borderColor:
+                      touched.purpose && errors.purpose ? "red" : "#d4d7e3",
+                    minHeight: 80,
+                  },
+                ]}
+                onChangeText={handleChange("purpose")}
+                onBlur={handleBlur("purpose")}
+                value={values.purpose}
+                placeholder="Mục đích thuê đất"
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+              <View
+                style={{
+                  marginBottom: 15,
+                }}
+              >
+                <Text>Loại cây phù hợp với thời gian thuê này</Text>
+
+                {plantSeason?.map((season, index) => (
+                  <View
+                    style={{
+                      paddingLeft: 10,
+                    }}
+                    key={index}
+                  >
+                    <View
+                      style={{
+                        marginTop: 15,
+                        borderWidth: 1,
+                        borderColor: "#7fb640",
+                        paddingVertical: 10,
+                        paddingHorizontal: 10,
+                        borderRadius: 20,
+                      }}
+                    >
+                      <Text>
+                        {capitalizeFirstLetter(season?.plant?.name)} -{" "}
+                        {season.type === "in_season"
+                          ? "mùa thuận"
+                          : "mùa nghịch"}{" "}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+                {plantSeason?.length <= 0 && (
+                  <Text>Không có cây nào phù hợp</Text>
+                )}
+              </View>
+            </ScrollView>
+          </KeyboardAvoidingView>
+        );
+      }}
     </Formik>
   );
 });

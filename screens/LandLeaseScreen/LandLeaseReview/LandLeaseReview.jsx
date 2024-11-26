@@ -9,7 +9,7 @@ export default function LandLeaseReview({ formData, land }) {
   const user = useSelector((state) => state.userSlice.userInfo);
   console.log(user);
 
-  const depositMoney =  Number(land.price_booking_per_month) * 2;
+  const depositMoney = Number(land.price_booking_per_month) * 2;
   const totalMoney =
     Number(land.price_booking_per_month) * formData.rentalMonths;
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -10,9 +10,16 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Appbar, Button, FAB, Icon, IconButton } from "react-native-paper";
-import { convertImageURL, formatNumber } from "../../utils";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatNumber,
+} from "../../utils";
 import { MaterialIcons } from "@expo/vector-icons";
 import RenderHTML from "react-native-render-html";
+import { useDispatch, useSelector } from "react-redux";
+import { getPlantListByLandType } from "../../redux/slices/plantSlice";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const data = {
   landID: "MD001",
@@ -53,6 +60,12 @@ export default function LandDetailScreen({ navigation, route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
+  const dispatch = useDispatch();
+  const plants = useSelector((state) => state?.plantSlice?.plantList?.plants);
+  const loading = useSelector((state) => state?.plantSlice?.loading);
+
+  console.log(`Plants ${JSON.stringify(plants)}`);
+
   const { width } = useWindowDimensions();
 
   const openModal = (image) => {
@@ -65,14 +78,28 @@ export default function LandDetailScreen({ navigation, route }) {
     setModalVisible(false);
   };
 
-  console.log(land.url);
+  useEffect(() => {
+    console.log("featch plants");
+    dispatch(
+      getPlantListByLandType({
+        land_type_id: "a0b1d402-1c74-4401-a1be-393c58915119",
+        page_siz: 100,
+        page_index: 1,
+      })
+    );
+  }, [land]);
+
+  if (loading) return <ActivityIndicatorComponent />;
 
   return (
     <View style={styles.container}>
       {/* Header with back button */}
       <Appbar.Header style={{ backgroundColor: "#7fb640" }}>
         <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
-        <Appbar.Content color="#fff" title={`${land.name}`} />
+        <Appbar.Content
+          color="#fff"
+          title={`${capitalizeFirstLetter(land.name)}`}
+        />
       </Appbar.Header>
 
       {/* Content */}
@@ -97,7 +124,9 @@ export default function LandDetailScreen({ navigation, route }) {
 
         {/* Land Details */}
         <View style={styles.section}>
-          <Text style={styles.titleName}>{land.name}</Text>
+          <Text style={styles.titleName}>
+            {capitalizeFirstLetter(land.name)}
+          </Text>
 
           <View
             style={{
@@ -134,6 +163,28 @@ export default function LandDetailScreen({ navigation, route }) {
             {land.status === "booked" ? "Đã thuê" : "Chưa thuê"}
           </Text>
         </View>
+        <Text style={styles.titleName}>Loại cây phù hợp</Text>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={{ marginBottom: 10 }}
+        >
+          {plants?.map((plant, index) => (
+            <View
+              key={index}
+              style={{
+                paddingHorizontal: 20,
+                paddingVertical: 10,
+                borderRadius: 30,
+                borderColor: "#7FB640",
+                borderWidth: 1,
+                marginRight: 10,
+              }}
+            >
+              <Text>{capitalizeFirstLetter(plant?.name)}</Text>
+            </View>
+          ))}
+        </ScrollView>
 
         {/* Descriptions */}
         <View style={styles.section}>

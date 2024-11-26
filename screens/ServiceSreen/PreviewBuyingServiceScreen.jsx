@@ -18,9 +18,13 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
 
   const dispatch = useDispatch();
 
-  const totalPrice =
+  const totalServicePrice =
     (serviceInfo.service_price / 1000) * serviceInfo.acreage_land +
     (serviceInfo.seasonPrice / 1000) * serviceInfo.acreage_land;
+  const serviceDeposit = totalServicePrice * 0.1;
+  const totalPrice = totalServicePrice + serviceDeposit;
+
+  console.log("serviceDeposit: " + JSON.stringify(serviceDeposit));
 
   const handleBuyService = () => {
     try {
@@ -148,6 +152,12 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
                   <Text style={styles.textLabel}>Giá quy trình mùa vụ</Text>
                   <Text style={styles.textValue}>
                     {formatNumber(serviceInfo.seasonPrice)} VND/1000 m²
+                  </Text>
+                </View>
+                <View style={styles.infoRow}>
+                  <Text style={styles.textLabel}>Tiền cọc dịch vụ</Text>
+                  <Text style={styles.textValue}>
+                    {formatNumber(serviceDeposit)} VND
                   </Text>
                 </View>
                 <View style={styles.infoRow}>

@@ -42,6 +42,21 @@ export const getSpecificProcess = createAsyncThunk(
   }
 );
 
+export const getSpecificProcessDetail = createAsyncThunk(
+  "processSlice/getSpecificProcessDetail",
+  async (processId, { rejectWithValue }) => {
+    try {
+      const data = await api.get(
+        `/processes/getDetailProcessSpecific/${processId}`
+      );
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const updateSpecificProcess = createAsyncThunk(
   "processSlice/updateSpecificProcess",
   async (params, { rejectWithValue }) => {
@@ -94,6 +109,7 @@ export const processSlice = createSlice({
     process: {},
     plantSeason: {},
     specificProcess: {},
+    specificProcessDetail: {},
     loading: false,
     error: null,
   },
@@ -167,6 +183,17 @@ export const processSlice = createSlice({
         }
       })
       .addCase(getSpecificProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getSpecificProcessDetail.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getSpecificProcessDetail.fulfilled, (state, action) => {
+        state.loading = false;
+        state.specificProcessDetail = action.payload.metadata;
+      })
+      .addCase(getSpecificProcessDetail.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

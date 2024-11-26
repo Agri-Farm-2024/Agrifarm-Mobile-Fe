@@ -20,4 +20,6 @@ export const landLoadingSelector = (state) => state.landSlice.loading;
 //process
 export const getSpecificProcessSelector = (state) =>
   state.processSlice.specificProcess;
+export const getSpecificProcessDetailSelector = (state) =>
+  state.processSlice.specificProcessDetail;
 export const processLoadingSelector = (state) => state.processSlice.loading;

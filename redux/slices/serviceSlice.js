@@ -19,7 +19,7 @@ export const getListServiceSpecific = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const data = await api.get(
-        `/services/getListServiceSpecific?page_size=10&page_index=1`
+        `/services/getListServiceSpecific?page_size=100&page_index=1`
       );
       return data.data;
     } catch (error) {
@@ -34,6 +34,22 @@ export const buyService = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const data = await api.post(`/services/buyServiceSpecific`, formData);
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const sendSupportService = createAsyncThunk(
+  "serviceSlice/sendSupportService",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const data = await api.post(
+        `/requests/createRequestTechnicalSupport`,
+        formData
+      );
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -82,6 +98,16 @@ export const serviceSlice = createSlice({
         state.loading = false;
       })
       .addCase(buyService.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(sendSupportService.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(sendSupportService.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(sendSupportService.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

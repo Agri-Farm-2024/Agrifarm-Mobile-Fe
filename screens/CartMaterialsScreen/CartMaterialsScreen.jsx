@@ -16,14 +16,14 @@ import {
   increaseQuantity,
   removeFromCart,
 } from "../../redux/slices/cartSlice";
-import { formatNumberToVND } from "../../utils";
+import { convertImageURL, formatNumberToVND } from "../../utils";
 import Toast from "react-native-toast-message";
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
 
 export default function CartMaterialsScreen({ navigation }) {
   const cartItems = useSelector((state) => state.cartSlice.items);
-  const cartBuy = cartItems.filter((item) => item.requestType === "buy");
-  const cartRent = cartItems.filter((item) => item.requestType === "rent");
+  const cartBuy = cartItems.filter((item) => item.type === "buy");
+  const cartRent = cartItems.filter((item) => item.type === "rent");
   const dispatch = useDispatch();
 
   const [checkedBuy, setcheckedBuy] = useState(false);
@@ -33,10 +33,16 @@ export default function CartMaterialsScreen({ navigation }) {
 
   const totalPrice =
     (checkedBuy
-      ? cartBuy.reduce((total, item) => total + item.price * item.quantity, 0)
+      ? cartBuy.reduce(
+          (total, item) => total + item.price_per_piece * item.quantity,
+          0
+        )
       : 0) +
     (checkedRent
-      ? cartRent.reduce((total, item) => total + item.price * item.quantity, 0)
+      ? cartRent.reduce(
+          (total, item) => total + item.price_of_rent * item.quantity,
+          0
+        )
       : 0);
 
   const openMenu = (itemId) => {
@@ -73,18 +79,25 @@ export default function CartMaterialsScreen({ navigation }) {
   };
 
   const renderItem = (item) => (
-    <View key={item.id} style={styles.itemContainer}>
-      <Image source={{ uri: item.image }} style={styles.itemImage} />
+    <View key={item.material_id} style={styles.itemContainer}>
+      <Image
+        source={{ uri: convertImageURL(item.image_material) }}
+        style={styles.itemImage}
+      />
       <View style={styles.itemDetails}>
         <Text style={styles.itemName}>Tên: {item.name}</Text>
         <Text style={styles.itemPrice}>
-          Giá: {formatNumberToVND(item.price)} VND
+          Giá:{" "}
+          {item?.type == "buy"
+            ? formatNumberToVND(item.price_per_piece)
+            : formatNumberToVND(item.price_of_rent)}{" "}
+          VND
         </Text>
         <View style={styles.itemQuantity}>
           <IconButton
             icon="minus"
             size={20}
-            onPress={() => dispatch(decreaseQuantity(item.id))}
+            onPress={() => dispatch(decreaseQuantity(item.material_id))}
             style={styles.iconButton}
             iconColor="#7fb640"
           />
@@ -92,7 +105,7 @@ export default function CartMaterialsScreen({ navigation }) {
           <IconButton
             icon="plus"
             size={20}
-            onPress={() => dispatch(increaseQuantity(item.id))}
+            onPress={() => dispatch(increaseQuantity(item.material_id))}
             style={styles.iconButton}
             iconColor="#7fb640"
           />
@@ -107,13 +120,13 @@ export default function CartMaterialsScreen({ navigation }) {
         }}
       >
         <Menu
-          visible={menuVisibleItem[item.id]}
-          onDismiss={() => closeMenu(item.id)}
+          visible={menuVisibleItem[item.material_id]}
+          onDismiss={() => closeMenu(item.material_id)}
           anchor={
             <IconButton
               icon="dots-vertical"
               size={20}
-              onPress={() => openMenu(item.id)}
+              onPress={() => openMenu(item.material_id)}
               style={styles.menuIcon}
             />
           }
@@ -125,7 +138,7 @@ export default function CartMaterialsScreen({ navigation }) {
                 type: "error",
                 text1: "Đã xóa sản phẩm khỏi giỏ hàng",
               });
-              closeMenu(item.id);
+              closeMenu(item.material_id);
             }}
             title="Xóa"
           />
@@ -271,11 +284,16 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     marginVertical: 10,
-    borderWidth: 1,
+    borderRadius: 7,
     padding: 10,
-    borderColor: "#7FB640",
     alignItems: "center",
     position: "relative",
+    backgroundColor: "#f5f5f5",
+    shadowColor: "rgba(0, 0, 0, 0.5)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   itemImage: {
     width: 100,

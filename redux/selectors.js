@@ -23,3 +23,7 @@ export const getSpecificProcessSelector = (state) =>
 export const getSpecificProcessDetailSelector = (state) =>
   state.processSlice.specificProcessDetail;
 export const processLoadingSelector = (state) => state.processSlice.loading;
+
+//material
+export const getMaterialSelector = (state) => state.materialSlice.material;
+export const materialLoadingSelector = (state) => state.materialSlice.loading;

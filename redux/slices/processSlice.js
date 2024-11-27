@@ -108,8 +108,8 @@ export const processSlice = createSlice({
   initialState: {
     process: {},
     plantSeason: {},
-    specificProcess: {},
-    specificProcessDetail: {},
+    specificProcess: null,
+    specificProcessDetail: null,
     loading: false,
     error: null,
   },

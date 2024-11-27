@@ -4,11 +4,11 @@ import { Button, IconButton, Appbar, Badge } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, clearCart } from "../../redux/slices/cartSlice";
-import { formatNumberToVND } from "../../utils";
+import { convertImageURL, formatNumberToVND } from "../../utils";
 
 export default function MaterialDetailScreen({ route, navigation }) {
-  const { image, name, type, price, requestType, id, quantityByStage } =
-    route.params;
+  const { material } = route.params;
+
   const dispatch = useDispatch();
   const cartCount = useSelector((state) => state.cartSlice.cartCount);
 
@@ -26,12 +26,8 @@ export default function MaterialDetailScreen({ route, navigation }) {
 
   const handleAddToCart = () => {
     const item = {
-      id,
-      name,
-      price,
-      requestType,
-      quantity,
-      image,
+      ...material,
+      quantity: quantity,
     };
     console.log("handleIncrease");
     dispatch(addToCart(item));
@@ -79,18 +75,21 @@ export default function MaterialDetailScreen({ route, navigation }) {
         <Image
           style={styles.imageProduct}
           source={{
-            uri: image,
+            uri: convertImageURL(material?.image_material),
           }}
         />
-        <Text style={styles.nameProduct}>{name}</Text>
-        <Text style={styles.typeProduct}>{type}</Text>
-        <Text style={styles.descProduct}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent in
-          posuere dui. In hac habitasse platea dictumst. Morbi vitae tincidunt
-          leo. Etiam id libero at turpis mollis posuere consectetur.
+        <Text style={styles.nameProduct}>{material?.name}</Text>
+        <Text style={styles.typeProduct}>
+          {material?.type == "buy" ? "Bán" : "Cho thuê"}
         </Text>
-        <Text style={styles.priceProduct}>{formatNumberToVND(price)} VND</Text>
-        {requestType === "request by stage" ? (
+        <Text style={styles.descProduct}>{material?.description}</Text>
+        <Text style={styles.priceProduct}>
+          {material?.type == "buy"
+            ? formatNumberToVND(material?.price_per_piece)
+            : formatNumberToVND(material?.price_of_rent)}{" "}
+          VND
+        </Text>
+        {material?.type == "stage" ? (
           <View>
             <Button
               style={{
@@ -101,7 +100,7 @@ export default function MaterialDetailScreen({ route, navigation }) {
               }}
               mode="contained"
             >
-              Số lượng : {quantityByStage}
+              Số lượng : {material?.total_quantity || 0}
             </Button>
           </View>
         ) : (
@@ -152,8 +151,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     resizeMode: "cover",
-    borderRadius: 10,
-    marginBottom: 5,
+    borderRadius: 7,
   },
   adjustButton: {
     borderColor: "gray",
@@ -168,19 +166,19 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "700",
     color: "#000",
-    marginTop: 40,
+    marginTop: 20,
   },
   typeProduct: {
     fontSize: 14,
     fontWeight: "400",
     color: "#707070",
-    marginTop: 10,
+    marginTop: 5,
   },
   descProduct: {
     fontSize: 15,
     fontWeight: "500",
     color: "#4F4F4F",
-    marginTop: 10,
+    marginTop: 5,
     lineHeight: 24,
   },
   priceProduct: {

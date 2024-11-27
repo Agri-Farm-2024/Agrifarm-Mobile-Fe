@@ -199,10 +199,10 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+    elevation: 5,
     width: "100%",
     paddingVertical: 20,
     paddingHorizontal: 20,
-    elevation: 5,
   },
   contentWrapper: {
     gap: 10,

@@ -1,6 +1,10 @@
 import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import MaterialItem from "../../../components/MaterialItem";
+import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+import { getMaterial } from "../../../redux/slices/materialSlice";
+import { getMaterialSelector } from "../../../redux/selectors";
 
 const data = [
   {
@@ -50,8 +54,26 @@ const data = [
     requestType: "buy",
   },
 ];
+const PAGE_SIZE = 30;
 
 export default function BuyMaterials() {
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+
+  const materialList = useSelector(getMaterialSelector);
+  console.log("materialList", JSON.stringify(materialList));
+  // const loading = useSelector(materialLoadingSelector);
+
+  useEffect(() => {
+    if (isFocused) {
+      const params = {
+        material_type: "buy",
+        page_index: 1,
+        page_size: PAGE_SIZE,
+      };
+      dispatch(getMaterial(params));
+    }
+  }, [isFocused]);
   return (
     <View
       style={{
@@ -59,6 +81,7 @@ export default function BuyMaterials() {
       }}
     >
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           flexDirection: "column",
           alignItems: "center",
@@ -70,20 +93,12 @@ export default function BuyMaterials() {
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
-            paddingHorizontal: 20,
           }}
         >
-          {data.map((item) => (
-            <MaterialItem
-              key={item.id}
-              id={item.id}
-              image={item.image}
-              name={item.name}
-              type={item.type}
-              price={item.price}
-              requestType={item.requestType}
-            />
-          ))}
+          {materialList &&
+            materialList?.materials?.map((item) => (
+              <MaterialItem key={item.material_id} material={item} />
+            ))}
         </View>
       </ScrollView>
     </View>

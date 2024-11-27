@@ -14,11 +14,26 @@ export const getPlantSeasonList = createAsyncThunk(
   }
 );
 
+export const getPlantListByLandType = createAsyncThunk(
+  "plantSlice/getPlantListByLandType",
+  async (params, { rejectWithValue }) => {
+    console.log(params);
+    try {
+      const data = await api.get(`/plants/`, { params });
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const plantSlice = createSlice({
   name: "plantSlice",
   initialState: {
     plant: {},
     plantSeason: {},
+    plantList: [],
     loading: false,
     error: null,
   },
@@ -33,6 +48,17 @@ export const plantSlice = createSlice({
         state.plantSeason = action.payload.metadata;
       })
       .addCase(getPlantSeasonList.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getPlantListByLandType.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getPlantListByLandType.fulfilled, (state, action) => {
+        state.loading = false;
+        state.plantList = action.payload.metadata;
+      })
+      .addCase(getPlantListByLandType.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

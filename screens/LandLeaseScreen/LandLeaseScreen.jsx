@@ -18,7 +18,7 @@ export default function LandLeaseScreen({ navigation, route }) {
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
-    rentalMonths: "",
+    rentalMonths: "6",
     purpose: "",
     startTime: new Date(),
   });

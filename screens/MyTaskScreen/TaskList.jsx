@@ -196,6 +196,7 @@ const TaskList = ({ taskType }) => {
 
   const dispatch = useDispatch();
   const { taskList, loading, error } = useSelector((state) => state.taskSlice);
+  console.log("taskList: " + JSON.stringify(taskList));
 
   useEffect(() => {
     console.log("Fetching follow task type...");
@@ -219,7 +220,7 @@ const TaskList = ({ taskType }) => {
       );
       setTaskList(newData);
     }
-  }, [taskType]);
+  }, [taskType, taskList]);
 
   useEffect(() => {
     if (isFocused) {

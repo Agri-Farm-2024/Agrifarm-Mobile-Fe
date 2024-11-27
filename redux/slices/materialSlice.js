@@ -5,7 +5,7 @@ export const getMaterial = createAsyncThunk(
   "materialSlice/getMaterial",
   async (params, { rejectWithValue }) => {
     try {
-      const data = await api.get(`/materials/getAllMaterial`, params);
+      const data = await api.get(`/materials/getAllMaterial`, { params });
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -17,7 +17,7 @@ export const getMaterial = createAsyncThunk(
 export const materialSlice = createSlice({
   name: "materialSlice",
   initialState: {
-    material: {},
+    material: null,
     loading: false,
     error: null,
   },
@@ -29,7 +29,17 @@ export const materialSlice = createSlice({
       })
       .addCase(getMaterial.fulfilled, (state, action) => {
         state.loading = false;
-        state.material = action.payload;
+        if (action?.payload?.metadata?.pagination?.page_index > 1) {
+          state.material = {
+            materials: [
+              ...state.material.materials,
+              ...action?.payload?.metadata?.materials,
+            ],
+            pagination: action?.payload?.metadata?.pagination,
+          };
+        } else {
+          state.material = action.payload.metadata;
+        }
       })
       .addCase(getMaterial.rejected, (state, action) => {
         state.loading = false;

@@ -1,5 +1,19 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { api } from "../../services/api";
+
+export const buyMaterial = createAsyncThunk(
+  "materialSlice/buyMaterial",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const data = await api.post(`/materials/buyMaterial`, formData);
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const initialState = {
   cartCount: 0,
@@ -14,7 +28,7 @@ export const cartSlice = createSlice({
   reducers: {
     addToCart: (state, action) => {
       const existingItemIndex = state.items.findIndex(
-        (item) => item.id === action.payload.id
+        (item) => item.material_id === action.payload.material_id
       );
 
       console.log("existingItemIndex: " + existingItemIndex);
@@ -28,7 +42,7 @@ export const cartSlice = createSlice({
         });
       }
 
-      countNumberOfCart = 0;
+      let countNumberOfCart = 0;
       state.items.map((item) => (countNumberOfCart += 1));
       state.cartCount = countNumberOfCart;
       console.log("cart: " + JSON.stringify(state.items));
@@ -38,7 +52,9 @@ export const cartSlice = createSlice({
 
     removeFromCart: (state, action) => {
       state.cartCount -= 1;
-      state.items = state.items.filter((item) => item.id !== action.payload.id);
+      state.items = state.items.filter(
+        (item) => item.material_id !== action.payload.material_id
+      );
       AsyncStorage.setItem("cartItems", JSON.stringify(state.items));
     },
     clearCart: (state) => {
@@ -48,7 +64,7 @@ export const cartSlice = createSlice({
     },
     increaseQuantity: (state, action) => {
       state.items = state.items.map((item) =>
-        item.id === action.payload
+        item.material_id === action.payload
           ? { ...item, quantity: item.quantity + 1 }
           : item
       );
@@ -58,7 +74,7 @@ export const cartSlice = createSlice({
     decreaseQuantity: (state, action) => {
       state.items = state.items
         .map((item) =>
-          item.id === action.payload
+          item.material_id === action.payload
             ? { ...item, quantity: item.quantity - 1 }
             : item
         )
@@ -68,7 +84,17 @@ export const cartSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder;
+    builder
+      .addCase(buyMaterial.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(buyMaterial.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(buyMaterial.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

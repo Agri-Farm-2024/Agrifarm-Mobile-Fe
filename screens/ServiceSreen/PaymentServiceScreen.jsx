@@ -9,6 +9,7 @@ import {
 import { useDispatch } from "react-redux";
 import Toast from "react-native-toast-message";
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
+import { clearCart } from "../../redux/slices/cartSlice";
 
 const PaymentServiceScreen = ({ navigation, route }) => {
   const [timeLeft, setTimeLeft] = useState(300);
@@ -33,6 +34,9 @@ const PaymentServiceScreen = ({ navigation, route }) => {
       dispatch(getTransactionByID({ transactionID })).then((res) => {
         console.log(res.payload.status);
         if (res.payload.status === "succeed") {
+          if (paymentInfo?.isCart) {
+            dispatch(clearCart());
+          }
           navigation.navigate("ThankYouScreen", {
             msg: "Thanh toán thành công, chúc bạn canh tác thuận lợi",
           });

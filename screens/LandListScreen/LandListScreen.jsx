@@ -60,7 +60,6 @@ export default function LandListScreen() {
 
   const { landList, loading, error } = useSelector((state) => state.landSlice);
 
-
   useEffect(() => {
     dispatch(
       getListOfLand({ status: selectedStatus, page_size: 100, page_index: 1 })
@@ -143,6 +142,7 @@ export default function LandListScreen() {
         <ActivityIndicatorComponent />
       ) : (
         <FlatList
+          showsVerticalScrollIndicator={false}
           data={landList?.metadata?.lands}
           renderItem={renderItem}
           keyExtractor={(item) => item.land_id}

@@ -3,20 +3,59 @@ import React from "react";
 import { Image } from "react-native";
 import { View, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 import { Appbar, Card, Text, Button, Divider } from "react-native-paper";
-import { formatNumberToVND } from "../../utils";
+import { convertImageURL, formatNumberToVND } from "../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserSelector } from "../../redux/selectors";
+import { buyMaterial } from "../../redux/slices/cartSlice";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const CheckoutScreen = ({ route, navigation }) => {
   const { cartItemsCheckout } = route.params;
-  const discountPrice = 50000;
+  const userSelector = useSelector(getUserSelector);
+  console.log("userSelector", JSON.stringify(userSelector));
+  const discountPrice = 0;
+  const dispatch = useDispatch();
 
   function objectToArray(obj) {
     return Object.keys(obj).map((key) => obj[key]);
   }
 
   const totalPrice = objectToArray(cartItemsCheckout).reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total, item) =>
+      item.type == "buy"
+        ? total + item.price_per_piece * item.quantity
+        : total + item.price_of_rent * item.quantity,
     0
   );
+
+  const handleCheckout = () => {
+    try {
+      const formData = objectToArray(cartItemsCheckout).map((item) => ({
+        material_id: item?.material_id,
+        quantity: item.quantity,
+      }));
+      console.log("FormData buy material", formData);
+      dispatch(buyMaterial(formData)).then((response) => {
+        console.log("Buy material response: " + JSON.stringify(response));
+        if (response.payload.statusCode != 201) {
+          Toast.show({ type: "error", text1: "Thanh toán thất bại!" });
+        }
+        if (response.payload.statusCode == 201) {
+          console.log("Response sucess", JSON.stringify(response));
+          const paymentInfo = {
+            payment_link: response?.payload?.metadata?.payment_link,
+            transactionID: response?.payload?.metadata?.transaction_id,
+            isCart: true,
+          };
+          navigation.navigate("PaymentServiceScreen", {
+            paymentInfo: paymentInfo,
+          });
+        }
+      });
+    } catch (error) {
+      console.log("Error Checkout", error);
+    }
+  };
 
   return (
     <>
@@ -37,15 +76,10 @@ const CheckoutScreen = ({ route, navigation }) => {
         <Text style={styles.sectionTitle}>Thông tin người đặt</Text>
         <Card style={styles.card}>
           <Card.Content>
-            <Text>Người thuê: Chi Bảo</Text>
-            <Text
-              style={{
-                marginVertical: 10,
-              }}
-            >
-              Mãnh vườn: MD001
+            <Text style={{ color: "#707070" }}>
+              <Text style={{ fontWeight: "bold" }}>Người thuê:</Text>{" "}
+              {userSelector?.full_name || ""}
             </Text>
-            <Text>Ngày giao: 17/11/2024</Text>
           </Card.Content>
         </Card>
 
@@ -53,23 +87,26 @@ const CheckoutScreen = ({ route, navigation }) => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Đơn hàng</Text>
           {objectToArray(cartItemsCheckout).map((item) => (
-            <Card key={item.id} style={styles.productCard}>
+            <Card key={item.material_id} style={styles.productCard}>
               <Card.Content style={styles.productContent}>
                 <Image
                   style={{
                     borderRadius: 5,
-                    width: 60,
+                    width: 70,
                     height: 70,
                   }}
                   source={{
-                    uri: item.image,
+                    uri: convertImageURL(item.image_material),
                   }}
                 />
                 <View style={styles.productDetails}>
                   <Text style={styles.productName}>{item.name}</Text>
                   <Text style={styles.productPrice}>
-                    Giá {item.requestType == "buy" ? "mua" : "thuê"}:{" "}
-                    {formatNumberToVND(item.price)} VND
+                    Giá {item.type == "buy" ? "mua" : "thuê"}:{" "}
+                    {item.type == "buy"
+                      ? formatNumberToVND(item.price_per_piece)
+                      : formatNumberToVND(item.price_of_rent)}{" "}
+                    VND
                   </Text>
                   <Text style={styles.productQuantity}>
                     Số lượng: {item.quantity}
@@ -135,7 +172,7 @@ const CheckoutScreen = ({ route, navigation }) => {
         <Button
           mode="contained"
           style={styles.payButton}
-          onPress={() => navigation.navigate("PaymentScreen")}
+          onPress={() => handleCheckout()}
         >
           THANH TOÁN
         </Button>

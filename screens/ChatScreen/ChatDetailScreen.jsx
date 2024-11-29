@@ -14,11 +14,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Avatar, FAB } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
 import { convertHttpToHttps } from "../../utils";
-// import {
-//   getMessageDetail,
-//   sendMessageByUser,
-// } from "../../redux/slices/messageSlice";
-// import socket from "../../services/socket";
+import socket from "../../services/socket";
+import { getChatDetail, sendMessageByUser } from "../../redux/slices/chatSlice";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const chatDetail = {
   group_message_detail: {
@@ -44,14 +42,18 @@ const chatDetail = {
   ],
 };
 
-export default function ChatDetailScreen({ navigation }) {
-  //   const { chatDetail, group_message_id, loading, error } = useSelector(
-  //     (state) => state.messageSlice
-  //   );
-  //   const dispatch = useDispatch();
-  const [message, setMessage] = useState("");
+export default function ChatDetailScreen({ navigation, route }) {
+  const { channelId } = route.params;
+  const { chatDetail, loading, error } = useSelector(
+    (state) => state.chatSlice
+  );
 
-  //   const { userInfo } = useSelector((state) => state.userSlice);
+  // console.log("ChatDetail ne", JSON.stringify(chatDetail));
+  const dispatch = useDispatch();
+  const [message, setMessage] = useState("");
+  const [conversation, setConversation] = useState(null);
+
+  const { userInfo } = useSelector((state) => state.userSlice);
 
   const scrollViewRef = useRef(null);
 
@@ -59,7 +61,10 @@ export default function ChatDetailScreen({ navigation }) {
   let timeout;
 
   useEffect(() => {
-    scrollToBottom();
+    if (chatDetail) {
+      setConversation(chatDetail);
+      scrollToBottom();
+    }
   }, [chatDetail]);
 
   const scrollToBottom = () => {
@@ -69,42 +74,65 @@ export default function ChatDetailScreen({ navigation }) {
   };
 
   const sendMessage = () => {
-    if (message.trim() !== "") {
-      //   dispatch(
-      //     sendMessageByUser({
-      //       group_message_id: group_message_id,
-      //       content: message,
-      //     })
-      //   ).then((res) => {
-      //     socket.emit("send-message", {
-      //       group_message_id: group_message_id,
-      //       content: message,
-      //       user_id: userInfo.id,
-      //       message: res,
-      //     });
-      //     setMessage("");
-      //     console.log("send-message ", group_message_id);
-      //     dispatch(getMessageDetail(group_message_id));
-      //     Keyboard.dismiss();
-      //   });
+    try {
+      if (message.trim() !== "") {
+        const formData = {
+          message_to_id: channelId,
+          content: message,
+          message_type: "text",
+        };
+        dispatch(sendMessageByUser(formData)).then((response) => {
+          Keyboard.dismiss();
+          console.log("Response send message: " + JSON.stringify(response));
+          if (response?.payload?.statusCode != 201) {
+            Toast.show({
+              type: "error",
+              text1: "Gửi tin nhắn thất bại!",
+            });
+          }
+          if (response?.payload?.statusCode == 201) {
+            setMessage("");
+          }
+        });
+      }
+    } catch (error) {
+      console.log("Error sending message: ", JSON.stringify(error));
     }
   };
 
-  //   useEffect(() => {
-  //     if (socket) {
-  //       const handleMessageReceive = (msg) => {
-  //         console.log("receive-message ", group_message_id);
-  //         dispatch(getMessageDetail(group_message_id));
-  //       };
+  useEffect(() => {
+    if (socket) {
+      console.log("Socket listening");
+      const handleMessageReceive = (msg) => {
+        console.log("message receive", JSON.stringify(msg));
+        console.log(
+          "channel_message",
+          msg?.message?.message_to_id == channelId,
+          msg?.message?.message_to_id,
+          channelId,
+          conversation
+        );
+        if (msg?.message?.message_to_id === channelId) {
+          setConversation((prevConversation) => {
+            console.log("prev conversation", JSON.stringify(prevConversation));
+            const updatedConversation = [
+              ...(prevConversation || []),
+              { ...msg.message },
+            ];
+            return updatedConversation;
+          });
+          scrollToBottom();
+        }
+      };
 
-  //       socket.on("receive-message", handleMessageReceive);
+      socket.on("message", handleMessageReceive);
 
-  //       // Cleanup function to remove the event listener
-  //       return () => {
-  //         socket.off("receive-message", handleMessageReceive);
-  //       };
-  //     }
-  //   }, [group_message_id]);
+      // Cleanup function to remove the event listener
+      return () => {
+        socket.off("message", handleMessageReceive);
+      };
+    }
+  }, [channelId]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -117,11 +145,9 @@ export default function ChatDetailScreen({ navigation }) {
             <Avatar.Image
               size={60}
               source={{
-                uri: convertHttpToHttps(
-                  chatDetail.group_message_detail.group_message_thumnail
-                ),
+                uri: "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png",
               }}
-              style={{ marginRight: 10 }}
+              style={{ marginRight: 10, backgroundColor: "white" }}
             />
           </View>
         </View>
@@ -131,24 +157,28 @@ export default function ChatDetailScreen({ navigation }) {
           contentContainerStyle={{ paddingTop: 20 }}
           onLayout={scrollToBottom}
         >
-          {chatDetail.messages.slice().map((msg, index) => (
-            <View
-              key={msg.message_id}
-              style={
-                msg.is_me === true
-                  ? [styles.message, styles.myMessage]
-                  : [styles.message, styles.guestMessage]
-              }
-            >
-              <Text
+          {conversation &&
+            conversation.length > 0 &&
+            conversation.slice().map((msg, index) => (
+              <View
+                key={channelId + index}
                 style={
-                  msg.is_me === true ? { color: "white" } : { color: "black" }
+                  msg.message_from_id == userInfo?.user_id
+                    ? [styles.message, styles.myMessage]
+                    : [styles.message, styles.guestMessage]
                 }
               >
-                {msg.content}
-              </Text>
-            </View>
-          ))}
+                <Text
+                  style={
+                    msg.message_from_id == userInfo?.user_id
+                      ? { color: "white" }
+                      : { color: "black" }
+                  }
+                >
+                  {msg.content}
+                </Text>
+              </View>
+            ))}
         </ScrollView>
       </View>
       <KeyboardAvoidingView

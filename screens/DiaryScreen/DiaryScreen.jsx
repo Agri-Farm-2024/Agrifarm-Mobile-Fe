@@ -43,18 +43,20 @@ const DiaryScreen = ({ navigation }) => {
   const specificProcessSelector = useSelector(getSpecificProcessSelector);
   console.log(
     "specificProcessSelector",
-    JSON.stringify(specificProcessSelector)
+    JSON.stringify(specificProcessSelector).length
   );
 
   useEffect(() => {
     try {
       if (isFocused) {
         const formData = {
+          status: "active",
           page_index: 1,
           page_size: PAGE_SIZE,
-          status: "active",
         };
-        dispatch(getSpecificProcess(formData));
+        dispatch(getSpecificProcess(formData)).then((response) => {
+          console.log("response", JSON.stringify(response));
+        });
       }
     } catch (error) {
       console.log("Error fetch specific process: " + JSON.stringify(error));

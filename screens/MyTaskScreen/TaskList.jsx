@@ -196,7 +196,20 @@ const TaskList = ({ taskType }) => {
 
   const dispatch = useDispatch();
   const { taskList, loading, error } = useSelector((state) => state.taskSlice);
-  console.log("taskList: " + JSON.stringify(taskList));
+  // console.log("taskList: " + JSON.stringify(taskList));
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log("Fetching tasks...");
+      dispatch(
+        getListTaskByUser({
+          status: taskType,
+        })
+      ).then((res) => {
+        // console.log("Fetch task response: " + JSON.stringify(res));
+      });
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     console.log("Fetching follow task type...");
@@ -206,6 +219,7 @@ const TaskList = ({ taskType }) => {
           task?.request?.status === "rejected" ||
           task?.request?.status === "assigned"
       );
+      console.log("newData: " + JSON.stringify(newData));
       setTaskList(newData);
     } else if (taskType == "Đang làm") {
       const newData = taskList.filter(
@@ -220,20 +234,7 @@ const TaskList = ({ taskType }) => {
       );
       setTaskList(newData);
     }
-  }, [taskType, taskList]);
-
-  useEffect(() => {
-    if (isFocused) {
-      console.log("Fetching tasks...");
-      dispatch(
-        getListTaskByUser({
-          status: taskType,
-        })
-      ).then((res) => {
-        console.log("Fetch task response: " + JSON.stringify(res));
-      });
-    }
-  }, [isFocused, taskType]);
+  }, [taskList, taskType]);
 
   const openModal = (task) => {
     setSelectedTask(task);

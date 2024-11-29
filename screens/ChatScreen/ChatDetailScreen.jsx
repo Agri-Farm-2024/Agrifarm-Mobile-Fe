@@ -51,6 +51,7 @@ export default function ChatDetailScreen({ navigation, route }) {
   // console.log("ChatDetail ne", JSON.stringify(chatDetail));
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
+  const [conversation, setConversation] = useState(null);
 
   const { userInfo } = useSelector((state) => state.userSlice);
 
@@ -60,7 +61,10 @@ export default function ChatDetailScreen({ navigation, route }) {
   let timeout;
 
   useEffect(() => {
-    scrollToBottom();
+    if (chatDetail) {
+      setConversation(chatDetail);
+      scrollToBottom();
+    }
   }, [chatDetail]);
 
   const scrollToBottom = () => {
@@ -86,6 +90,9 @@ export default function ChatDetailScreen({ navigation, route }) {
               text1: "Gửi tin nhắn thất bại!",
             });
           }
+          if (response?.payload?.statusCode == 201) {
+            setMessage("");
+          }
         });
       }
     } catch (error) {
@@ -98,7 +105,24 @@ export default function ChatDetailScreen({ navigation, route }) {
       console.log("Socket listening");
       const handleMessageReceive = (msg) => {
         console.log("message receive", JSON.stringify(msg));
-        // dispatch(getChatDetail(channelId));
+        console.log(
+          "channel_message",
+          msg?.message?.message_to_id == channelId,
+          msg?.message?.message_to_id,
+          channelId,
+          conversation
+        );
+        if (msg?.message?.message_to_id === channelId) {
+          setConversation((prevConversation) => {
+            console.log("prev conversation", JSON.stringify(prevConversation));
+            const updatedConversation = [
+              ...(prevConversation || []),
+              { ...msg.message },
+            ];
+            return updatedConversation;
+          });
+          scrollToBottom();
+        }
       };
 
       socket.on("message", handleMessageReceive);
@@ -133,9 +157,9 @@ export default function ChatDetailScreen({ navigation, route }) {
           contentContainerStyle={{ paddingTop: 20 }}
           onLayout={scrollToBottom}
         >
-          {chatDetail &&
-            chatDetail.length > 0 &&
-            chatDetail.slice().map((msg, index) => (
+          {conversation &&
+            conversation.length > 0 &&
+            conversation.slice().map((msg, index) => (
               <View
                 key={channelId + index}
                 style={

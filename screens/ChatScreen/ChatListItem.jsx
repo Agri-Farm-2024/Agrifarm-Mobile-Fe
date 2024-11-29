@@ -18,6 +18,7 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
   return (
     <TouchableOpacity
       onPress={() => {
+        console.log("chatItem", JSON.stringify(chatItem));
         dispatch(getChatDetail(chatItem?.channel_id)).then((res) => {
           navigation.navigate("ChatDetailScreen", {
             channelId: chatItem?.channel_id,

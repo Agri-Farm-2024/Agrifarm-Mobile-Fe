@@ -84,7 +84,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
           Chưa có nhật ký
         </Text>
       )}
-      {diaryRender && (
+      {diaryRender && diaryRender?.length > 0 && (
         <View style={[styles.progressItemContainer, styles.firstPoint]}>
           <View style={styles.diaryTime}></View>
           <View style={styles.progress}>
@@ -94,6 +94,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
         </View>
       )}
       {diaryRender &&
+        diaryRender?.length > 0 &&
         diaryRender.map((progressItem, index) => (
           <View key={index} style={styles.progressItemContainer}>
             <View style={styles.diaryTime}>

@@ -7,6 +7,8 @@ export const getUserLoadingSelector = (state) => state.userSlice.loading;
 //service
 export const getServicePackageSelector = (state) =>
   state.serviceSlice.servicePackage;
+export const getServiceSpecificSelector = (state) =>
+  state.serviceSlice.listServiceInUse;
 export const serviceLoadingSelector = (state) => state.serviceSlice.loading;
 
 //plant
@@ -27,3 +29,7 @@ export const processLoadingSelector = (state) => state.processSlice.loading;
 //material
 export const getMaterialSelector = (state) => state.materialSlice.material;
 export const materialLoadingSelector = (state) => state.materialSlice.loading;
+
+//chat
+export const getChatListSelector = (state) => state.chatSlice.chatList;
+export const chatLoadingSelector = (state) => state.chatSlice.loading;

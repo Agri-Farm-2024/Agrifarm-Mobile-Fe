@@ -17,43 +17,42 @@ import { useDispatch, useSelector } from "react-redux";
 //   import { io } from "socket.io-client";
 //   import socket from "../../services/socket";
 import { useIsFocused } from "@react-navigation/native";
+import { getChatList } from "../../redux/slices/chatSlice";
+import socket from "../../services/socket";
 
-const chatList = [
-  {
-    group_message_id: "MSG001",
-    group_message_thumnail:
-      "https://i.pinimg.com/564x/0e/48/2e/0e482efba911b30ef9d6cbe70ad0c25a.jpg",
-    group_message_name: "Tieu Bao Bao",
-    is_seen: true,
-    last_active_time: "2024-06-09T03:11:56.622Z",
-    last_message: "Ra sân đá bóng lẹ nào",
-  },
-  {
-    group_message_id: "MSG002",
-    group_message_thumnail:
-      "https://i.pinimg.com/564x/0e/48/2e/0e482efba911b30ef9d6cbe70ad0c25a.jpg",
-    group_message_name: "Le Ninh",
-    is_seen: false,
-    last_active_time: "2024-06-09T03:11:56.622Z",
-    last_message: "Tôi yêu đá bóng còn bạn thì sao?? Liên hệ tôi nhá",
-  },
-];
+// const chatList = [
+//   {
+//     group_message_id: "MSG001",
+//     group_message_thumnail:
+//       "https://i.pinimg.com/564x/0e/48/2e/0e482efba911b30ef9d6cbe70ad0c25a.jpg",
+//     group_message_name: "Tieu Bao Bao",
+//     is_seen: true,
+//     last_active_time: "2024-06-09T03:11:56.622Z",
+//     last_message: "Ra sân đá bóng lẹ nào",
+//   },
+//   {
+//     group_message_id: "MSG002",
+//     group_message_thumnail:
+//       "https://i.pinimg.com/564x/0e/48/2e/0e482efba911b30ef9d6cbe70ad0c25a.jpg",
+//     group_message_name: "Le Ninh",
+//     is_seen: false,
+//     last_active_time: "2024-06-09T03:11:56.622Z",
+//     last_message: "Tôi yêu đá bóng còn bạn thì sao?? Liên hệ tôi nhá",
+//   },
+// ];
 
 export default function ChatListScreen({ navigation }) {
-  // const dispatch = useDispatch();
-  // const { chatList, loading, error } = useSelector(
-  //   (state) => state.messageSlice
-  // );
-  // const { userInfo } = useSelector((state) => state.userSlice);
+  const dispatch = useDispatch();
+  const { chatList, loading, error } = useSelector((state) => state.chatSlice);
+  const { userInfo } = useSelector((state) => state.userSlice);
+  const isFocused = useIsFocused();
 
-  // const isFocused = useIsFocused();
-
-  // useEffect(() => {
-  //   if (isFocused) {
-  //     // dispatch(getListMessage());
-  //     socket.emit("online-user", userInfo.id);
-  //   }
-  // }, [isFocused]);
+  useEffect(() => {
+    if (isFocused) {
+      dispatch(getChatList());
+      socket.emit("online-user", userInfo.user_id);
+    }
+  }, [isFocused]);
 
   // useEffect(() => {
   //   if (socket) {
@@ -74,10 +73,10 @@ export default function ChatListScreen({ navigation }) {
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.chatBody}>
         <ScrollView>
-          {chatList?.length != 0 ? (
+          {chatList && chatList?.length != 0 ? (
             chatList?.map((chatItem, index) => (
               <ChatListItem
-                key={chatItem.group_message_id}
+                key={chatItem?.channel_id}
                 seen={false}
                 chatItem={chatItem}
                 navigation={navigation}
@@ -125,7 +124,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   chatEmpty: {
-    color: "#1646A9",
+    color: "#707070",
     fontSize: 20,
     textAlign: "center",
     fontWeight: "bold",

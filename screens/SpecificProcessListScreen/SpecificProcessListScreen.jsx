@@ -32,7 +32,7 @@ const diaryList = [
   },
 ];
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 30;
 
 const SpecificProcessListScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -84,8 +84,8 @@ const SpecificProcessListScreen = ({ navigation }) => {
       setPageNumber((prevState) => prevState + 1);
       console.log("Load more process...");
       const formData = {
-        pageNumber: pageNumber + 1,
-        pageSize: PAGE_SIZE,
+        page_index: pageNumber + 1,
+        page_size: PAGE_SIZE,
       };
       dispatch(getSpecificProcess(formData)).then((response) => {
         console.log("load more process", JSON.stringify(response));

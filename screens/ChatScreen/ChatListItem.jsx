@@ -1,39 +1,46 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import React from "react";
 import { Avatar } from "react-native-paper";
-import { convertHttpToHttps, convertTo12HourFormat } from "../../utils";
-import { useDispatch } from "react-redux";
+import {
+  convertHttpToHttps,
+  convertTo12HourFormat,
+  formatDate,
+} from "../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { getChatDetail } from "../../redux/slices/chatSlice";
 // import messageSlice, {
 //   getMessageDetail,
 // } from "../../redux/slices/messageSlice";
 
 export default function ChatListItem({ seen, navigation, chatItem }) {
   const dispatch = useDispatch();
+  const { userInfo } = useSelector((state) => state.userSlice);
   return (
     <TouchableOpacity
       onPress={() => {
-        // dispatch(getMessageDetail(chatItem.group_message_id)).then((res) => {
-        navigation.navigate("ChatDetailScreen");
-        //   dispatch(
-        //     messageSlice.actions.setGroupMessageID(chatItem.group_message_id)
-        //   );
-        // });
+        dispatch(getChatDetail(chatItem?.channel_id)).then((res) => {
+          navigation.navigate("ChatDetailScreen", {
+            channelId: chatItem?.channel_id,
+          });
+        });
       }}
     >
       <View style={styles.chatItem}>
         <Avatar.Image
           size={45}
           source={{
-            uri: convertHttpToHttps(chatItem.group_message_thumnail),
+            uri: "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png",
           }}
           style={{ marginRight: 10 }}
         />
         <View>
           <View style={styles.chatTop}>
-            <Text style={styles.userName}>{chatItem.group_message_name}</Text>
+            <Text style={styles.userName}>
+              Hỗ trợ kỹ thuật {formatDate(chatItem?.created_at, 2)}
+            </Text>
             <Text
               style={
-                chatItem.is_seen
+                chatItem?.is_seen
                   ? [
                       styles.textContent,
                       {
@@ -48,7 +55,7 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
                     ]
               }
             >
-              {convertTo12HourFormat(chatItem.last_active_time)}
+              {convertTo12HourFormat(chatItem?.newest_message?.created_at)}
             </Text>
           </View>
           <Text
@@ -59,7 +66,10 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
             }
             numberOfLines={1}
           >
-            {chatItem.last_message}
+            {chatItem?.newest_message?.message_from_id == userInfo?.user_id
+              ? "Bạn"
+              : chatItem?.newest_message?.message_from?.full_name || ""}
+            : {chatItem?.newest_message?.content}
           </Text>
         </View>
       </View>

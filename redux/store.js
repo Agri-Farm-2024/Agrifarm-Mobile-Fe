@@ -13,11 +13,12 @@ import plantSlice from "./slices/plantSlice";
 import transactionSlice from "./slices/transactionSlice";
 import requestSlice from "./slices/requestSlice";
 import taskSlice from "./slices/taskSlice";
+import chatSlice from "./slices/chatSlice";
 
 const rootPersistConfig = {
   key: "root",
   storage,
-  whitelist: ["userSlice"], 
+  whitelist: ["userSlice"],
 };
 
 const rootReducer = combineReducers({
@@ -31,7 +32,7 @@ const rootReducer = combineReducers({
   plantSlice: plantSlice.reducer,
   requestSlice: requestSlice.reducer,
   taskSlice: taskSlice.reducer,
-
+  chatSlice: chatSlice.reducer,
   transactionSlice: transactionSlice.reducer,
 
   //add more reducer here

@@ -16,11 +16,11 @@ export const getServicePackageList = createAsyncThunk(
 
 export const getListServiceSpecific = createAsyncThunk(
   "serviceSlice/getListServiceSpecific",
-  async (_, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const data = await api.get(
-        `/services/getListServiceSpecific?page_size=10&page_index=1`
-      );
+      const data = await api.get(`/services/getListServiceSpecific`, {
+        params,
+      });
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -69,7 +69,17 @@ export const serviceSlice = createSlice({
       })
       .addCase(getListServiceSpecific.fulfilled, (state, action) => {
         state.loading = false;
-        state.listServiceInUse = action.payload;
+        if (action?.payload?.metadata?.pagination?.page_index > 1) {
+          state.listServiceInUse = {
+            services: [
+              ...state.listServiceInUse.services,
+              ...action?.payload?.metadata?.services,
+            ],
+            pagination: action?.payload?.metadata?.pagination,
+          };
+        } else {
+          state.listServiceInUse = action.payload.metadata;
+        }
       })
       .addCase(getListServiceSpecific.rejected, (state, action) => {
         state.loading = false;

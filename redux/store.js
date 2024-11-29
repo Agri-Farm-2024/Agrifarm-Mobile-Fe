@@ -14,6 +14,7 @@ import transactionSlice from "./slices/transactionSlice";
 import requestSlice from "./slices/requestSlice";
 import taskSlice from "./slices/taskSlice";
 import chatSlice from "./slices/chatSlice";
+import notificationSlice from "./slices/notificationSlice";
 
 const rootPersistConfig = {
   key: "root",
@@ -33,6 +34,8 @@ const rootReducer = combineReducers({
   requestSlice: requestSlice.reducer,
   taskSlice: taskSlice.reducer,
   chatSlice: chatSlice.reducer,
+  notificationSlice: notificationSlice.reducer,
+
   transactionSlice: transactionSlice.reducer,
 
   //add more reducer here

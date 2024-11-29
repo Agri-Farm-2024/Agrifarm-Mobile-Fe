@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -12,24 +12,56 @@ import {
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
 import { View } from "react-native";
 import Toast from "react-native-toast-message"; // Import Toast
+import DropdownComponent from "../../components/DropdownComponent";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getListServiceSpecific,
+  sendSupportService,
+} from "../../redux/slices/serviceSlice";
+import { capitalizeFirstLetter } from "../../utils";
 
 const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
-  const [name, setName] = useState("");
-  const [landCode] = useState("MD0001");
-  const [plantType, setPlantType] = useState("Chọn cây mai");
-  const [requestType, setRequestType] = useState("Chọn loại hỗ trợ");
+  const [filterList, setFilterList] = useState([]);
+  const [service, setService] = useState(null);
+  const [serviceObj, setServiceObj] = useState(null);
+  const [land, setLand] = useState("Chưa có");
+  const [requestType, setRequestType] = useState(null);
   const [requestContent, setRequestContent] = useState("");
   const [confirmVisible, setConfirmVisible] = useState(false);
 
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [menuPlantVisible, setMenuPlantVisible] = useState(false);
+  const serviceSpcificList = useSelector(
+    (state) => state.serviceSlice?.listServiceInUse?.metadata?.services
+  );
+
+  useEffect(() => {
+    const filterUsed = serviceSpcificList?.filter(
+      (service) => service.status === "used"
+    );
+    const optionServices = filterUsed?.map((obj) => ({
+      label: capitalizeFirstLetter(obj?.plant_season?.plant?.name),
+      value: obj?.service_specific_id,
+      obj: obj,
+    }));
+
+    console.log("optionServies: " + JSON.stringify(optionServices));
+
+    setFilterList(optionServices);
+  }, [serviceSpcificList]);
+
+  useEffect(() => {
+    if (service) {
+      const getService = filterList.filter((item) => item.value === service);
+      console.log("service: " + getService[0]?.obj?.booking_land?.land?.name);
+      setLand(
+        capitalizeFirstLetter(getService[0]?.obj?.booking_land?.land?.name)
+      );
+    } else {
+      setLand("Chưa có");
+    }
+  }, [service]);
 
   const validateFields = () => {
-    const isValid =
-      name &&
-      plantType !== "Chọn cây mai" &&
-      requestType !== "Chọn loại hỗ trợ" &&
-      requestContent;
+    const isValid = requestType !== "Chọn loại hỗ trợ" && requestContent;
     if (!isValid) {
       Toast.show({
         type: "error",
@@ -46,8 +78,22 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
     }
   };
 
-  const requestTypes = ["Tư vấn qua chat", "Hỗ trợ kỹ thuật"];
-  const plantTypes = ["Cây mai", "Cây đào"];
+  const requestTypes = [
+    {
+      label: "Tư vấn qua chat",
+      value: "chat",
+    },
+    {
+      label: "Tư vấn trực tiếp",
+      value: "direct",
+    },
+  ];
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getListServiceSpecific());
+  }, []);
 
   return (
     <Portal>
@@ -62,102 +108,40 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
           YÊU CẦU HỖ TRỢ KĨ THUẬT
         </Dialog.Title>
         <Dialog.Content>
-          <TextInput
+          {/* <TextInput
             label="Họ và tên"
             value={name}
             onChangeText={setName}
             activeUnderlineColor="#7fb640"
             style={{ marginBottom: 20, backgroundColor: "#f5f5f5" }}
             underlineColor="white"
-          />
+          /> */}
+
+          <View style={{ marginBottom: 20 }}>
+            <DropdownComponent
+              options={filterList}
+              placeholder="Chọn dịch vụ"
+              value={service}
+              setValue={(e) => setService(e)}
+            />
+          </View>
           <TextInput
-            label="Mã số mảnh đất"
-            value={landCode}
+            label="Mảnh đất sử dụng dịch vụ"
+            value={land}
             disabled
             activeUnderlineColor="#7fb640"
             style={{ marginBottom: 20, backgroundColor: "#f5f5f5" }}
             underlineColor="white"
           />
 
-          <Menu
-            visible={menuPlantVisible}
-            onDismiss={() => setMenuPlantVisible(false)}
-            anchor={
-              <Button
-                style={{
-                  marginBottom: 20,
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: 5,
-                  textAlign: "left",
-                }}
-                onPress={() => setMenuPlantVisible(true)}
-              >
-                <Text
-                  style={{
-                    textAlign: "left",
-                    width: "100%",
-                    paddingHorizontal: 10,
-                    fontSize: 16,
-                    paddingVertical: 10,
-                  }}
-                >
-                  {plantType}
-                  <Icon source="menu-down" size={20} />
-                </Text>
-              </Button>
-            }
-          >
-            {plantTypes.map((type) => (
-              <Menu.Item
-                key={type}
-                onPress={() => {
-                  setPlantType(type);
-                  setMenuPlantVisible(false);
-                }}
-                title={<Text style={{ width: 200 }}>{type}</Text>}
-              />
-            ))}
-          </Menu>
-
-          <Menu
-            visible={menuVisible}
-            onDismiss={() => setMenuVisible(false)}
-            anchor={
-              <Button
-                style={{
-                  marginBottom: 20,
-                  backgroundColor: "#f5f5f5",
-                  borderRadius: 5,
-                  textAlign: "left",
-                }}
-                onPress={() => setMenuVisible(true)}
-              >
-                <Text
-                  style={{
-                    textAlign: "left",
-                    width: "100%",
-                    paddingHorizontal: 10,
-                    fontSize: 16,
-                    paddingVertical: 10,
-                  }}
-                >
-                  {requestType}
-                  <Icon source="menu-down" size={20} />
-                </Text>
-              </Button>
-            }
-          >
-            {requestTypes.map((type) => (
-              <Menu.Item
-                key={type}
-                onPress={() => {
-                  setRequestType(type);
-                  setMenuVisible(false);
-                }}
-                title={<Text style={{ width: 200 }}>{type}</Text>}
-              />
-            ))}
-          </Menu>
+          <View style={{ marginBottom: 20 }}>
+            <DropdownComponent
+              options={requestTypes}
+              placeholder="Chọn loại hỗ trợ"
+              value={requestType}
+              setValue={(e) => setRequestType(e)}
+            />
+          </View>
 
           <TextInput
             label="Nội dung yêu cầu"
@@ -199,14 +183,92 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
         visible={confirmVisible}
         onDismiss={() => setConfirmVisible(false)}
         onConfirm={() => {
-          onSubmit(name, landCode, plantType, requestType, requestContent);
-          setConfirmVisible(false);
-          onDismiss();
+          onSubmit(requestType, requestContent);
+          console.log(
+            "onSubmit: " +
+              service?.service_specific_id +
+              " " +
+              requestType +
+              " " +
+              requestContent
+          );
           Toast.show({
-            type: "success",
-            text1: "Đơn đã được gửi",
-            text2: "Hệ thống sẽ xử lí đơn của bạn sớm nhất!",
+            type: "info",
+            text1: "Đang xử lí...",
+            text2: "Vui lòng chờ trong giây lát",
+            visibilityTime: 0,
+            autoHide: false,
           });
+          const formdata = {
+            service_specific_id: service?.service_specific_id,
+            support_type: requestType,
+            description: requestContent,
+          };
+          dispatch(sendSupportService(formdata))
+            .then((res) => {
+              setConfirmVisible(false);
+              console.log("res: " + JSON.stringify(res));
+              if (res.payload.statusCode === 201) {
+                onDismiss();
+                Toast.show({
+                  type: "success",
+                  text1: "Đơn đã được gửi",
+                  text2: "Hệ thống sẽ xử lí đơn của bạn sớm nhất!",
+                });
+                setLand("Chưa có");
+                setService(null);
+                setRequestType(null);
+                setRequestContent("");
+                return;
+              }
+
+              if (res.payload.statusCode === 400) {
+                if (
+                  res.payload.message === "support_type should not be empty"
+                ) {
+                  Toast.show({
+                    type: "error",
+                    text1: "Đơn chưa được gửi",
+                    text2: "Không được để trống loại hỗ trợ",
+                  });
+                  return;
+                }
+
+                if (res.payload.message === "description should not be empty") {
+                  Toast.show({
+                    type: "error",
+                    text1: "Đơn chưa được gửi",
+                    text2: "Không được để trống nội dung",
+                  });
+                  return;
+                }
+
+                Toast.show({
+                  type: "error",
+                  text1: "Đơn chưa được gửi",
+                  text2: "Lỗi 400",
+                });
+                return;
+              }
+
+              if (res.payload.statusCode === 500) {
+                Toast.show({
+                  type: "error",
+                  text1: "Đơn chưa được gửi",
+                  text2: "Lỗi 500",
+                });
+                return;
+              }
+            })
+            .catch((err) => console.log("err: " + JSON.stringify(err)));
+
+          // setConfirmVisible(false);
+          // onDismiss();
+          // Toast.show({
+          //   type: "success",
+          //   text1: "Đơn đã được gửi",
+          //   text2: "Hệ thống sẽ xử lí đơn của bạn sớm nhất!",
+          // });
         }}
       />
 

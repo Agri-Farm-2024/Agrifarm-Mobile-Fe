@@ -10,17 +10,19 @@ import {
 } from "react-native";
 import { Avatar, Badge } from "react-native-paper";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AgricultureExpertEfficiency from "./AgricultureExpertEfficiency/AgricultureExpertEfficiency";
 import socket from "../../services/socket";
 import NotificationComponent from "../../services/notification";
 import { convertImageURL } from "../../utils";
+import { fetchNotifications } from "../../redux/slices/notificationSlice";
 
 function HomeExpertScreen({ navigation }) {
   const { triggerNotification } = NotificationComponent();
   const cartCount = useSelector((state) => state.cartSlice.cartCount);
   const user_id = useSelector((state) => state.userSlice?.userInfo?.user_id);
   const userInfo = useSelector((state) => state.userSlice?.userInfo);
+  const dispatch = useDispatch();
 
   console.log(user_id);
   const socketRef = useRef(null);
@@ -31,7 +33,6 @@ function HomeExpertScreen({ navigation }) {
     socketRef.current.emit("online-user", user_id);
     socketRef.current.on("notification", async (data) => {
       console.log(data);
-
       // Toast.show({
       //   type: "info",
       //   text1: "Thông báo",

@@ -44,6 +44,8 @@ import ExtendListScreen from "../screens/ExtendListScreen/ExtendListScreen";
 import ExtendItemScreen from "../screens/ExtendItemScreen/ExtendItemScreen";
 import UpdateSpecificProcessScreen from "../screens/SpecificProcessListScreen/UpdateSpecificProcess/UpdateSpecificProcessScreen";
 import SpecificProcessDetailScreen from "../screens/DiaryScreen/SpecificProcessDetailScreen";
+import { ReportTaskPurchaseScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseScreen";
+import { ReportTaskPurchaseHarvestScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseHarvestScreen";
 
 const Stack = createStackNavigator();
 
@@ -343,6 +345,23 @@ const StackNavigator = () => (
       component={ReportTaskScreen}
       options={{
         headerTitle: "Báo cáo công việc",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="ReportTaskPurchaseScreen"
+      component={ReportTaskPurchaseScreen}
+      options={{
+        headerTitle: "Báo cáo kiểm định nông sản",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="ReportTaskPurchaseHarvestScreen"
+      component={ReportTaskPurchaseHarvestScreen}
+      options={{
+        headerTitle: "Báo cáo thu hoạch nông sản",
         headerTitleAlign: "center",
       }}
     />

@@ -41,24 +41,6 @@ const DiarySpecificProcess = ({ diary }) => {
                 ? "Mùa thuận"
                 : "Mùa nghịch"}
             </Text>
-            <Text style={styles.diaryInfo}>
-              <Text style={{ color: "#707070", fontWeight: "bold" }}>
-                Phạm vi hiển thị:
-              </Text>{" "}
-              {diary.is_public ? "Công khai" : "Riêng tư"}
-            </Text>
-            {/* <Button
-          mode="contained"
-          style={{
-            width: 200,
-            marginTop: 10,
-            backgroundColor: "#7fb640",
-            borderRadius: 5,
-          }}
-          onPress={handleOpenModal}
-        >
-          Yêu cầu thu mua
-        </Button> */}
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}

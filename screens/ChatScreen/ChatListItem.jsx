@@ -22,6 +22,8 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
         dispatch(getChatDetail(chatItem?.channel_id)).then((res) => {
           navigation.navigate("ChatDetailScreen", {
             channelId: chatItem?.channel_id,
+            isExpired: chatItem != "active" ? true : false,
+            expiredAt: chatItem?.expired_at,
           });
         });
       }}
@@ -30,7 +32,10 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
         <Avatar.Image
           size={45}
           source={{
-            uri: "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png",
+            uri:
+              userInfo?.role != 3
+                ? "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png"
+                : "https://static.vecteezy.com/system/resources/previews/011/490/381/original/happy-smiling-young-man-avatar-3d-portrait-of-a-man-cartoon-character-people-illustration-isolated-on-white-background-vector.jpg",
           }}
           style={{ marginRight: 10 }}
         />
@@ -59,19 +64,20 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
               {convertTo12HourFormat(chatItem?.newest_message?.created_at)}
             </Text>
           </View>
-          <Text
-            style={
-              chatItem.is_seen
-                ? styles.textContent
-                : [styles.textContent, styles.seen]
-            }
-            numberOfLines={1}
-          >
+          <Text style={styles.textContent} numberOfLines={1}>
             {chatItem?.newest_message?.message_from_id == userInfo?.user_id
               ? "Bạn"
               : chatItem?.newest_message?.message_from?.full_name || ""}
             : {chatItem?.newest_message?.content}
           </Text>
+          {chatItem?.status != "active" && (
+            <Text
+              style={[styles.textContent, { color: "red", fontWeight: "bold" }]}
+              numberOfLines={1}
+            >
+              Phiên làm việc đã kết thúc
+            </Text>
+          )}
         </View>
       </View>
     </TouchableOpacity>

@@ -59,6 +59,10 @@ export function calculateMonthsBetween(date1, date2) {
 
 //Shorten string
 export function shortenText(description, limit) {
+  if (!description) {
+    return "";
+  }
+
   // Check if the description is already within the limit
   if (description.length <= limit) {
     return description;

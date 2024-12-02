@@ -41,10 +41,6 @@ const DiaryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const specificProcessSelector = useSelector(getSpecificProcessSelector);
-  console.log(
-    "specificProcessSelector",
-    JSON.stringify(specificProcessSelector).length
-  );
 
   useEffect(() => {
     try {
@@ -54,9 +50,7 @@ const DiaryScreen = ({ navigation }) => {
           page_index: 1,
           page_size: PAGE_SIZE,
         };
-        dispatch(getSpecificProcess(formData)).then((response) => {
-          console.log("response", JSON.stringify(response));
-        });
+        dispatch(getSpecificProcess(formData));
       }
     } catch (error) {
       console.log("Error fetch specific process: " + JSON.stringify(error));

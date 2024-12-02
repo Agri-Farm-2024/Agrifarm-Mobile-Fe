@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import DiaryProgress from "../../components/DiaryProgress";
 import { Button } from "react-native-paper";
 import PurchaseRequestModal from "./PurchaseRequestModal/PurchaseRequestModal"; // Import the modal
+import { capitalizeFirstLetter } from "../../utils";
 
 const DiarySpecificProcess = ({ diary }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -30,14 +31,15 @@ const DiarySpecificProcess = ({ diary }) => {
               >
                 Giống cây:
               </Text>{" "}
-              {diary?.process_technical_standard?.plant_season?.plant?.name}
+              {capitalizeFirstLetter(
+                diary?.service_specific?.plant_season?.plant?.name
+              )}
             </Text>
             <Text style={styles.diaryInfo}>
               <Text style={{ color: "#707070", fontWeight: "bold" }}>
                 Mùa vụ:
               </Text>{" "}
-              {diary?.process_technical_standard?.plant_season?.type ==
-              "in_season"
+              {diary?.service_specific?.plant_season?.type == "in_season"
                 ? "Mùa thuận"
                 : "Mùa nghịch"}
             </Text>

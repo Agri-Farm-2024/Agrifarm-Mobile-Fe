@@ -6,6 +6,8 @@ import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationMo
 import { useDispatch } from "react-redux";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { publicDiary } from "../../redux/slices/processSlice";
+import QRModal from "./QRModal";
+import { capitalizeFirstLetter } from "../../utils";
 
 const diaryContent = [
   {
@@ -71,7 +73,9 @@ const diaryContent = [
 ];
 
 const DiaryView = ({ diary }) => {
+  console.log("Diary View", JSON.stringify(diary));
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isQRModalOpen, setIsQRModalOpen] = useState(false);
   const dispatch = useDispatch();
 
   const handlePublicDiary = () => {
@@ -117,11 +121,13 @@ const DiaryView = ({ diary }) => {
           >
             Giống cây:
           </Text>{" "}
-          {diary?.process_technical_standard?.plant_season?.plant?.name}
+          {capitalizeFirstLetter(
+            diary?.service_specific?.plant_season?.plant?.name
+          )}
         </Text>
         <Text style={styles.diaryInfo}>
           <Text style={{ color: "#707070", fontWeight: "bold" }}>Mùa vụ:</Text>{" "}
-          {diary?.process_technical_standard?.plant_season?.type == "in_season"
+          {diary?.service_specific?.plant_season?.type == "in_season"
             ? "Mùa thuận"
             : "Mùa nghịch"}
         </Text>
@@ -147,6 +153,22 @@ const DiaryView = ({ diary }) => {
             Công khai nhật ký
           </Button>
         )}
+        {diary.is_public && (
+          <Button
+            mode="contained"
+            style={{
+              width: 200,
+              marginTop: 10,
+              backgroundColor: "#7fb640",
+              borderRadius: 5,
+            }}
+            onPress={() => {
+              setIsQRModalOpen(true);
+            }}
+          >
+            Xem QR Code
+          </Button>
+        )}
       </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -154,6 +176,12 @@ const DiaryView = ({ diary }) => {
       >
         <DiaryProgress isDiary={true} diaryProgress={diary} />
       </ScrollView>
+      <QRModal
+        visible={isQRModalOpen}
+        onDismiss={() => setIsQRModalOpen(false)}
+        onCancel={() => setIsQRModalOpen(false)}
+        diaryId={diary?.process_technical_specific_id}
+      />
       <ConfirmationModal
         title="Xác nhận"
         content="Bạn muốn công khai nhật ký của mình cho mọi người thấy?"
@@ -180,6 +208,7 @@ const styles = StyleSheet.create({
   },
   diaryInfo: {
     fontSize: 14,
+    color: "#707070",
   },
   diaryProgress: {
     height: "100%",

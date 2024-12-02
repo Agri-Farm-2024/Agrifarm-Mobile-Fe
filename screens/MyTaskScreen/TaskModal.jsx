@@ -47,23 +47,29 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
         >
           <Text style={styles.modalTitle}>Chi tiết công việc</Text>
           <Text style={styles.modalText}>
-            Ngày tạo: {formatTimeViewLand(taskData?.created_at)}
+            Yêu cầu lúc: {formatTimeViewLand(taskData?.created_at)}
           </Text>
+
           <Text style={styles.modalText}>
             Mô tả:{" "}
-            {taskData?.request?.type === "create_process_standard"
-              ? "Tạo quy trình kĩ thuật canh tác"
-              : taskData?.request?.type === "cultivate_process_content"
-              ? "Canh tác và ghi nhật ký"
-              : taskData?.request?.type === "report_land"
-              ? "Báo cáo mảnh đất"
-              : taskData?.request?.type === "technical_support"
-              ? "Hỗ trợ kĩ thuật"
-              : taskData?.request?.type === "product_purchase"
-              ? "Kiểm định thu mua"
-              : taskData?.request?.type === "product_puchase_harvest"
-              ? "Yêu cầu thu hoạch"
-              : "Chưa rõ"}
+            <Text style={{ fontWeight: "bold" }}>
+              {taskData?.request?.type === "create_process_standard"
+                ? "Tạo quy trình kĩ thuật canh tác"
+                : taskData?.request?.type === "cultivate_process_content"
+                ? "Canh tác và ghi nhật ký"
+                : taskData?.request?.type === "report_land"
+                ? "Báo cáo mảnh đất"
+                : taskData?.request?.type === "technical_support"
+                ? "Hỗ trợ kĩ thuật"
+                : taskData?.request?.type === "product_purchase"
+                ? "Kiểm định thu mua"
+                : taskData?.request?.type === "product_puchase_harvest"
+                ? "Yêu cầu thu hoạch"
+                : taskData?.request?.type}
+            </Text>
+          </Text>
+          <Text style={styles.modalText}>
+            Phân công lúc: {formatTimeViewLand(taskData?.assigned_at)}
           </Text>
           <Text style={styles.modalText}>
             Mảnh đất:{" "}
@@ -73,9 +79,16 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               ? taskData?.request?.process_technical_specific_stage_content
                   ?.process_technical_specific_stage?.process_technical_specific
                   ?.service_specific?.booking_land?.land?.name
+              : taskData?.request?.booking_land
+              ? taskData?.request?.booking_land?.land?.name
               : "Không có"}
           </Text>
-
+          <Text style={styles.modalText}>
+            Bắt đầu lúc:{" "}
+            {taskData?.request?.time_start
+              ? formatTimeViewLand(taskData?.request?.time_start)
+              : "Ngay bây giờ"}
+          </Text>
           <Text style={styles.modalText}>
             Trạng thái: {filterStatus(taskData?.request?.status)}
           </Text>
@@ -138,6 +151,10 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                     taskData?.request?.type === "product_puchase_harvest"
                   ) {
                     navigation.navigate("ReportTaskPurchaseHarvestScreen", {
+                      taskInfo: taskData,
+                    });
+                  } else if (taskData?.request?.type === "report_land") {
+                    navigation.navigate("ReportTaskLandScreen", {
                       taskInfo: taskData,
                     });
                   } else {

@@ -361,7 +361,7 @@ const TaskList = ({ taskType }) => {
             ? "Kiểm định thu mua"
             : item?.request?.type === "product_puchase_harvest"
             ? "Yêu cầu thu hoạch"
-            : "Chưa rõ"}
+            : item?.request?.type}
         </Text>
         <Text
           style={[

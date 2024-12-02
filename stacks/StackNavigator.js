@@ -46,6 +46,7 @@ import UpdateSpecificProcessScreen from "../screens/SpecificProcessListScreen/Up
 import SpecificProcessDetailScreen from "../screens/DiaryScreen/SpecificProcessDetailScreen";
 import { ReportTaskPurchaseScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseScreen";
 import { ReportTaskPurchaseHarvestScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseHarvestScreen";
+import { ReportTaskLandScreen } from "../screens/MyTaskScreen/ReportTaskLandScreen";
 
 const Stack = createStackNavigator();
 
@@ -345,6 +346,15 @@ const StackNavigator = () => (
       component={ReportTaskScreen}
       options={{
         headerTitle: "Báo cáo công việc",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="ReportTaskLandScreen"
+      component={ReportTaskLandScreen}
+      options={{
+        headerTitle: "Báo cáo tình trạng đất",
         headerTitleAlign: "center",
       }}
     />

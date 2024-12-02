@@ -13,7 +13,7 @@ import {
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Avatar, FAB } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { convertHttpToHttps } from "../../utils";
+import { convertHttpToHttps, formatDate } from "../../utils";
 import socket from "../../services/socket";
 import { getChatDetail, sendMessageByUser } from "../../redux/slices/chatSlice";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
@@ -43,7 +43,7 @@ const chatDetail = {
 };
 
 export default function ChatDetailScreen({ navigation, route }) {
-  const { channelId } = route.params;
+  const { channelId, isExpired } = route.params;
   const { chatDetail, loading, error } = useSelector(
     (state) => state.chatSlice
   );
@@ -145,7 +145,10 @@ export default function ChatDetailScreen({ navigation, route }) {
             <Avatar.Image
               size={60}
               source={{
-                uri: "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png",
+                uri:
+                  userInfo?.role != 3
+                    ? "https://cdn.icon-icons.com/icons2/1465/PNG/512/138manfarmer2_100718.png"
+                    : "https://static.vecteezy.com/system/resources/previews/011/490/381/original/happy-smiling-young-man-avatar-3d-portrait-of-a-man-cartoon-character-people-illustration-isolated-on-white-background-vector.jpg",
               }}
               style={{ marginRight: 10, backgroundColor: "white" }}
             />
@@ -185,29 +188,36 @@ export default function ChatDetailScreen({ navigation, route }) {
         behavior={Platform.OS === "ios" ? "padding" : null}
         style={styles.inputContainer}
       >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Gõ tin nhắn ở đây..."
-            value={message}
-            onChangeText={(text) => setMessage(text)}
-          />
+        {isExpired ? (
+          <Text style={styles.expiredMessage}>
+            Đoạn chat sẽ được xoá vào ngày{" "}
+            {expiredAt ? formatDate(expiredAt) : ""}
+          </Text>
+        ) : (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Gõ tin nhắn ở đây..."
+              value={message}
+              onChangeText={(text) => setMessage(text)}
+            />
 
-          <FAB
-            icon="send"
-            size="small"
-            style={styles.btnSend}
-            onPress={() => {
-              if (timeout) {
-                clearTimeout(timeout);
-              }
-              timeout = setTimeout(() => {
-                sendMessage();
-              }, 300);
-            }}
-            color="white"
-          />
-        </View>
+            <FAB
+              icon="send"
+              size="small"
+              style={styles.btnSend}
+              onPress={() => {
+                if (timeout) {
+                  clearTimeout(timeout);
+                }
+                timeout = setTimeout(() => {
+                  sendMessage();
+                }, 300);
+              }}
+              color="white"
+            />
+          </View>
+        )}
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -287,5 +297,13 @@ const styles = StyleSheet.create({
   btnSend: {
     backgroundColor: "#7FB640",
     borderRadius: 50,
+  },
+  expiredMessage: {
+    width: "100%",
+    padding: 20,
+    textAlign: "center",
+    color: "#707070",
+    fontWeight: "bold",
+    fontSize: 18,
   },
 });

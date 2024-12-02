@@ -41,10 +41,6 @@ const DiaryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const specificProcessSelector = useSelector(getSpecificProcessSelector);
-  console.log(
-    "specificProcessSelector",
-    JSON.stringify(specificProcessSelector).length
-  );
 
   useEffect(() => {
     try {
@@ -54,9 +50,7 @@ const DiaryScreen = ({ navigation }) => {
           page_index: 1,
           page_size: PAGE_SIZE,
         };
-        dispatch(getSpecificProcess(formData)).then((response) => {
-          console.log("response", JSON.stringify(response));
-        });
+        dispatch(getSpecificProcess(formData));
       }
     } catch (error) {
       console.log("Error fetch specific process: " + JSON.stringify(error));
@@ -104,7 +98,7 @@ const DiaryScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} onScroll={handleScroll}>
         <View style={styles.container}>
           {specificProcessSelector?.process_technical_specific &&
             specificProcessSelector.process_technical_specific.map(

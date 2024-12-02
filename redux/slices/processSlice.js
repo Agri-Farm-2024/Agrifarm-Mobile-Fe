@@ -103,6 +103,24 @@ export const writeDiary = createAsyncThunk(
   }
 );
 
+export const publicDiary = createAsyncThunk(
+  "processSlice/publicDiary",
+  async (diaryId, { rejectWithValue }) => {
+    try {
+      const data = await api.patch(
+        `/processes/updateProcessSpecific/public/${diaryId}`,
+        {
+          is_public: true,
+        }
+      );
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const processSlice = createSlice({
   name: "processSlice",
   initialState: {
@@ -164,6 +182,16 @@ export const processSlice = createSlice({
         state.plantSeason = action.payload;
       })
       .addCase(getPlantSeason.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(publicDiary.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(publicDiary.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(publicDiary.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

@@ -18,29 +18,29 @@ const DiaryAction = ({ route, navigation }) => {
   const { diary } = route.params;
   const processSpecificDetail = useSelector(getSpecificProcessDetailSelector);
   const loading = useSelector(processLoadingSelector);
-  console.log("processSpecificDetail", JSON.stringify(processSpecificDetail));
+  // console.log("processSpecificDetail", JSON.stringify(processSpecificDetail));
   const isFocused = useIsFocused();
 
   const dispatch = useDispatch();
 
   const [activeTab, setActiveTab] = useState("process");
 
-  useEffect(() => {
-    if (isFocused) {
-      try {
-        if (diary?.process_technical_specific_id) {
-          dispatch(
-            getSpecificProcessDetail(diary?.process_technical_specific_id)
-          );
-        }
-      } catch (error) {
-        console.log("Error fetch specific process ", error);
+  const fetchSpecificProcessDetail = () => {
+    try {
+      if (diary?.process_technical_specific_id) {
+        dispatch(
+          getSpecificProcessDetail(diary?.process_technical_specific_id)
+        );
       }
+    } catch (error) {
+      console.log("Error fetch specific process ", error);
     }
-  }, [isFocused]);
+  };
 
   useEffect(() => {
+    console.log("fetch first!");
     if (diary) {
+      fetchSpecificProcessDetail();
       const diaryTitle = `${
         diary?.process_technical_standard?.plant_season?.plant?.name || ""
       } ${formatDate(
@@ -57,6 +57,14 @@ const DiaryAction = ({ route, navigation }) => {
       });
     }
   }, []);
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log("fetch again!");
+      fetchSpecificProcessDetail();
+    }
+  }, [activeTab]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {loading && !processSpecificDetail && <ActivityIndicatorComponent />}

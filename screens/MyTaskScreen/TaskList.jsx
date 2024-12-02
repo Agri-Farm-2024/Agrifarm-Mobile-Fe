@@ -10,6 +10,7 @@ import TaskModal from "./TaskModal";
 import Toast from "react-native-toast-message";
 import { useIsFocused } from "@react-navigation/native";
 import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
+import { formatDate, formatDateToDDMMYYYY } from "../../utils";
 
 const notStartTasks = [
   {
@@ -327,32 +328,64 @@ const TaskList = ({ taskType }) => {
         },
       ]}
     >
-      <Text
-        style={[
-          styles.taskTitle,
-          item?.request?.status == "assigned" && {
-            color: "#0087ff",
-          },
-          item?.request?.status == "rejected" && {
-            color: "#0087ff",
-          },
-          item?.request?.status == "in_progress" && {
-            color: "#ff7d53",
-          },
-          item?.request?.status == "pending_approval" && {
-            color: "#5f33e1",
-          },
-          item?.request?.status == "completed" && {
-            color: "#5f33e1",
-          },
-        ]}
-      >
-        {item?.request?.type === "create_process_standard"
-          ? "Tạo quy trình kĩ thuật canh tác"
-          : item?.request?.type === "cultivate_process_content"
-          ? "Canh tác và ghi nhật ký"
-          : "Hỗ trợ kĩ thuật"}
-      </Text>
+      <View>
+        <Text
+          style={[
+            styles.taskTitle,
+            item?.request?.status == "assigned" && {
+              color: "#0087ff",
+            },
+            item?.request?.status == "rejected" && {
+              color: "#0087ff",
+            },
+            item?.request?.status == "in_progress" && {
+              color: "#ff7d53",
+            },
+            item?.request?.status == "pending_approval" && {
+              color: "#5f33e1",
+            },
+            item?.request?.status == "completed" && {
+              color: "#5f33e1",
+            },
+          ]}
+        >
+          {item?.request?.type === "create_process_standard"
+            ? "Tạo quy trình kĩ thuật canh tác"
+            : item?.request?.type === "cultivate_process_content"
+            ? "Canh tác và ghi nhật ký"
+            : item?.request?.type === "report_land"
+            ? "Báo cáo mảnh đất"
+            : item?.request?.type === "technical_support"
+            ? "Hỗ trợ kĩ thuật"
+            : item?.request?.type === "product_purchase"
+            ? "Kiểm định thu mua"
+            : item?.request?.type === "product_puchase_harvest"
+            ? "Yêu cầu thu hoạch"
+            : "Chưa rõ"}
+        </Text>
+        <Text
+          style={[
+            item?.request?.status == "assigned" && {
+              color: "#0087ff",
+            },
+            item?.request?.status == "rejected" && {
+              color: "#0087ff",
+            },
+            item?.request?.status == "in_progress" && {
+              color: "#ff7d53",
+            },
+            item?.request?.status == "pending_approval" && {
+              color: "#5f33e1",
+            },
+            item?.request?.status == "completed" && {
+              color: "#5f33e1",
+            },
+          ]}
+        >
+          Ngày tạo: {formatDateToDDMMYYYY(item.created_at)}
+        </Text>
+      </View>
+
       {hadnleShowIconTask(item?.request?.status)}
     </TouchableOpacity>
   );
@@ -394,6 +427,8 @@ const styles = StyleSheet.create({
   taskTitle: {
     color: "white",
     fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 5,
   },
 });
 

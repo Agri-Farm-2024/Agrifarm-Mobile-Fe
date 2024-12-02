@@ -209,12 +209,17 @@ const LandLeaseInput = forwardRef((props, ref) => {
                   >
                     <View
                       style={{
-                        marginTop: 15,
-                        borderWidth: 1,
-                        borderColor: "#7fb640",
+                        backgroundColor: "white",
+                        paddingHorizontal: 20,
                         paddingVertical: 10,
-                        paddingHorizontal: 10,
-                        borderRadius: 20,
+                        borderRadius: 6,
+                        marginRight: 10,
+                        marginTop: 10,
+                        shadowColor: "#000",
+                        shadowOpacity: 0.1,
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowRadius: 4,
+                        elevation: 3,
                       }}
                     >
                       <Text>

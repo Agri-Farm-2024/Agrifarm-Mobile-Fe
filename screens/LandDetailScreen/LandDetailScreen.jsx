@@ -103,7 +103,10 @@ export default function LandDetailScreen({ navigation, route }) {
       </Appbar.Header>
 
       {/* Content */}
-      <ScrollView style={styles.content}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={{ paddingBottom: 10 }}
+      >
         {/* Image Slider */}
         <ScrollView
           horizontal
@@ -173,12 +176,17 @@ export default function LandDetailScreen({ navigation, route }) {
             <View
               key={index}
               style={{
+                backgroundColor: "white",
                 paddingHorizontal: 20,
                 paddingVertical: 10,
-                borderRadius: 30,
-                borderColor: "#7FB640",
-                borderWidth: 1,
+                borderRadius: 6,
                 marginRight: 10,
+                marginBottom: 10,
+                shadowColor: "#000",
+                shadowOpacity: 0.1,
+                shadowOffset: { width: 0, height: 2 },
+                shadowRadius: 4,
+                elevation: 3,
               }}
             >
               <Text>{capitalizeFirstLetter(plant?.name)}</Text>

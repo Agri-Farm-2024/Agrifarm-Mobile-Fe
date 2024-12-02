@@ -1,11 +1,12 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
-import { formatDateToDDMMYYYY } from "../../utils";
+import { formatDateToDDMMYYYY, formatTimeViewLand } from "../../utils";
 import { useNavigation } from "@react-navigation/native";
 
 const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
   const navigation = useNavigation();
+  console.log(JSON.stringify(taskData));
 
   const filterStatus = (status) => {
     if (status === "assigned") {
@@ -46,14 +47,33 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
         >
           <Text style={styles.modalTitle}>Chi tiết công việc</Text>
           <Text style={styles.modalText}>
-            Ngày tạo: {new Date(taskData?.created_at).toLocaleString()}
+            Ngày tạo: {formatTimeViewLand(taskData?.created_at)}
           </Text>
           <Text style={styles.modalText}>
             Mô tả:{" "}
             {taskData?.request?.type === "create_process_standard"
               ? "Tạo quy trình kĩ thuật canh tác"
-              : "Hỗ trợ kĩ thuật"}{" "}
-            trên {taskData?.request?.plant_season?.plant?.name}
+              : taskData?.request?.type === "cultivate_process_content"
+              ? "Canh tác và ghi nhật ký"
+              : taskData?.request?.type === "report_land"
+              ? "Báo cáo mảnh đất"
+              : taskData?.request?.type === "technical_support"
+              ? "Hỗ trợ kĩ thuật"
+              : taskData?.request?.type === "product_purchase"
+              ? "Kiểm định thu mua"
+              : taskData?.request?.type === "product_puchase_harvest"
+              ? "Yêu cầu thu hoạch"
+              : "Chưa rõ"}
+          </Text>
+          <Text style={styles.modalText}>
+            Mảnh đất:{" "}
+            {taskData?.request?.service_specific
+              ? taskData?.request?.service_specific?.booking_land?.land?.name
+              : taskData?.request?.process_technical_specific_stage_content
+              ? taskData?.request?.process_technical_specific_stage_content
+                  ?.process_technical_specific_stage?.process_technical_specific
+                  ?.service_specific?.booking_land?.land?.name
+              : "Không có"}
           </Text>
 
           <Text style={styles.modalText}>
@@ -110,9 +130,21 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               <TouchableOpacity
                 onPress={() => {
                   onClose();
-                  navigation.navigate("ReportTaskScreen", {
-                    taskInfo: taskData,
-                  });
+                  if (taskData?.request?.type === "product_purchase") {
+                    navigation.navigate("ReportTaskPurchaseScreen", {
+                      taskInfo: taskData,
+                    });
+                  } else if (
+                    taskData?.request?.type === "product_puchase_harvest"
+                  ) {
+                    navigation.navigate("ReportTaskPurchaseHarvestScreen", {
+                      taskInfo: taskData,
+                    });
+                  } else {
+                    navigation.navigate("ReportTaskScreen", {
+                      taskInfo: taskData,
+                    });
+                  }
                 }}
                 style={styles.closeButton}
               >

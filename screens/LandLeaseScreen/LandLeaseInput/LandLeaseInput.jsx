@@ -34,6 +34,7 @@ const validationSchema = Yup.object().shape({
   rentalMonths: Yup.number()
     .typeError("Số tháng cần thuê phải là số")
     .min(6, "Ít nhất là 6 tháng")
+    .max(36, "nhiều nhất là 36 tháng")
     .required("Số tháng cần thuê là bắt buộc"),
   purpose: Yup.string().required("Mục đích thuê đất là bắt buộc"), // Add this line
 });

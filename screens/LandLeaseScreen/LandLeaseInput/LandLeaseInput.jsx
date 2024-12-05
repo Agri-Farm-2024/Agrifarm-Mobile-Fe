@@ -103,11 +103,7 @@ const LandLeaseInput = forwardRef((props, ref) => {
           dispatch(getPlantSeasonList(params));
         }, [values.rentalMonths, values.startTime]);
         return (
-          <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            keyboardVerticalOffset={80}
-          >
+          <KeyboardAvoidingView style={{ flex: 1 }} keyboardVerticalOffset={80}>
             <ScrollView contentContainerStyle={{ paddingVertical: 20 }}>
               <Text style={styles.title}>Thông tin yêu cầu</Text>
 

@@ -152,20 +152,43 @@ export function capitalizeFirstLetter(string) {
   return string;
 }
 
+// export function formatTimeViewLand(timestamp) {
+//   if (!timestamp) {
+//     return timestamp;
+//   }
+//   const date = new Date(timestamp);
+//   // Format time
+//   const optionsTime = {
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     hour12: true,
+//     timeZone: "UTC", // Adjust if needed
+//   };
+//   const time = date.toLocaleTimeString("en-GB", optionsTime);
+//   // Format date
+//   const formattedDate = date.toLocaleDateString("en-GB");
+//   return `${time} - ${formattedDate}`;
+// }
+
 export function formatTimeViewLand(timestamp) {
   if (!timestamp) {
     return timestamp;
   }
+
   const date = new Date(timestamp);
+
   // Format time
-  const optionsTime = {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-    timeZone: "UTC", // Adjust if needed
-  };
-  const time = date.toLocaleTimeString("en-GB", optionsTime);
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+
+  // Determine morning or afternoon
+  const period = hours >= 12 ? "chiều" : "sáng";
+
+  // Convert to 12-hour format for display
+  const formattedHours = hours % 12 || 12;
+
   // Format date
   const formattedDate = date.toLocaleDateString("en-GB");
-  return `${time} - ${formattedDate}`;
+
+  return `${formattedHours}:${minutes} ${period} - ${formattedDate}`;
 }

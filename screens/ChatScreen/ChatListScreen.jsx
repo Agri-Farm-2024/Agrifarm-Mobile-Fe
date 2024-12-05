@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import { getChatList } from "../../redux/slices/chatSlice";
 import socket from "../../services/socket";
+import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 
 // const chatList = [
 //   {
@@ -83,7 +84,8 @@ export default function ChatListScreen({ navigation }) {
               />
             ))
           ) : (
-            <Text style={styles.chatEmpty}>Không có đoạn chat nào</Text>
+            // <Text style={styles.chatEmpty}>Không có đoạn chat nào</Text>
+            <EmptyComponent message="Không có đoạn chat nào" />
           )}
         </ScrollView>
       </View>

@@ -30,13 +30,14 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
   const [confirmVisible, setConfirmVisible] = useState(false);
 
   const serviceSpcificList = useSelector(
-    (state) => state.serviceSlice?.listServiceInUse?.metadata?.services
+    (state) => state.serviceSlice?.listServiceInUse?.services
   );
 
   useEffect(() => {
     const filterUsed = serviceSpcificList?.filter(
       (service) => service.status === "used"
     );
+
     const optionServices = filterUsed?.map((obj) => ({
       label: capitalizeFirstLetter(obj?.plant_season?.plant?.name),
       value: obj?.service_specific_id,
@@ -185,12 +186,7 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
         onConfirm={() => {
           onSubmit(requestType, requestContent);
           console.log(
-            "onSubmit: " +
-              service?.service_specific_id +
-              " " +
-              requestType +
-              " " +
-              requestContent
+            "onSubmit: " + service + " " + requestType + " " + requestContent
           );
           Toast.show({
             type: "info",
@@ -200,7 +196,7 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
             autoHide: false,
           });
           const formdata = {
-            service_specific_id: service?.service_specific_id,
+            service_specific_id: service,
             support_type: requestType,
             description: requestContent,
           };
@@ -262,13 +258,13 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
             })
             .catch((err) => console.log("err: " + JSON.stringify(err)));
 
-          // setConfirmVisible(false);
-          // onDismiss();
-          // Toast.show({
-          //   type: "success",
-          //   text1: "Đơn đã được gửi",
-          //   text2: "Hệ thống sẽ xử lí đơn của bạn sớm nhất!",
-          // });
+          setConfirmVisible(false);
+          onDismiss();
+          Toast.show({
+            type: "success",
+            text1: "Đơn đã được gửi",
+            text2: "Hệ thống sẽ xử lí đơn của bạn sớm nhất!",
+          });
         }}
       />
 

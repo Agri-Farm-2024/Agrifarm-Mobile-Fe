@@ -1,10 +1,11 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import MaterialItem from "../../../components/MaterialItem";
 import { useDispatch, useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 import { getMaterial } from "../../../redux/slices/materialSlice";
 import { getMaterialSelector } from "../../../redux/selectors";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const data = [
   {
@@ -59,25 +60,34 @@ const PAGE_SIZE = 30;
 export default function BuyMaterials() {
   const dispatch = useDispatch();
   const isFocused = useIsFocused();
+  const [loading, setLoading] = useState(false);
 
   const materialList = useSelector(getMaterialSelector);
   console.log("materialList", JSON.stringify(materialList));
-  // const loading = useSelector(materialLoadingSelector);
 
   useEffect(() => {
-    if (isFocused) {
-      const params = {
-        material_type: "buy",
-        page_index: 1,
-        page_size: PAGE_SIZE,
-      };
-      dispatch(getMaterial(params));
+    try {
+      if (isFocused) {
+        const params = {
+          material_type: "buy",
+          page_index: 1,
+          page_size: PAGE_SIZE,
+        };
+        setLoading(true);
+        dispatch(getMaterial(params)).then((response) => {
+          setLoading(false);
+        });
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log("Error fetch buy material", JSON.stringify(error));
     }
   }, [isFocused]);
   return (
     <View
       style={{
         flex: 1,
+        width: "100%",
       }}
     >
       <ScrollView
@@ -85,11 +95,12 @@ export default function BuyMaterials() {
         contentContainerStyle={{
           flexDirection: "column",
           alignItems: "center",
-          paddingBottom: 20, // Prevent data from being cut off at the bottom
+          paddingBottom: 20,
         }}
       >
         <View
           style={{
+            width: "100%",
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
@@ -99,6 +110,20 @@ export default function BuyMaterials() {
             materialList?.materials?.map((item) => (
               <MaterialItem key={item.material_id} material={item} />
             ))}
+          {!materialList && loading && <ActivityIndicatorComponent />}
+          {!materialList && !loading && (
+            <Text
+              style={{
+                width: "100%",
+                color: "#707070",
+                fontWeight: "bold",
+                fontSize: 16,
+                textAlign: "center",
+              }}
+            >
+              Không tìm thấy vật tư
+            </Text>
+          )}
         </View>
       </ScrollView>
     </View>

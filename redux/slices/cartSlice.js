@@ -15,6 +15,19 @@ export const buyMaterial = createAsyncThunk(
   }
 );
 
+export const rentMaterial = createAsyncThunk(
+  "materialSlice/rentMaterial",
+  async (formData, { rejectWithValue }) => {
+    try {
+      const data = await api.post(`/materials/bookingMaterial`, formData);
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   cartCount: 0,
   items: [],
@@ -92,6 +105,16 @@ export const cartSlice = createSlice({
         state.loading = false;
       })
       .addCase(buyMaterial.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(rentMaterial.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(rentMaterial.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(rentMaterial.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

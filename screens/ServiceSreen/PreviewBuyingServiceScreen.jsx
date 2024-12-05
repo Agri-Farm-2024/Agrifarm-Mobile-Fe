@@ -193,6 +193,7 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
               mode="contained"
               style={styles.button}
               onPress={() => handleBuyService()}
+              disabled={!isChecked}
             >
               Tiến hành thanh toán
             </Button>

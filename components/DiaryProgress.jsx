@@ -168,6 +168,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                   if (isDiary) {
                     navigation.navigate("DiaryDetailView", {
                       diaryDetail: progressItem,
+                      expertReponsible: diaryProgress?.expert?.full_name,
                     });
                   } else {
                     navigation.navigate("SpecificProcessDetailScreen", {

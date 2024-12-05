@@ -83,12 +83,18 @@ export default function MaterialDetailScreen({ route, navigation }) {
           {material?.type == "buy" ? "Bán" : "Cho thuê"}
         </Text>
         <Text style={styles.descProduct}>{material?.description}</Text>
+        {material?.type == "rent" && (
+          <Text style={styles.descProduct}>
+            Giá cọc: {formatNumberToVND(material?.deposit_per_piece)} VND/cái
+          </Text>
+        )}
         <Text style={styles.priceProduct}>
           {material?.type == "buy"
-            ? formatNumberToVND(material?.price_per_piece)
-            : formatNumberToVND(material?.price_of_rent)}{" "}
-          VND
+            ? `Giá: ${formatNumberToVND(material?.price_per_piece)}`
+            : `Giá thuê: ${formatNumberToVND(material?.price_of_rent)}`}{" "}
+          VND{material?.type == "rent" && "/ngày"}
         </Text>
+
         {material?.type == "stage" ? (
           <View>
             <Button

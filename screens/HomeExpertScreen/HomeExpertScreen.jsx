@@ -109,7 +109,7 @@ function HomeExpertScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Yêu cầu vật tư</Text>
+              <Text style={styles.iconLabel}>Vật tư</Text>
             </View>
 
             <View style={styles.iconContainer}>

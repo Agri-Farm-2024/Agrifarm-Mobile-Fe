@@ -1,6 +1,11 @@
 import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MaterialItem from "../../../components/MaterialItem";
+import { useDispatch, useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+import { getMaterial } from "../../../redux/slices/materialSlice";
+import { getMaterialSelector } from "../../../redux/selectors";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const deviceData = [
   {
@@ -50,11 +55,40 @@ const deviceData = [
   },
 ];
 
+const PAGE_SIZE = 30;
+
 export default function RentMaterials() {
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+  const [loading, setLoading] = useState(false);
+
+  const materialList = useSelector(getMaterialSelector);
+  console.log("materialList", JSON.stringify(materialList));
+
+  useEffect(() => {
+    try {
+      console.log("isFocused", isFocused);
+      if (isFocused) {
+        const params = {
+          material_type: "rent",
+          page_index: 1,
+          page_size: PAGE_SIZE,
+        };
+        setLoading(true);
+        dispatch(getMaterial(params)).then((response) => {
+          setLoading(false);
+        });
+      }
+    } catch (error) {
+      setLoading(false);
+      console.log("Error fetch rent material", JSON.stringify(error));
+    }
+  }, [isFocused]);
   return (
     <View
       style={{
         flex: 1,
+        width: "100%",
       }}
     >
       <ScrollView
@@ -62,27 +96,35 @@ export default function RentMaterials() {
         contentContainerStyle={{
           flexDirection: "column",
           alignItems: "center",
-          paddingBottom: 20, // Prevent data from being cut off at the bottom
+          paddingBottom: 20,
         }}
       >
         <View
           style={{
+            width: "100%",
             flexDirection: "row",
             flexWrap: "wrap",
             justifyContent: "space-between",
           }}
         >
-          {deviceData.map((item) => (
-            <MaterialItem
-              key={item.id}
-              id={item.id}
-              image={item.image}
-              name={item.name}
-              type={item.type}
-              price={item.price}
-              requestType={item.requestType}
-            />
-          ))}
+          {materialList &&
+            materialList?.materials?.map((item) => (
+              <MaterialItem key={item.material_id} material={item} />
+            ))}
+          {!materialList && loading && <ActivityIndicatorComponent />}
+          {!materialList && !loading && (
+            <Text
+              style={{
+                width: "100%",
+                color: "#707070",
+                fontWeight: "bold",
+                fontSize: 16,
+                textAlign: "center",
+              }}
+            >
+              Không tìm thấy vật tư
+            </Text>
+          )}
         </View>
       </ScrollView>
     </View>

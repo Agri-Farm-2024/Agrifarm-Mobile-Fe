@@ -28,6 +28,9 @@ export const processLoadingSelector = (state) => state.processSlice.loading;
 
 //material
 export const getMaterialSelector = (state) => state.materialSlice.material;
+export const getOrderSelector = (state) => state.materialSlice.order;
+export const getBookingMaterialSelector = (state) =>
+  state.materialSlice.bookingMaterial;
 export const materialLoadingSelector = (state) => state.materialSlice.loading;
 
 //chat

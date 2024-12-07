@@ -3,47 +3,55 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Button, Card } from "react-native-paper";
 import { useDispatch, useSelector } from "react-redux";
-import { getOrderHistory } from "../../redux/slices/materialSlice";
 import {
+  getBookingMaterialHistory,
+  getOrderHistory,
+} from "../../redux/slices/materialSlice";
+import {
+  getBookingMaterialSelector,
   getOrderSelector,
   materialLoadingSelector,
 } from "../../redux/selectors";
-import { formatDate, formatNumber } from "../../utils";
+import { calculateDaysDifference, formatDate, formatNumber } from "../../utils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const PAGE_SIZE = 30;
 
-export default function OrderCard() {
+export default function BookingOrderCard() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const orderHistory = useSelector(getOrderSelector);
+  const bookingOrderHistory = useSelector(getBookingMaterialSelector);
   const loading = useSelector(materialLoadingSelector);
 
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchOrder = () => {
+  const fetchBookingOrder = () => {
     try {
       const params = {
         page_size: PAGE_SIZE,
         page_index: currentPage,
       };
-      dispatch(getOrderHistory(params));
+      dispatch(getBookingMaterialHistory(params));
     } catch (error) {
       console.log("Error fetching order history", JSON.stringify(error));
     }
   };
 
   useEffect(() => {
-    fetchOrder();
+    fetchBookingOrder();
   }, []);
 
-  const calculateTotalPrice = (itemList) => {
+  const calculateTotalPrice = (itemList, time_start, time_end) => {
     if (!itemList || itemList.length == 0) {
       return 0;
     } else {
+      const dayDifference = calculateDaysDifference(time_start, time_end);
       const total = itemList.reduce(
-        (total, item) => total + item?.price_per_iteam * item?.quantity,
+        (total, item) =>
+          total +
+          item?.price_per_piece_item * item?.quantity * dayDifference +
+          item?.price_deposit_per_item * item?.quantity,
         0
       );
       return formatNumber(total);
@@ -63,12 +71,13 @@ export default function OrderCard() {
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}
       {!loading &&
-        orderHistory &&
-        orderHistory.length > 0 &&
-        orderHistory.map((order, index) => (
+        bookingOrderHistory &&
+        bookingOrderHistory?.booking_materials &&
+        bookingOrderHistory?.booking_materials.length > 0 &&
+        bookingOrderHistory?.booking_materials.map((order, index) => (
           <Card
-            key={index + order?.order_id}
             style={[styles.card, { borderColor: "#7fb640" }]}
+            key={index + order?.booking_material_id}
           >
             <Card.Content>
               <View style={styles.header}>
@@ -78,26 +87,57 @@ export default function OrderCard() {
                     size={24}
                     color="#7fb640"
                   />{" "}
-                  Đơn ngày: {formatDate(order?.created_at, 0)}
+                  Đơn thuê ngày: {formatDate(order?.created_at, 0)}
                 </Text>
               </View>
 
               <View style={styles.row}>
                 <Text style={styles.label}>Mã đơn: </Text>
-                <Text style={styles.value}>{order?.order_id}</Text>
+                <Text style={styles.value}>{order?.booking_material_id}</Text>
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.label}>Ngày hết hạn: </Text>
+                <Text style={styles.value}>
+                  {formatDate(order?.time_end, 0)}
+                </Text>
+              </View>
+
+              <View style={styles.row}>
+                <Text style={styles.label}>Trạng thái: </Text>
+                <Text style={styles.value}>
+                  {order?.status == "pending_payment" && (
+                    <Text style={{ color: "#ff007f" }}>Chờ thanh toán</Text>
+                  )}
+                  {order?.status == "pending_sign" && (
+                    <Text style={{ color: "#00bcd4" }}>Chờ ký</Text>
+                  )}
+                  {order?.status == "completed" && (
+                    <Text style={{ color: "#28a745" }}>Đang sử dụng</Text>
+                  )}
+                  {order?.status == "expired" && (
+                    <Text style={{ color: "#dc3545" }}>Hết hạn</Text>
+                  )}
+                </Text>
               </View>
 
               <View style={styles.row}>
                 <Text style={styles.label}>Số lượng: </Text>
                 <Text style={styles.value}>
-                  {calculateTotalQuantity(order?.orders_detail)} vật tư
+                  {calculateTotalQuantity(order?.booking_material_detail)} vật
+                  tư
                 </Text>
               </View>
 
               <View style={styles.row}>
                 <Text style={styles.label}>Tổng thanh toán: </Text>
                 <Text style={styles.value}>
-                  {calculateTotalPrice(order?.orders_detail)} VND
+                  {calculateTotalPrice(
+                    order?.booking_material_detail,
+                    order?.time_start,
+                    order?.time_end
+                  )}{" "}
+                  VND
                 </Text>
               </View>
 
@@ -106,7 +146,7 @@ export default function OrderCard() {
                 textColor={"#7fb640"}
                 style={[styles.button, { borderColor: "#7fb640" }]}
                 onPress={() =>
-                  navigation.navigate("HistoryOrderDetail", { order: order })
+                  navigation.navigate("BookingOrderDetail", { order: order })
                 }
               >
                 Xem chi tiết

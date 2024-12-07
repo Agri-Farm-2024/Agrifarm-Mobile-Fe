@@ -47,6 +47,7 @@ import SpecificProcessDetailScreen from "../screens/DiaryScreen/SpecificProcessD
 import { ReportTaskPurchaseScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseScreen";
 import { ReportTaskPurchaseHarvestScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseHarvestScreen";
 import { ReportTaskLandScreen } from "../screens/MyTaskScreen/ReportTaskLandScreen";
+import BookingOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/BookingOrderDetail";
 
 const Stack = createStackNavigator();
 
@@ -239,6 +240,14 @@ const StackNavigator = () => (
         headerTitleAlign: "center",
       }}
       component={HistoryOrderDetail}
+    />
+    <Stack.Screen
+      name="BookingOrderDetail"
+      options={{
+        headerTitle: "Chi tiết đơn hàng",
+        headerTitleAlign: "center",
+      }}
+      component={BookingOrderDetail}
     />
     <Stack.Screen
       name="RequestContractDetailScreen"

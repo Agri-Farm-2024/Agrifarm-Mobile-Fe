@@ -10,20 +10,24 @@ export function formatNumber(number) {
 
 //Format date
 export function formatDate(timestamp, formatType) {
-  const date = new Date(timestamp);
-  if (formatType === 0) {
-    // Format to "DD/MM/YYYY"
-    const formattedDDMMYYYY = date.toLocaleDateString("en-GB");
-    return formattedDDMMYYYY;
-  } else if (formatType === 1) {
-    // Format to "YYYY/MM/DD"
-    const formattedYYYYMMDD = date.toLocaleDateString("en-CA");
-    return formattedYYYYMMDD;
-  } else if (formatType === 2) {
-    // Format to "DD/MM"
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    return `${day}/${month}`;
+  if (timestamp) {
+    const date = new Date(timestamp);
+    if (formatType === 0) {
+      // Format to "DD/MM/YYYY"
+      const formattedDDMMYYYY = date.toLocaleDateString("en-GB");
+      return formattedDDMMYYYY;
+    } else if (formatType === 1) {
+      // Format to "YYYY/MM/DD"
+      const formattedYYYYMMDD = date.toLocaleDateString("en-CA");
+      return formattedYYYYMMDD;
+    } else if (formatType === 2) {
+      // Format to "DD/MM"
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      return `${day}/${month}`;
+    } else {
+      return timestamp;
+    }
   } else {
     return timestamp;
   }
@@ -192,3 +196,20 @@ export function formatTimeViewLand(timestamp) {
 
   return `${formattedHours}:${minutes} ${period} - ${formattedDate}`;
 }
+
+export const calculateDaysDifference = (date1, date2) => {
+  const firstDate = new Date(date1);
+  const secondDate = new Date(date2);
+
+  if (isNaN(firstDate) || isNaN(secondDate)) {
+    return "Invalid date";
+  }
+
+  const differenceInMilliseconds = Math.abs(firstDate - secondDate);
+
+  const differenceInDays = Math.ceil(
+    differenceInMilliseconds / (1000 * 60 * 60 * 24)
+  );
+
+  return differenceInDays;
+};

@@ -4,6 +4,7 @@ import { Image } from "react-native";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Card, Text, Button, Divider } from "react-native-paper";
 import {
+  calculateDaysDifference,
   capitalizeFirstLetter,
   convertImageURL,
   formatDate,
@@ -11,20 +12,31 @@ import {
   formatNumberToVND,
 } from "../../../utils";
 
-const HistoryOrderDetail = ({ route, navigation }) => {
+const BookingOrderDetail = ({ route, navigation }) => {
   const { order } = route.params;
-  console.log("History Order", order);
+  console.log("Booking Order", order);
 
   const discountPrice = 0;
+  const dayDifference = calculateDaysDifference(
+    order?.time_start,
+    order?.time_end
+  );
   const totalPrice =
     order &&
-    order?.orders_detail.reduce(
-      (total, item) => total + item.price_per_iteam * item.quantity,
+    order?.booking_material_detail.reduce(
+      (total, item) =>
+        total +
+        item.price_per_piece_item * item.quantity * dayDifference +
+        item.price_deposit_per_item * item.quantity,
       0
     );
+
   const totalQuantity =
     order &&
-    order?.orders_detail.reduce((total, item) => total + item?.quantity, 0);
+    order?.booking_material_detail.reduce(
+      (total, item) => total + item?.quantity,
+      0
+    );
 
   return (
     <>
@@ -48,7 +60,41 @@ const HistoryOrderDetail = ({ route, navigation }) => {
                   marginBottom: 8,
                 }}
               >
-                Mã đơn: <Text style={{ fontSize: 14 }}>{order.order_id}</Text>
+                Mã đơn:{" "}
+                <Text style={{ fontSize: 14 }}>
+                  {order.booking_material_id}
+                </Text>
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "800",
+                  color: "#222",
+                  marginBottom: 8,
+                }}
+              >
+                Số ngày thuê:{" "}
+                <Text style={{ fontSize: 14 }}>{dayDifference} ngày</Text>
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "800",
+                  color: "#222",
+                  marginBottom: 8,
+                }}
+              >
+                Trạng thái:{" "}
+                {order?.status == "pending_payment" && (
+                  <Text style={{ color: "#ff007f" }}>Chờ thanh toán</Text>
+                )}
+                {order?.status == "pending_sign" && (
+                  <Text style={{ color: "#00bcd4" }}>Chờ ký</Text>
+                )}
+                {order?.status == "completed" && (
+                  <Text style={{ color: "#28a745" }}>Đang sử dụng</Text>
+                )}
+                {order?.status == "expired" && (
+                  <Text style={{ color: "#dc3545" }}>Hết hạn</Text>
+                )}
               </Text>
               <Text
                 style={{
@@ -57,6 +103,23 @@ const HistoryOrderDetail = ({ route, navigation }) => {
                 }}
               >
                 Ngày giao: <Text>{formatDate(order.created_at, 0)}</Text>
+              </Text>
+              <Text
+                style={{
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                }}
+              >
+                Ngày hết hạn: <Text>{formatDate(order.time_end, 0)}</Text>
+              </Text>
+              <Text
+                style={{
+                  marginBottom: 8,
+                  fontWeight: "bold",
+                }}
+              >
+                Ngày bắt đầu thuê:{" "}
+                <Text>{formatDate(order.created_at, 0)}</Text>
               </Text>
               <Text
                 style={{
@@ -73,8 +136,8 @@ const HistoryOrderDetail = ({ route, navigation }) => {
         {/* Items */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Danh sách sản phẩm</Text>
-          {order?.orders_detail &&
-            order?.orders_detail.map((item) => (
+          {order?.booking_material_detail &&
+            order?.booking_material_detail.map((item) => (
               <Card key={item.material_id} style={styles.productCard}>
                 <Card.Content style={styles.productContent}>
                   <Image
@@ -88,7 +151,12 @@ const HistoryOrderDetail = ({ route, navigation }) => {
                       {capitalizeFirstLetter(item?.material?.name)}
                     </Text>
                     <Text style={styles.productPrice}>
-                      Giá mua: {formatNumber(item?.price_per_iteam)} VND
+                      Giá thuê: {formatNumber(item?.price_per_piece_item)}{" "}
+                      VND/ngày
+                    </Text>
+                    <Text style={styles.productPrice}>
+                      Giá cọc: {formatNumber(item?.price_deposit_per_item)}{" "}
+                      VND/cái
                     </Text>
                     <Text style={styles.productQuantity}>
                       Số lượng: {item?.quantity}
@@ -196,4 +264,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HistoryOrderDetail;
+export default BookingOrderDetail;

@@ -21,6 +21,7 @@ export default function LandLeaseScreen({ navigation, route }) {
     rentalMonths: "6",
     purpose: "",
     startTime: new Date(),
+    isMultiplePayment: false,
   });
   const [visibleContract, setVisibleContract] = useState(false);
 
@@ -62,11 +63,16 @@ export default function LandLeaseScreen({ navigation, route }) {
       return;
     }
 
+    console.log(
+      "handleSubmitForm: " + JSON.stringify(formData.isMultiplePayment)
+    );
+
     dispatch(
       bookingLand({
         land_id: land.land_id,
         time_start: formData.startTime,
         total_month: formData.rentalMonths,
+        payment_frequency: formData.isMultiplePayment ? "multiple" : "single",
         purpose_rental: formData.purpose,
       })
     )

@@ -25,10 +25,16 @@ export const getListOfLand = createAsyncThunk(
 export const bookingLand = createAsyncThunk(
   "landSlice/bookingLand",
   async (
-    { land_id, time_start, total_month, purpose_rental },
+    { land_id, time_start, total_month, purpose_rental, payment_frequency },
     { rejectWithValue }
   ) => {
-    console.log({ land_id, time_start, total_month, purpose_rental });
+    console.log({
+      land_id,
+      time_start,
+      total_month,
+      purpose_rental,
+      payment_frequency,
+    });
 
     try {
       const data = await api.post(`/bookings`, {
@@ -36,6 +42,7 @@ export const bookingLand = createAsyncThunk(
         time_start,
         total_month: Number(total_month),
         purpose_rental,
+        payment_frequency,
       });
 
       console.log("bookingLand data:", data);

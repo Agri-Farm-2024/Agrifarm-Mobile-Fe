@@ -26,7 +26,7 @@ export default function App() {
             <StatusBar barStyle="light-content" backgroundColor={"#7FB640"} />
             <NavigationContainer>
               <StackNavigator />
-              <Toast />
+              <Toast visibilityTime={2000} />
             </NavigationContainer>
           </PaperProvider>
         </PersistGate>

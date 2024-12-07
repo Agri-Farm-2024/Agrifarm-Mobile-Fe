@@ -43,12 +43,17 @@ const chatDetail = {
 };
 
 export default function ChatDetailScreen({ navigation, route }) {
-  const { channelId, isExpired } = route.params;
+  const { channelId, isExpired, expiredAt } = route.params;
   const { chatDetail, loading, error } = useSelector(
     (state) => state.chatSlice
   );
 
-  // console.log("ChatDetail ne", JSON.stringify(chatDetail));
+  console.log(
+    "ChatDetail ne",
+    JSON.stringify(chatDetail),
+    isExpired,
+    expiredAt
+  );
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
   const [conversation, setConversation] = useState(null);
@@ -191,7 +196,7 @@ export default function ChatDetailScreen({ navigation, route }) {
         {isExpired ? (
           <Text style={styles.expiredMessage}>
             Đoạn chat sẽ được xoá vào ngày{" "}
-            {expiredAt ? formatDate(expiredAt) : ""}
+            {expiredAt ? formatDate(expiredAt, 0) : ""}
           </Text>
         ) : (
           <View style={styles.inputContainer}>

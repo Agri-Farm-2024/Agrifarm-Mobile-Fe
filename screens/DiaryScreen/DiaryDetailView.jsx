@@ -27,7 +27,7 @@ const actionDetail = {
 };
 
 const DiaryDetailView = ({ route }) => {
-  const { diaryDetail } = route.params;
+  const { diaryDetail, expertReponsible } = route.params;
   console.log("diaryDetail", diaryDetail);
   const [visibleImageVIew, setVisibleImageVIew] = useState(false);
   const [imageIndexSelected, setImageIndexSelected] = useState(0);
@@ -63,10 +63,14 @@ const DiaryDetailView = ({ route }) => {
               <Text style={styles.infoContent}>{diaryDetail?.diaryNote}</Text>
             </View>
             <View style={styles.diaryInfo}>
-              <Text style={styles.infoTitle}>Người ghi</Text>
+              <Text style={styles.infoTitle}>Chất lượng đạt: </Text>
               <Text style={styles.infoContent}>
-                {diaryDetail?.diaryAuthor || ""}
+                {diaryDetail?.actionQuality}%
               </Text>
+            </View>
+            <View style={styles.diaryInfo}>
+              <Text style={styles.infoTitle}>Người ghi</Text>
+              <Text style={styles.infoContent}>{expertReponsible || ""}</Text>
             </View>
 
             <View style={styles.diaryInfo}>

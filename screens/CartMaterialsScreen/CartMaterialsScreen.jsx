@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -16,9 +16,14 @@ import {
   increaseQuantity,
   removeFromCart,
 } from "../../redux/slices/cartSlice";
-import { convertImageURL, formatNumberToVND } from "../../utils";
-import Toast from "react-native-toast-message";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatNumberToVND,
+} from "../../utils";
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
+import { TextInput } from "react-native";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 export default function CartMaterialsScreen({ navigation }) {
   const cartItems = useSelector((state) => state.cartSlice.items);
@@ -28,6 +33,7 @@ export default function CartMaterialsScreen({ navigation }) {
 
   const [checkedBuy, setcheckedBuy] = useState(false);
   const [checkedRent, setcheckedRent] = useState(false);
+  const [rentDay, setRentDay] = useState(1);
   const [menuVisibleItem, setMenuVisibleItem] = useState({});
   const [comfirmVisibleClearAll, setComfirmVisibleClearAll] = useState(false);
 
@@ -40,7 +46,10 @@ export default function CartMaterialsScreen({ navigation }) {
       : 0) +
     (checkedRent
       ? cartRent.reduce(
-          (total, item) => total + item.price_of_rent * item.quantity,
+          (total, item) =>
+            total +
+            item.price_of_rent * item.quantity * rentDay +
+            item.deposit_per_piece * item.quantity,
           0
         )
       : 0);
@@ -62,6 +71,21 @@ export default function CartMaterialsScreen({ navigation }) {
   const handleCheckout = () => {
     let cartItemsCheckout = {};
 
+    if (checkedRent && cartRent?.length == 0) {
+      Toast.show({
+        type: "error",
+        text1: "Không tồn tại thiết bị thuê!",
+      });
+      return;
+    }
+    if (checkedBuy && cartBuy?.length == 0) {
+      Toast.show({
+        type: "error",
+        text1: "Không tồn tại thiết bị!",
+      });
+      return;
+    }
+
     // Handle case where both are checked first
     if (checkedBuy && checkedRent) {
       cartItemsCheckout = { ...cartItems };
@@ -75,7 +99,11 @@ export default function CartMaterialsScreen({ navigation }) {
       cartItemsCheckout = { ...cartRent };
     }
 
-    navigation.navigate("CheckoutScreen", { cartItemsCheckout });
+    navigation.navigate("CheckoutScreen", {
+      cartItemsCheckout,
+      isRent: checkedRent,
+      rentDay: checkedRent ? rentDay : 0,
+    });
   };
 
   const renderItem = (item) => (
@@ -85,14 +113,25 @@ export default function CartMaterialsScreen({ navigation }) {
         style={styles.itemImage}
       />
       <View style={styles.itemDetails}>
-        <Text style={styles.itemName}>Tên: {item.name}</Text>
-        <Text style={styles.itemPrice}>
-          Giá:{" "}
-          {item?.type == "buy"
-            ? formatNumberToVND(item.price_per_piece)
-            : formatNumberToVND(item.price_of_rent)}{" "}
-          VND
+        <Text style={styles.itemName}>
+          Tên: {capitalizeFirstLetter(item.name)}
         </Text>
+
+        {item?.type == "buy" && (
+          <Text style={styles.itemPrice}>
+            Giá: {formatNumberToVND(item.price_per_piece)} VND
+          </Text>
+        )}
+        {item?.type == "rent" && (
+          <>
+            <Text style={styles.itemPrice}>
+              Giá thuê: {formatNumberToVND(item.price_of_rent)} VND/ngày
+            </Text>
+            <Text style={styles.itemPrice}>
+              Giá cọc: {formatNumberToVND(item.deposit_per_piece)} VND/cái
+            </Text>
+          </>
+        )}
         <View style={styles.itemQuantity}>
           <IconButton
             icon="minus"
@@ -147,6 +186,17 @@ export default function CartMaterialsScreen({ navigation }) {
     </View>
   );
 
+  const handleRentDayChange = (text) => {
+    if (/^\d*$/.test(text)) {
+      setRentDay(text);
+    } else {
+      Toast.show({
+        type: "error",
+        text1: "Số ngày thuê không hợp lệ",
+      });
+    }
+  };
+
   return (
     <>
       <Appbar.Header style={styles.appbar}>
@@ -170,7 +220,10 @@ export default function CartMaterialsScreen({ navigation }) {
                 <Text style={styles.sectionTitle}>Mua vật tư</Text>
                 <Checkbox
                   status={checkedBuy ? "checked" : "unchecked"}
-                  onPress={() => setcheckedBuy(!checkedBuy)}
+                  onPress={() => {
+                    setcheckedBuy(!checkedBuy);
+                    setcheckedRent(false);
+                  }}
                   color="#7fb640"
                 />
               </View>
@@ -190,13 +243,44 @@ export default function CartMaterialsScreen({ navigation }) {
                 <Text style={styles.sectionTitle}>Thuê thiết bị</Text>
                 <Checkbox
                   status={checkedRent ? "checked" : "unchecked"}
-                  onPress={() => setcheckedRent(!checkedRent)}
+                  onPress={() => {
+                    setcheckedRent(!checkedRent);
+                    setcheckedBuy(false);
+                  }}
                   color="#7fb640"
                 />
               </View>
               <View style={styles.sectionItems}>
                 {cartRent.length > 0 ? (
-                  cartRent.map((item) => renderItem(item))
+                  <>
+                    <View
+                      style={[
+                        styles.itemContainer,
+                        {
+                          justifyContent: "space-between",
+                          padding: 20,
+                        },
+                      ]}
+                    >
+                      <Text style={{ fontSize: 16 }}>Số ngày thuê: </Text>
+                      <TextInput
+                        placeholder="Số ngày thuê"
+                        inputMode="numeric"
+                        defaultValue="1"
+                        value={rentDay}
+                        onChangeText={handleRentDayChange}
+                        style={{
+                          width: "60%",
+                          marginLeft: 10,
+                          borderWidth: 1,
+                          borderRadius: 5,
+                          borderColor: "#707070",
+                          paddingLeft: 10,
+                        }}
+                      />
+                    </View>
+                    {cartRent.map((item) => renderItem(item))}
+                  </>
                 ) : (
                   <Text style={styles.emptyText}>
                     Không có thiết bị thuê trong giỏ hàng
@@ -210,9 +294,11 @@ export default function CartMaterialsScreen({ navigation }) {
             <View style={styles.totalContainer}>
               <Text style={styles.totalLabel}>Tổng thanh toán:</Text>
               <Text style={styles.totalPrice}>
-                {formatNumberToVND(totalPrice)} VND
+                {checkedBuy && `${formatNumberToVND(totalPrice)} VND`}
+                {checkedRent && `${formatNumberToVND(totalPrice)} VND`}
               </Text>
             </View>
+
             <TouchableOpacity
               style={[
                 styles.checkoutButton,
@@ -247,6 +333,7 @@ export default function CartMaterialsScreen({ navigation }) {
           }}
         />
       </SafeAreaView>
+      <Toast topOffset={50} visibilityTime={2000} />
     </>
   );
 }

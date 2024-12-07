@@ -5,6 +5,7 @@ export const getMaterial = createAsyncThunk(
   "materialSlice/getMaterial",
   async (params, { rejectWithValue }) => {
     try {
+      console.log("params fetch material", JSON.stringify(params));
       const data = await api.get(`/materials/getAllMaterial`, { params });
       return data.data;
     } catch (error) {

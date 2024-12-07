@@ -13,12 +13,12 @@ import RentMaterials from "./RentMaterials/RentMaterials";
 // Components for each section
 
 export default function RequestMaterialsScreen() {
-  const [activeComponent, setActiveComponent] = useState("request"); // Default is 'request'
+  const [activeComponent, setActiveComponent] = useState("buy"); // Default is 'buy'
 
   const renderContent = () => {
     switch (activeComponent) {
-      case "request":
-        return <RequestMaterialsList />;
+      // case "request":
+      //   return <RequestMaterialsList />;
       case "buy":
         return <BuyMaterials />;
       case "rent":
@@ -32,7 +32,7 @@ export default function RequestMaterialsScreen() {
     <SafeAreaView style={styles.container}>
       {/* Filter Navigation */}
       <View style={styles.tabContainer}>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={[
             styles.tabButton,
             activeComponent === "request" ? styles.activeTab : null,
@@ -47,7 +47,7 @@ export default function RequestMaterialsScreen() {
           >
             Yêu cầu vật tư
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={[
             styles.tabButton,
@@ -95,27 +95,23 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   tabContainer: {
-    marginTop: 20,
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 20,
   },
   textButton: {
-    color: "black",
-    fontSize: 16,
+    color: "#707070",
+    fontSize: 18,
   },
   textButtonActive: {
-    color: "white",
+    color: "#7fb640",
   },
   tabButton: {
     padding: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: "transparent",
   },
   activeTab: {
-    backgroundColor: "#7fb640",
-    borderRadius: 5,
-    paddingHorizontal: 15,
+    borderBottomColor: "#7fb640",
+    borderBottomWidth: 3,
   },
   contentContainer: {
     flex: 1,

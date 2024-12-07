@@ -22,7 +22,7 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
         dispatch(getChatDetail(chatItem?.channel_id)).then((res) => {
           navigation.navigate("ChatDetailScreen", {
             channelId: chatItem?.channel_id,
-            isExpired: chatItem != "active" ? true : false,
+            isExpired: chatItem?.status != "active" ? true : false,
             expiredAt: chatItem?.expired_at,
           });
         });
@@ -61,15 +61,19 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
                     ]
               }
             >
-              {convertTo12HourFormat(chatItem?.newest_message?.created_at)}
+              {convertTo12HourFormat(
+                chatItem?.newest_message?.created_at || chatItem?.updated_at
+              )}
             </Text>
           </View>
-          <Text style={styles.textContent} numberOfLines={1}>
-            {chatItem?.newest_message?.message_from_id == userInfo?.user_id
-              ? "Bạn"
-              : chatItem?.newest_message?.message_from?.full_name || ""}
-            : {chatItem?.newest_message?.content}
-          </Text>
+          {chatItem?.newest_message && (
+            <Text style={styles.textContent} numberOfLines={1}>
+              {chatItem?.newest_message?.message_from_id == userInfo?.user_id
+                ? "Bạn"
+                : chatItem?.newest_message?.message_from?.full_name || ""}
+              : {chatItem?.newest_message?.content}
+            </Text>
+          )}
           {chatItem?.status != "active" && (
             <Text
               style={[styles.textContent, { color: "red", fontWeight: "bold" }]}

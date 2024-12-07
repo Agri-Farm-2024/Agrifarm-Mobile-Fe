@@ -10,7 +10,6 @@ import {
   TextInput,
   StyleSheet,
   KeyboardAvoidingView,
-  Platform,
   ScrollView,
   TouchableOpacity,
 } from "react-native";
@@ -21,6 +20,7 @@ import { capitalizeFirstLetter, formatNumber } from "../../../utils";
 import { getPlantSeasonList } from "../../../redux/slices/plantSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
+import { Checkbox } from "react-native-paper";
 
 // Validation schema with Yup
 // Validation schema with Yup
@@ -42,6 +42,7 @@ const validationSchema = Yup.object().shape({
 const LandLeaseInput = forwardRef((props, ref) => {
   const [startTime, setStartTime] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const formikRef = React.useRef();
 
   const dispatch = useDispatch();
@@ -168,6 +169,27 @@ const LandLeaseInput = forwardRef((props, ref) => {
                 keyboardType="numeric"
                 placeholder="Số tháng cần thuê"
               />
+              {Number(values.rentalMonths) > 12 && (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <Checkbox
+                    status={values.isMultiplePayment ? "checked" : "unchecked"}
+                    onPress={() =>
+                      setFieldValue(
+                        "isMultiplePayment",
+                        !values.isMultiplePayment
+                      )
+                    }
+                    color="#7fb640"
+                  />
+                  <Text>Thanh toán nhiều lần</Text>
+                </View>
+              )}
 
               <Text>Mục đích thuê đất</Text>
               {touched.purpose && errors.purpose && (

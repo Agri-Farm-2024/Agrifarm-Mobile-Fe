@@ -41,7 +41,10 @@ const DiaryScreen = ({ navigation }) => {
   const dispatch = useDispatch();
 
   const specificProcessSelector = useSelector(getSpecificProcessSelector);
-
+  console.log(
+    "specificProcessSelector",
+    JSON.stringify(specificProcessSelector)
+  );
   useEffect(() => {
     try {
       if (isFocused) {
@@ -107,6 +110,8 @@ const DiaryScreen = ({ navigation }) => {
                   key={index}
                   rippleColor="rgba(127, 182, 64, 0.2)"
                   onPress={() =>
+                    diary.status == "active" &&
+                    diary.service_specific.status != "pending_sign" &&
                     navigation.navigate("DiaryActionScreen", {
                       diary: diary,
                     })
@@ -138,6 +143,10 @@ const DiaryScreen = ({ navigation }) => {
                             diary.service_specific.status == "expired" && {
                               color: "#74483F",
                             },
+                          diary.status == "active" &&
+                            diary.service_specific.status == "pending_sign" && {
+                              color: "#00bcd4",
+                            },
                         ]}
                       >
                         {diary.status == "pending" && "Chờ duyệt"}
@@ -147,6 +156,9 @@ const DiaryScreen = ({ navigation }) => {
                         {diary.status == "active" &&
                           diary.service_specific.status == "expired" &&
                           "Đã hoàn thành"}
+                        {diary.status == "active" &&
+                          diary.service_specific.status == "pending_sign" &&
+                          "Đợi ký"}
                       </Text>
                     </View>
                     <MaterialIcons

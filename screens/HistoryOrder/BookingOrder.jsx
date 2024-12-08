@@ -70,6 +70,18 @@ export default function BookingOrderCard() {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}
+      {!loading && !bookingOrderHistory && (
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "#707070",
+          }}
+        >
+          Không có đơn hàng
+        </Text>
+      )}
       {!loading &&
         bookingOrderHistory &&
         bookingOrderHistory?.booking_materials &&

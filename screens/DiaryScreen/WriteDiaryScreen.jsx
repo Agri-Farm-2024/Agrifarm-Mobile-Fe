@@ -198,7 +198,7 @@ const WriteDiaryScreen = ({ route, navigation }) => {
                     </Text>
                   </View>
                 </View>
-                <Text style={[styles.label]}>Chất lượng canh tác</Text>
+                <Text style={[styles.label]}>Chất lượng canh tác (%)</Text>
                 <TextInput
                   style={styles.input}
                   textColor="#707070"

@@ -36,87 +36,107 @@ const HistoryOrderDetail = ({ route, navigation }) => {
         }}
       >
         {/* Order Information */}
-        <Card style={styles.card}>
-          <Card.Content
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+        {!order && (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#707070",
+            }}
           >
-            <View>
-              <Text
+            Không tìm thấy đơn hàng
+          </Text>
+        )}
+        {order && (
+          <>
+            <Card style={styles.card}>
+              <Card.Content
                 style={{
-                  fontWeight: "800",
-                  color: "#222",
-                  marginBottom: 8,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                Mã đơn: <Text style={{ fontSize: 14 }}>{order.order_id}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Ngày giao: <Text>{formatDate(order.created_at, 0)}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Số lượng: <Text>{formatNumber(totalQuantity)} vật tư</Text>
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
-        {/* Items */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Danh sách sản phẩm</Text>
-          {order?.orders_detail &&
-            order?.orders_detail.map((item) => (
-              <Card key={item.material_id} style={styles.productCard}>
-                <Card.Content style={styles.productContent}>
-                  <Image
-                    style={styles.productImage}
-                    source={{
-                      uri: convertImageURL(item?.material.image_material),
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
                     }}
-                  />
-                  <View style={styles.productDetails}>
-                    <Text style={styles.productName}>
-                      {capitalizeFirstLetter(item?.material?.name)}
-                    </Text>
-                    <Text style={styles.productPrice}>
-                      Giá mua: {formatNumber(item?.price_per_iteam)} VND
-                    </Text>
-                    <Text style={styles.productQuantity}>
-                      Số lượng: {item?.quantity}
-                    </Text>
-                  </View>
-                </Card.Content>
-              </Card>
-            ))}
-        </View>
+                  >
+                    Mã đơn:{" "}
+                    <Text style={{ fontSize: 14 }}>{order.order_id}</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ngày giao: <Text>{formatDate(order.created_at, 0)}</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Số lượng: <Text>{formatNumber(totalQuantity)} vật tư</Text>
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
 
-        {/* Summary */}
-        <View style={styles.section}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.textLabelPrice}>Tổng đơn:</Text>
-            <Text>{formatNumberToVND(totalPrice)} VND</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.textLabelPrice}>Giảm giá:</Text>
-            <Text>{formatNumberToVND(discountPrice)} VND</Text>
-          </View>
-          <Divider style={styles.divider} />
-          <View style={styles.summaryRow}>
-            <Text style={styles.totalText}>Tổng thanh toán:</Text>
-            <Text style={styles.totalText}>
-              {formatNumberToVND(totalPrice - discountPrice)} VND
-            </Text>
-          </View>
-        </View>
+            {/* Items */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Danh sách sản phẩm</Text>
+              {order?.orders_detail &&
+                order?.orders_detail.map((item) => (
+                  <Card key={item.material_id} style={styles.productCard}>
+                    <Card.Content style={styles.productContent}>
+                      <Image
+                        style={styles.productImage}
+                        source={{
+                          uri: convertImageURL(item?.material.image_material),
+                        }}
+                      />
+                      <View style={styles.productDetails}>
+                        <Text style={styles.productName}>
+                          {capitalizeFirstLetter(item?.material?.name)}
+                        </Text>
+                        <Text style={styles.productPrice}>
+                          Giá mua: {formatNumber(item?.price_per_iteam)} VND
+                        </Text>
+                        <Text style={styles.productQuantity}>
+                          Số lượng: {item?.quantity}
+                        </Text>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                ))}
+            </View>
+
+            {/* Summary */}
+            <View style={styles.section}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.textLabelPrice}>Tổng đơn:</Text>
+                <Text>{formatNumberToVND(totalPrice)} VND</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.textLabelPrice}>Giảm giá:</Text>
+                <Text>{formatNumberToVND(discountPrice)} VND</Text>
+              </View>
+              <Divider style={styles.divider} />
+              <View style={styles.summaryRow}>
+                <Text style={styles.totalText}>Tổng thanh toán:</Text>
+                <Text style={styles.totalText}>
+                  {formatNumberToVND(totalPrice - discountPrice)} VND
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
     </>
   );

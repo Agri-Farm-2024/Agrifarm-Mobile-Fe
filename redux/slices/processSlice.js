@@ -42,6 +42,21 @@ export const getSpecificProcess = createAsyncThunk(
   }
 );
 
+export const getStandardProcess = createAsyncThunk(
+  "processSlice/getStandardProcess",
+  async (params, { rejectWithValue }) => {
+    try {
+      const data = await api.get(`/processes/getListProcessStandard`, {
+        params,
+      });
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getSpecificProcessDetail = createAsyncThunk(
   "processSlice/getSpecificProcessDetail",
   async (processId, { rejectWithValue }) => {
@@ -126,6 +141,7 @@ export const processSlice = createSlice({
   initialState: {
     process: {},
     plantSeason: {},
+    standardProcess: null,
     specificProcess: null,
     specificProcessDetail: null,
     loading: false,
@@ -211,6 +227,25 @@ export const processSlice = createSlice({
         }
       })
       .addCase(getSpecificProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(getStandardProcess.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getStandardProcess.fulfilled, (state, action) => {
+        state.loading = false;
+        //handle whether load a new list or paging
+        if (action.payload.metadata?.pagination?.page_index > 1) {
+          state.standardProcess = {
+            ...state.standardProcess,
+            ...action.payload.metadata,
+          };
+        } else {
+          state.standardProcess = action.payload.metadata;
+        }
+      })
+      .addCase(getStandardProcess.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

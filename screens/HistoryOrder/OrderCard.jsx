@@ -62,6 +62,18 @@ export default function OrderCard() {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}
+      {!loading && !orderHistory && (
+        <Text
+          style={{
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",
+            color: "#707070",
+          }}
+        >
+          Không có đơn hàng
+        </Text>
+      )}
       {!loading &&
         orderHistory &&
         orderHistory.length > 0 &&

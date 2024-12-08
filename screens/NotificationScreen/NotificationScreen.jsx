@@ -8,25 +8,7 @@ import {
 } from "../../redux/slices/notificationSlice";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
-
-// Dữ liệu mẫu cho thông báo với tiêu đề, mô tả và biểu tượng
-const initialNotifications = [
-  {
-    id: "1",
-    title: "Đơn hàng đã được giao",
-    description: "Đơn hàng của bạn #1234 đã được vận chuyển!",
-    icon: "https://img.icons8.com/color/48/000000/shipped.png",
-    isRead: false,
-  },
-  {
-    id: "3",
-    title: "Gia hạn đăng ký",
-    description: "Nhắc nhở: Đăng ký của bạn sẽ hết hạn trong 3 ngày.",
-    icon: "https://img.icons8.com/color/48/000000/calendar.png",
-    isRead: false,
-  },
-  // Thêm nhiều thông báo ở đây
-];
+import { formatTimeViewLand } from "../../utils";
 
 export default function NotificationScreen() {
   const notifications = useSelector(
@@ -72,6 +54,9 @@ export default function NotificationScreen() {
         <View style={styles.textContainer}>
           <Text style={styles.notificationTitle}>{item.title}</Text>
           <Text style={styles.notificationDesc}>{item.content}</Text>
+          <Text style={styles.notificationTime}>
+            {formatTimeViewLand(item.created_at)}
+          </Text>
         </View>
       </View>
     );
@@ -125,20 +110,21 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     flexDirection: "row",
-    backgroundColor: "#7fb640", // Màu chính cho nền của thông báo
     padding: 16,
-    marginVertical: 8,
-    marginHorizontal: 16,
+    marginHorizontal: 10,
     borderRadius: 8,
     alignItems: "center",
+    backgroundColor: "white",
   },
   readNotification: {
-    opacity: 0.6, // Thông báo đã đọc sẽ hiển thị mờ hơn
+    // backgroundColor: "white",
+    opacity: 0.6,
   },
   icon: {
     width: 40,
     height: 40,
     marginRight: 12,
+    color: "#7fb640",
   },
   textContainer: {
     flex: 1,
@@ -146,12 +132,17 @@ const styles = StyleSheet.create({
   notificationTitle: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#fff", // Màu văn bản cho tiêu đề
+    color: "#7fb640",
   },
   notificationDesc: {
     fontSize: 14,
-    color: "#fff", // Màu văn bản cho mô tả
+    color: "#7d8185",
   },
+  notificationTime: {
+    fontSize: 12,
+    color: "#babdc2",
+  },
+
   markAsReadButton: {
     margin: 16,
     borderColor: "#7fb640",

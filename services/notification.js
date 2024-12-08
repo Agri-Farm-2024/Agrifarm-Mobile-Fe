@@ -124,7 +124,10 @@ const NotificationComponent = () => {
 
       return token;
     } catch (error) {
-      console.error("Error registering for push notifications:", error);
+      console.error(
+        "Error registering for push notifications:",
+        JSON.stringify(error)
+      );
     }
   }
 

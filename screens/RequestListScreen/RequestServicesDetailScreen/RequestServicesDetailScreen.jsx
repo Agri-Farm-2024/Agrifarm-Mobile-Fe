@@ -1,50 +1,99 @@
 import React, { useState } from "react";
-import { View, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+  Modal,
+} from "react-native";
 import { Text, Checkbox, Button, Divider } from "react-native-paper";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatDateToDDMMYYYY,
+  formatNumber,
+} from "../../../utils";
+import ContractComponent from "../RequestServicesDetailScreen/ContractComponent";
 
-export default function RequestServicesDetailScreen() {
-  const [checked, setChecked] = useState(false);
+export default function RequestServicesDetailScreen({ route }) {
+  const [modalVisible, setModalVisible] = useState(false);
+  const { requestService } = route.params;
+  console.log("RequestServicesDetailScreen: " + JSON.stringify(requestService));
+  const contract = [];
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{ paddingBottom: 60 }}
+      >
         {/* Request details */}
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Yêu cầu:</Text>
-          <Text style={styles.value}>Yêu cầu gói dịch vụ số 1</Text>
-        </View>
-
-        <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Ngày gửi yêu cầu:</Text>
-          <Text style={styles.value}>25/09/2020</Text>
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Trạng thái:</Text>
-          <Text style={styles.value}>Chấp nhận</Text>
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <View style={styles.detailContainer}>
-          <Text style={styles.label}>Nội dung yêu cầu:</Text>
           <Text style={styles.value}>
-            Yêu cầu sử dụng gói dịch vụ DV001 với nội dung rất dài và có thể
-            chiếm nhiều dòng để hiển thị đúng nội dung.
+            {" "}
+            {formatDateToDDMMYYYY(requestService?.created_at)}
+          </Text>
+        </View>
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Gói dịch vụ:</Text>
+          <Text style={styles.value}>
+            {requestService?.service_package?.name}
           </Text>
         </View>
 
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Ghi chú:</Text>
+          <Text style={styles.label}>Giống cây:</Text>
           <Text style={styles.value}>
-            Đây là ghi chú dài, và nó cũng có thể cần hiển thị trên nhiều dòng
-            tùy thuộc vào kích thước màn hình và nội dung.
+            {capitalizeFirstLetter(requestService?.plant_season?.plant?.name)}
+          </Text>
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Diện tích sử dụng:</Text>
+          <Text style={styles.value}>
+            {formatNumber(requestService?.acreage_land)} m2
+          </Text>
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Ngày bắt đầu:</Text>
+          <Text style={styles.value}>
+            {" "}
+            {formatDateToDDMMYYYY(requestService?.time_start)}
+          </Text>
+        </View>
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Mảnh đất sử dụng:</Text>
+          <Text style={styles.value}>
+            {capitalizeFirstLetter(requestService?.booking_land?.land?.name)}
+          </Text>
+        </View>
+
+        <Divider style={styles.divider} />
+
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Trạng thái:</Text>
+          <Text style={styles.value}>
+            {" "}
+            {requestService.status == "used" && "Đang sử dụng"}
+            {requestService.status == "canceled" && "Đã huỷ"}
+            {requestService.status == "expired" && "Đã hoàn thành"}
+            {requestService.status == "pending_payment" && "Đợi thanh toán"}
+            {requestService.status == "pending_sign" && "Đợi ký"}
           </Text>
         </View>
 
@@ -54,50 +103,53 @@ export default function RequestServicesDetailScreen() {
         <Text style={styles.sectionTitle}>Thông tin dịch vụ</Text>
         <View style={styles.serviceInfoContainer}>
           {/* Service Title */}
-          <Text style={styles.serviceTitle}>Gói dịch vụ Trồng trọt Cơ Bản</Text>
+          <Text style={styles.serviceTitle}>
+            {requestService?.service_package?.name}
+          </Text>
 
           {/* Service Description */}
           <Text style={styles.serviceDescription}>
-            Gói dịch vụ này cung cấp hỗ trợ toàn diện cho việc trồng trọt theo
-            tiêu chuẩn VietGAP, bao gồm cung cấp vật tư, kỹ thuật canh tác và
-            quản lý chất lượng.
-          </Text>
-
-          {/* Package Price */}
-          <Text style={styles.servicePackagePrice}>
-            Giá thu mua sản phẩm(VND): 50.000/KG
+            {requestService?.service_package?.description}
           </Text>
           <Text style={styles.servicePackagePrice}>
-            Giá trọn gói dịch vụ: 5,000,000 VND
+            Giá thu mua sản phẩm:{" "}
+            {formatNumber(requestService?.price_purchase_per_kg)} VND/KG
           </Text>
         </View>
+        <View>
+          <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
 
-        {/* Checkbox with text */}
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => setChecked(!checked)}
-            color="#7fb640"
-          />
-          <View style={styles.checkboxLabelContainer}>
-            <Text style={styles.checkboxLabel}>
-              Tôi đã đọc và{" "}
-              <Text style={styles.link}>
-                đồng ý với các điều khoản của dịch vụ
-              </Text>
+          <ContractComponent contract={contract} isDownload={true} />
+        </View>
+        <Divider style={styles.divider} />
+        {requestService?.contract_image ? (
+          <View>
+            <Text style={[styles.sectionTitle, { marginBottom: 10 }]}>
+              Hình ảnh hợp đồng
             </Text>
+            <Button onPress={() => setModalVisible(true)} mode="contained">
+              Xem hình ảnh đã ký
+            </Button>
           </View>
-        </View>
-
-        {/* Button */}
-        <Button
-          mode="contained"
-          style={styles.button}
-          disabled={!checked}
-          onPress={() => console.log("Proceeding to payment")}
-        >
-          Tiến hành thanh toán
-        </Button>
+        ) : (
+          <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
+        )}
+        <Modal visible={modalVisible} transparent={true} animationType="fade">
+          <View style={styles.modalContainer}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeText}>Đóng</Text>
+            </TouchableOpacity>
+            <Image
+              source={{
+                uri: convertImageURL(requestService?.contract_image),
+              }}
+              style={styles.modalImage}
+            />
+          </View>
+        </Modal>
       </ScrollView>
     </SafeAreaView>
   );
@@ -173,5 +225,79 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: "#7fb640",
     marginBottom: 30, // Margin for button at the bottom
+  },
+  contractImage: {
+    width: "100%",
+    height: 700,
+    resizeMode: "cover",
+    marginTop: 10,
+    objectFit: "cover",
+  },
+
+  contractImage: {
+    width: "100%",
+    height: 700,
+    resizeMode: "cover",
+    marginTop: 10,
+    objectFit: "cover",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 30,
+    right: 20,
+  },
+  closeText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalImage: {
+    width: "90%",
+    height: "80%",
+    resizeMode: "contain",
+  },
+  checkboxContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  checkboxLabelContainer: {
+    flex: 1,
+  },
+  checkboxLabel: {
+    flexWrap: "wrap",
+    color: "#666",
+  },
+  link: {
+    color: "#7fb640",
+    textDecorationLine: "underline",
+  },
+  button: {
+    backgroundColor: "#7fb640",
+    marginBottom: 30,
+  },
+  buttonAdd: {
+    position: "absolute",
+    right: 15,
+    bottom: 15,
+    borderRadius: 60,
+    width: 60,
+    height: 60,
+    backgroundColor: "#7fb640",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  textAdd: {
+    width: 25,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "white",
   },
 });

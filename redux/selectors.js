@@ -20,6 +20,8 @@ export const getBookingSelector = (state) => state.landSlice.booking;
 export const landLoadingSelector = (state) => state.landSlice.loading;
 
 //process
+export const getStandardProcessSelector = (state) =>
+  state.processSlice.standardProcess;
 export const getSpecificProcessSelector = (state) =>
   state.processSlice.specificProcess;
 export const getSpecificProcessDetailSelector = (state) =>

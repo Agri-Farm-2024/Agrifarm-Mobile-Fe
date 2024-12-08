@@ -1,6 +1,16 @@
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
 import { FAB, TouchableRipple } from "react-native-paper";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  getStandardProcessSelector,
+  processLoadingSelector,
+} from "../../redux/selectors";
+import { useEffect } from "react";
+import { useState } from "react";
+import { getStandardProcess } from "../../redux/slices/processSlice";
+import { useIsFocused } from "@react-navigation/native";
+import { capitalizeFirstLetter } from "../../utils";
 
 const diaryList = [
   {
@@ -25,47 +35,92 @@ const diaryList = [
   },
 ];
 
+const PAGE_SIZE = 30;
+
 const StandardProcessScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [currentPage, setCurrentPage] = useState(1);
+  const isFocused = useIsFocused();
+  const standardProcessList = useSelector(getStandardProcessSelector);
+  const loading = useSelector(processLoadingSelector);
+
+  console.log("Standard Process", JSON.stringify(standardProcessList));
+
+  const fetchStandardprocess = () => {
+    try {
+      const params = {
+        page_size: PAGE_SIZE,
+        page_index: currentPage,
+      };
+      dispatch(getStandardProcess(params));
+    } catch (error) {
+      console.log("Error fetch standard process list", JSON.stringify(error));
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchStandardprocess();
+    }
+  }, [isFocused]);
+
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {diaryList.map((diary, index) => (
-            <TouchableRipple
-              key={index}
-              rippleColor="rgba(127, 182, 64, 0.2)"
-              onPress={() =>
-                // navigation.navigate("DiaryActionScreen", {
-                //   diaryTitle: diary.title,
-                // })
-                console.log("Press")
-              }
-              style={styles.diaryContainer}
-            >
-              <>
-                <View style={styles.contentWrapper}>
-                  <Text style={styles.title}>{diary.title}</Text>
-                  <Text style={styles.plantType}>{diary.plantType}</Text>
-                  <Text
-                    style={[
-                      styles.status,
-                      diary.status == "ongoing" && { color: "#FFA756" },
-                      diary.status == "cancel" && { color: "#D91515" },
-                    ]}
-                  >
-                    {diary.status == "ongoing" && "Đang thực hiện"}
-                    {diary.status == "cancel" && "Đã huỷ"}
-                    {diary.status == "done" && "Đã hoàn thành"}
-                  </Text>
-                </View>
-                <MaterialIcons
-                  name="arrow-forward-ios"
-                  size={24}
-                  color="#707070"
-                />
-              </>
-            </TouchableRipple>
-          ))}
+          {standardProcessList &&
+            standardProcessList?.process_technical_standard &&
+            standardProcessList?.process_technical_standard.map(
+              (diary, index) => (
+                <TouchableRipple
+                  key={index}
+                  rippleColor="rgba(127, 182, 64, 0.2)"
+                  onPress={
+                    () =>
+                      navigation.navigate("StandardProcessDetail", {
+                        standardProcess: diary,
+                      })
+                    // console.log("Press")
+                  }
+                  style={styles.diaryContainer}
+                >
+                  <>
+                    <View style={styles.contentWrapper}>
+                      <Text style={styles.title}>
+                        {capitalizeFirstLetter(diary?.name)}
+                      </Text>
+                      <Text style={styles.plantType}>
+                        {capitalizeFirstLetter(
+                          diary?.plant_season?.plant?.name
+                        )}{" "}
+                        -{" "}
+                        {diary?.plant_season?.type == "in_season"
+                          ? "Mùa thuận"
+                          : "Mùa nghịch"}
+                      </Text>
+                      <Text
+                        style={[
+                          styles.status,
+                          diary.status == "pending" && { color: "#FFA756" },
+                          diary.status == "rejected" && { color: "#D91515" },
+                          diary.status == "in_active" && { color: "#6c757d" },
+                        ]}
+                      >
+                        {diary.status == "pending" && "Đợi duyệt"}
+                        {diary.status == "rejected" && "Không đạt yêu cầu"}
+                        {diary.status == "in_active " && "Ngừng sử dụng"}
+                        {diary.status == "accepted" && "Đang sử dụng"}
+                      </Text>
+                    </View>
+                    <MaterialIcons
+                      name="arrow-forward-ios"
+                      size={24}
+                      color="#707070"
+                    />
+                  </>
+                </TouchableRipple>
+              )
+            )}
         </View>
       </ScrollView>
       <FAB

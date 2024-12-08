@@ -141,6 +141,10 @@ const SpecificProcessListScreen = ({ navigation }) => {
                             diary.service_specific.status == "expired" && {
                               color: "#74483F",
                             },
+                          diary.status == "active" &&
+                            diary.service_specific.status == "pending_sign" && {
+                              color: "#00bcd4",
+                            },
                         ]}
                       >
                         {diary.status == "pending" && "Chờ duyệt"}
@@ -150,6 +154,9 @@ const SpecificProcessListScreen = ({ navigation }) => {
                         {diary.status == "active" &&
                           diary.service_specific.status == "expired" &&
                           "Đã hoàn thành"}
+                        {diary.status == "active" &&
+                          diary.service_specific.status == "pending_sign" &&
+                          "Đợi ký"}
                       </Text>
                     </View>
                     <MaterialIcons

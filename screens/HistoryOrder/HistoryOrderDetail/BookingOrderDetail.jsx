@@ -48,143 +48,162 @@ const BookingOrderDetail = ({ route, navigation }) => {
         }}
       >
         {/* Order Information */}
-        <Card style={styles.card}>
-          <Card.Content
-            style={{ flexDirection: "row", justifyContent: "space-between" }}
+        {!order && (
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",
+              color: "#707070",
+            }}
           >
-            <View>
-              <Text
+            Không tìm thấy đơn hàng
+          </Text>
+        )}
+        {order && (
+          <>
+            <Card style={styles.card}>
+              <Card.Content
                 style={{
-                  fontWeight: "800",
-                  color: "#222",
-                  marginBottom: 8,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
                 }}
               >
-                Mã đơn:{" "}
-                <Text style={{ fontSize: 14 }}>
-                  {order.booking_material_id}
-                </Text>
-              </Text>
-              <Text
-                style={{
-                  fontWeight: "800",
-                  color: "#222",
-                  marginBottom: 8,
-                }}
-              >
-                Số ngày thuê:{" "}
-                <Text style={{ fontSize: 14 }}>{dayDifference} ngày</Text>
-              </Text>
-              <Text
-                style={{
-                  fontWeight: "800",
-                  color: "#222",
-                  marginBottom: 8,
-                }}
-              >
-                Trạng thái:{" "}
-                {order?.status == "pending_payment" && (
-                  <Text style={{ color: "#ff007f" }}>Chờ thanh toán</Text>
-                )}
-                {order?.status == "pending_sign" && (
-                  <Text style={{ color: "#00bcd4" }}>Chờ ký</Text>
-                )}
-                {order?.status == "completed" && (
-                  <Text style={{ color: "#28a745" }}>Đang sử dụng</Text>
-                )}
-                {order?.status == "expired" && (
-                  <Text style={{ color: "#dc3545" }}>Hết hạn</Text>
-                )}
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Ngày giao: <Text>{formatDate(order.created_at, 0)}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Ngày hết hạn: <Text>{formatDate(order.time_end, 0)}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Ngày bắt đầu thuê:{" "}
-                <Text>{formatDate(order.created_at, 0)}</Text>
-              </Text>
-              <Text
-                style={{
-                  marginBottom: 8,
-                  fontWeight: "bold",
-                }}
-              >
-                Số lượng: <Text>{formatNumber(totalQuantity)} vật tư</Text>
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
-        {/* Items */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Danh sách sản phẩm</Text>
-          {order?.booking_material_detail &&
-            order?.booking_material_detail.map((item) => (
-              <Card key={item.material_id} style={styles.productCard}>
-                <Card.Content style={styles.productContent}>
-                  <Image
-                    style={styles.productImage}
-                    source={{
-                      uri: convertImageURL(item?.material.image_material),
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
                     }}
-                  />
-                  <View style={styles.productDetails}>
-                    <Text style={styles.productName}>
-                      {capitalizeFirstLetter(item?.material?.name)}
+                  >
+                    Mã đơn:{" "}
+                    <Text style={{ fontSize: 14 }}>
+                      {order.booking_material_id}
                     </Text>
-                    <Text style={styles.productPrice}>
-                      Giá thuê: {formatNumber(item?.price_per_piece_item)}{" "}
-                      VND/ngày
-                    </Text>
-                    <Text style={styles.productPrice}>
-                      Giá cọc: {formatNumber(item?.price_deposit_per_item)}{" "}
-                      VND/cái
-                    </Text>
-                    <Text style={styles.productQuantity}>
-                      Số lượng: {item?.quantity}
-                    </Text>
-                  </View>
-                </Card.Content>
-              </Card>
-            ))}
-        </View>
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Số ngày thuê:{" "}
+                    <Text style={{ fontSize: 14 }}>{dayDifference} ngày</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Trạng thái:{" "}
+                    {order?.status == "pending_payment" && (
+                      <Text style={{ color: "#ff007f" }}>Chờ thanh toán</Text>
+                    )}
+                    {order?.status == "pending_sign" && (
+                      <Text style={{ color: "#00bcd4" }}>Chờ ký</Text>
+                    )}
+                    {order?.status == "completed" && (
+                      <Text style={{ color: "#28a745" }}>Đang sử dụng</Text>
+                    )}
+                    {order?.status == "expired" && (
+                      <Text style={{ color: "#dc3545" }}>Hết hạn</Text>
+                    )}
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ngày giao: <Text>{formatDate(order.created_at, 0)}</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ngày hết hạn: <Text>{formatDate(order.time_end, 0)}</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Ngày bắt đầu thuê:{" "}
+                    <Text>{formatDate(order.created_at, 0)}</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      marginBottom: 8,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Số lượng: <Text>{formatNumber(totalQuantity)} vật tư</Text>
+                  </Text>
+                </View>
+              </Card.Content>
+            </Card>
 
-        {/* Summary */}
-        <View style={styles.section}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.textLabelPrice}>Tổng đơn:</Text>
-            <Text>{formatNumberToVND(totalPrice)} VND</Text>
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.textLabelPrice}>Giảm giá:</Text>
-            <Text>{formatNumberToVND(discountPrice)} VND</Text>
-          </View>
-          <Divider style={styles.divider} />
-          <View style={styles.summaryRow}>
-            <Text style={styles.totalText}>Tổng thanh toán:</Text>
-            <Text style={styles.totalText}>
-              {formatNumberToVND(totalPrice - discountPrice)} VND
-            </Text>
-          </View>
-        </View>
+            {/* Items */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Danh sách sản phẩm</Text>
+              {order?.booking_material_detail &&
+                order?.booking_material_detail.map((item) => (
+                  <Card key={item.material_id} style={styles.productCard}>
+                    <Card.Content style={styles.productContent}>
+                      <Image
+                        style={styles.productImage}
+                        source={{
+                          uri: convertImageURL(item?.material.image_material),
+                        }}
+                      />
+                      <View style={styles.productDetails}>
+                        <Text style={styles.productName}>
+                          {capitalizeFirstLetter(item?.material?.name)}
+                        </Text>
+                        <Text style={styles.productPrice}>
+                          Giá thuê: {formatNumber(item?.price_per_piece_item)}{" "}
+                          VND/ngày
+                        </Text>
+                        <Text style={styles.productPrice}>
+                          Giá cọc: {formatNumber(item?.price_deposit_per_item)}{" "}
+                          VND/cái
+                        </Text>
+                        <Text style={styles.productQuantity}>
+                          Số lượng: {item?.quantity}
+                        </Text>
+                      </View>
+                    </Card.Content>
+                  </Card>
+                ))}
+            </View>
+
+            {/* Summary */}
+            <View style={styles.section}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.textLabelPrice}>Tổng đơn:</Text>
+                <Text>{formatNumberToVND(totalPrice)} VND</Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.textLabelPrice}>Giảm giá:</Text>
+                <Text>{formatNumberToVND(discountPrice)} VND</Text>
+              </View>
+              <Divider style={styles.divider} />
+              <View style={styles.summaryRow}>
+                <Text style={styles.totalText}>Tổng thanh toán:</Text>
+                <Text style={styles.totalText}>
+                  {formatNumberToVND(totalPrice - discountPrice)} VND
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
       </ScrollView>
     </>
   );

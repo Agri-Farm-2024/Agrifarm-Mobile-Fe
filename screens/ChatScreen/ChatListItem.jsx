@@ -66,7 +66,7 @@ export default function ChatListItem({ seen, navigation, chatItem }) {
               )}
             </Text>
           </View>
-          {chatItem?.newest_message && (
+          {chatItem?.status == "active" && chatItem?.newest_message && (
             <Text style={styles.textContent} numberOfLines={1}>
               {chatItem?.newest_message?.message_from_id == userInfo?.user_id
                 ? "Bạn"

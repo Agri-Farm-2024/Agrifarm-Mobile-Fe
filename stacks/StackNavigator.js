@@ -48,6 +48,7 @@ import { ReportTaskPurchaseScreen } from "../screens/MyTaskScreen/ReportTaskPurc
 import { ReportTaskPurchaseHarvestScreen } from "../screens/MyTaskScreen/ReportTaskPurchaseHarvestScreen";
 import { ReportTaskLandScreen } from "../screens/MyTaskScreen/ReportTaskLandScreen";
 import BookingOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/BookingOrderDetail";
+import StandardProcessDetail from "../screens/StandardProcessScreen/StandardProcessDetail";
 
 const Stack = createStackNavigator();
 
@@ -295,6 +296,14 @@ const StackNavigator = () => (
       component={CreateStandardProcessScreen}
       options={{
         headerTitle: "Tạo quy trình chuẩn",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="StandardProcessDetail"
+      component={StandardProcessDetail}
+      options={{
+        headerTitle: "Chi tiết quy trình chuẩn",
         headerTitleAlign: "center",
       }}
     />

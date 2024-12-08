@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: 180,
-    width: "100%",
+    width: 350,
     resizeMode: "cover",
   },
 });

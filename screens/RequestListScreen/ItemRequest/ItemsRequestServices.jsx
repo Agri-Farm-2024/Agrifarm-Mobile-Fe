@@ -1,20 +1,26 @@
 import { View, Text, SafeAreaView, ScrollView, StyleSheet } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { getListServiceSpecific } from "../../../redux/slices/serviceSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { getServiceSpecificSelector } from "../../../redux/selectors";
+import {
+  getServiceSpecificSelector,
+  serviceLoadingSelector,
+} from "../../../redux/selectors";
 import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const PAGE_SIZE = 30;
-export default function ItemsRequestServices({ navigation }) {
+export default function ItemsRequestServices() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);
   const isFocused = useIsFocused();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
   const serviceInUseSelector = useSelector(getServiceSpecificSelector);
+  const loading = useSelector(serviceLoadingSelector);
   useEffect(() => {
     try {
       if (isFocused == true) {
@@ -68,6 +74,9 @@ export default function ItemsRequestServices({ navigation }) {
       console.log("Error load more specific process", error);
     }
   };
+
+  if (loading) return <ActivityIndicatorComponent />;
+
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false} onScroll={handleScroll}>
@@ -79,6 +88,9 @@ export default function ItemsRequestServices({ navigation }) {
                 rippleColor="rgba(127, 182, 64, 0.2)"
                 onPress={() => {
                   console.log("Press");
+                  navigation.navigate("RequestServicesDetailScreen", {
+                    requestService: service,
+                  });
                 }}
                 style={styles.diaryContainer}
               >
@@ -163,5 +175,6 @@ const styles = StyleSheet.create({
   status: {
     fontSize: 14,
     color: "#7FB640",
+    fontWeight: "bold",
   },
 });

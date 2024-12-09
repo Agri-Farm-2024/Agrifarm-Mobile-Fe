@@ -65,11 +65,10 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 ? "Kiểm định thu mua"
                 : taskData?.request?.type === "product_puchase_harvest"
                 ? "Yêu cầu thu hoạch"
+                : taskData?.request?.type === "material_process_specfic_stage"
+                ? "Lấy vật tư theo giai đoạn"
                 : taskData?.request?.type}
             </Text>
-          </Text>
-          <Text style={styles.modalText}>
-            Phân công lúc: {formatTimeViewLand(taskData?.assigned_at)}
           </Text>
           <Text style={styles.modalText}>
             Mảnh đất:{" "}
@@ -83,6 +82,18 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               ? taskData?.request?.booking_land?.land?.name
               : "Không có"}
           </Text>
+          {taskData?.request?.process_technical_specific_stage_content
+            ?.title && (
+            <Text style={styles.modalText}>
+              Nội dung:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {
+                  taskData?.request?.process_technical_specific_stage_content
+                    ?.title
+                }
+              </Text>
+            </Text>
+          )}
           <Text style={styles.modalText}>
             Bắt đầu lúc:{" "}
             {taskData?.request?.time_start
@@ -91,6 +102,9 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
           </Text>
           <Text style={styles.modalText}>
             Trạng thái: {filterStatus(taskData?.request?.status)}
+          </Text>
+          <Text style={styles.modalText}>
+            Phân công lúc: {formatTimeViewLand(taskData?.assigned_at)}
           </Text>
           <Text style={styles.modalText}>
             Phân công bởi: {taskData?.assign_by?.full_name || "Hệ thống"}

@@ -35,23 +35,23 @@ export function formatDate(timestamp, formatType) {
 
 //Calculate number of months between two timestamp
 export function calculateMonthsBetween(date1, date2) {
-  const startDate = new Date(date1);
-  const endDate = new Date(date2);
+  let startDate = new Date(date1);
+  let endDate = new Date(date2);
 
   if (startDate > endDate) {
     // Swap dates if startDate is later
     [startDate, endDate] = [endDate, startDate];
   }
 
-  const yearsDifference = endDate.getFullYear() - startDate.getFullYear();
-  const monthsDifference = endDate.getMonth() - startDate.getMonth();
+  let yearsDifference = endDate.getFullYear() - startDate.getFullYear();
+  let monthsDifference = endDate.getMonth() - startDate.getMonth();
 
   let totalMonthsDifference = yearsDifference * 12 + monthsDifference;
 
-  const startDay = startDate.getDate();
-  const endDay = endDate.getDate();
+  let startDay = startDate.getDate();
+  let endDay = endDate.getDate();
 
-  const dayDifference = endDay - startDay;
+  let dayDifference = endDay - startDay;
 
   // If the day difference is greater or equal 0 will add an extra month
   if (dayDifference >= 0) {
@@ -213,3 +213,27 @@ export const calculateDaysDifference = (date1, date2) => {
 
   return differenceInDays;
 };
+
+export function isTodayInRange(date1, date2) {
+  const today = new Date();
+  const startDate = new Date(date1);
+  const endDate = new Date(date2);
+
+  // Compare dates (ignoring time)
+  today.setHours(0, 0, 0, 0);
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(0, 0, 0, 0);
+  console.log("check in range", today >= startDate && today <= endDate);
+  return today >= startDate && today <= endDate;
+}
+
+export function isDateGreaterThanTodayPlus7Days(iosString) {
+  const inputDate = new Date(iosString);
+
+  const today = new Date();
+
+  const sevenDaysFromNow = new Date(today);
+  sevenDaysFromNow.setDate(today.getDate() + 6);
+
+  return inputDate > sevenDaysFromNow;
+}

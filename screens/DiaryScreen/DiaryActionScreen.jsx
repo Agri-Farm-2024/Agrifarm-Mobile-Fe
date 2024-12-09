@@ -43,13 +43,8 @@ const DiaryAction = ({ route, navigation }) => {
       fetchSpecificProcessDetail();
       const diaryTitle = `${
         diary?.process_technical_standard?.plant_season?.plant?.name || ""
-      } ${formatDate(
-        diary?.process_technical_specific_stage[0].time_start,
-        2
-      )} - ${formatDate(
-        diary?.process_technical_specific_stage[
-          diary?.process_technical_specific_stage?.length - 1
-        ].time_end,
+      } ${formatDate(diary?.time_start, 2)} - ${formatDate(
+        diary?.time_end,
         2
       )}`;
       navigation.setOptions({

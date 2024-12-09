@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { formatDate, isFutureDate } from "../../utils";
+import { formatDate, isFutureDate, isTodayInRange } from "../../utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const actionDetail = {
@@ -23,20 +23,25 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
   const [visibleImageVIew, setVisibleImageVIew] = useState(false);
   const { processDetail } = route.params;
   console.log("processDetail", JSON.stringify(processDetail));
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           style={{ padding: 10 }}
           onPress={() =>
-            !isFutureDate(processDetail?.dayFrom) &&
+            isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo) &&
             navigation.navigate("WriteDiaryScreen", { diary: processDetail })
           }
         >
           <MaterialCommunityIcons
             name="pencil-plus"
             size={24}
-            color={isFutureDate(processDetail?.dayFrom) ? "#707070" : "#fff"}
+            color={
+              !isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo)
+                ? "#707070"
+                : "#fff"
+            }
           />
         </TouchableOpacity>
       ),

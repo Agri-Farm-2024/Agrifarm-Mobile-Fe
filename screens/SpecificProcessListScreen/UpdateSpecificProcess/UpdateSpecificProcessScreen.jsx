@@ -8,18 +8,21 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DropdownComponent from "../../../components/DropdownComponent";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { Button, TextInput } from "react-native-paper";
 import { getMaterial } from "../../../redux/slices/materialSlice";
 import TextEditor from "../../../components/TextEditor";
-import { formatDate } from "../../../utils";
+import { capitalizeFirstLetter, formatDate } from "../../../utils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   approveSpecificProcess,
+  getSpecificProcessDetail,
   updateSpecificProcess,
 } from "../../../redux/slices/processSlice";
+import { getSpecificProcessDetailSelector } from "../../../redux/selectors";
+import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const PAGE_SIZE = 30;
 const UpdateSpecificProcessScreen = ({ route, navigation }) => {
@@ -28,22 +31,28 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
 
   const dispatch = useDispatch();
 
-  const [stages, setStages] = useState(
-    specificProcess?.process_technical_specific_stage || []
-  );
+  const [stages, setStages] = useState([]);
   const [materialOptions, setMaterialOptions] = useState([]);
   const [pageNumberMaterial, setPageNumberMaterial] = useState(1);
   const [hasMoreMaterial, setHasMoreMaterial] = useState(true);
   const [isLoadingMaterial, setIsLoadingMaterial] = useState(false);
+  const [isLoadingProcess, setIsLoadingProcess] = useState(false);
   const [visibleDatePicker, setVisibleDatePicker] = useState([]);
+
+  const processDetailSeletor = useSelector(getSpecificProcessDetailSelector);
+  console.log("processDetailSeletor", JSON.stringify(processDetailSeletor));
 
   useEffect(() => {
     fetchMaterialOptions(1);
+    fetchProcessDetail();
     console.log("Stage", JSON.stringify(stages));
   }, []);
 
   useEffect(() => {
-    if (specificProcess && specificProcess?.process_technical_specific_stage) {
+    if (
+      processDetailSeletor &&
+      processDetailSeletor?.process_technical_specific_stage
+    ) {
       let visibleArr = [];
       specificProcess.process_technical_specific_stage.map(
         (stage, stageIndex) => {
@@ -73,8 +82,30 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         JSON.stringify(specificProcess?.process_technical_specific_stage)
       );
       setVisibleDatePicker(visibleArr);
+      setStages(specificProcess?.process_technical_specific_stage);
     }
-  }, [specificProcess]);
+  }, [processDetailSeletor]);
+
+  const fetchProcessDetail = () => {
+    try {
+      if (specificProcess?.process_technical_specific_id) {
+        setIsLoadingProcess(true);
+        dispatch(
+          getSpecificProcessDetail(
+            specificProcess.process_technical_specific_id
+          )
+        ).then((res) => {
+          setIsLoadingProcess(false);
+        });
+      }
+    } catch (error) {
+      setIsLoadingProcess(false);
+      console.log(
+        "Failed to fetch detail specific process",
+        JSON.stringify(error)
+      );
+    }
+  };
 
   const fetchMaterialOptions = (pageIndex) => {
     const params = {
@@ -95,7 +126,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
             const optionData = response.payload.metadata.materials.map(
               (material) => ({
                 value: material.material_id,
-                label: material.name,
+                label: capitalizeFirstLetter(material.name),
               })
             );
             console.log("Option data: " + JSON.stringify(optionData));
@@ -547,21 +578,28 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
       };
       dispatch(updateSpecificProcess(params)).then((updateResponse) => {
         console.log("Update response", updateResponse);
-        if (updateResponse.payload.statusCode != 200) {
-          Toast.show({
-            type: "error",
-            text1: "Duyệt quy trình không thành công!",
-          });
-        }
+        // if (updateResponse.payload.statusCode != 200) {
+        //   Toast.show({
+        //     type: "error",
+        //     text1: "Duyệt quy trình không thành công!",
+        //   });
+        // }
         if (updateResponse.payload.statusCode != 200) {
           dispatch(approveSpecificProcess(processId)).then(
             (approveResponse) => {
               console.log("Approve response", approveResponse);
               if (approveResponse.payload.statusCode != 200) {
-                Toast.show({
-                  type: "error",
-                  text1: "Duyệt quy trình không thành công!",
-                });
+                if (approveResponse.payload.statusCode == 400) {
+                  Toast.show({
+                    type: "error",
+                    text1: approveResponse?.payload?.message,
+                  });
+                } else {
+                  Toast.show({
+                    type: "error",
+                    text1: "Duyệt quy trình không thành công!",
+                  });
+                }
               }
               if (approveResponse.payload.statusCode == 200) {
                 Toast.show({
@@ -574,190 +612,296 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
           );
         }
       });
-      Toast.show({
-        type: "success",
-        text1: "Submit success",
-      });
     }
   };
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView keyboardDismissMode="on-drag" style={styles.container}>
-        <View style={styles.fiedldWrapper}>
-          <Text style={styles.title}>Tên quy trình</Text>
-          <TextInput
-            readOnly
-            style={styles.content}
-            mode="outlined"
-            activeOutlineColor="#7FB640"
-            textColor="#707070"
-            inputMode="text"
-            value={`${
-              specificProcess?.process_technical_standard?.plant_season?.plant
-                ?.name
-            } ${formatDate(
-              specificProcess?.process_technical_specific_stage[0].time_start,
-              2
-            )} - ${formatDate(
-              specificProcess?.process_technical_specific_stage[
-                specificProcess?.process_technical_specific_stage?.length - 1
-              ].time_end,
-              2
-            )}`}
-          />
-        </View>
-        <View style={styles.fiedldWrapper}>
-          <Text style={styles.title}>Mùa vụ</Text>
-          <TextInput
-            readOnly
-            style={styles.content}
-            mode="outlined"
-            activeOutlineColor="#7FB640"
-            textColor="#707070"
-            value={`${specificProcess?.process_technical_standard?.plant_season?.plant?.name} tháng ${specificProcess?.process_technical_standard?.plant_season?.month_start}`}
-            inputMode="text"
-          />
-        </View>
+      {isLoadingProcess && <ActivityIndicatorComponent />}
+      {!isLoadingProcess && processDetailSeletor && (
+        <ScrollView keyboardDismissMode="on-drag" style={styles.container}>
+          <View style={styles.fiedldWrapper}>
+            <Text style={styles.title}>Tên quy trình</Text>
+            <TextInput
+              readOnly
+              style={styles.content}
+              mode="outlined"
+              activeOutlineColor="#7FB640"
+              textColor="#707070"
+              inputMode="text"
+              value={`${
+                specificProcess?.process_technical_standard?.plant_season?.plant
+                  ?.name
+              } ${formatDate(
+                specificProcess?.process_technical_specific_stage[0].time_start,
+                2
+              )} - ${formatDate(
+                specificProcess?.process_technical_specific_stage[
+                  specificProcess?.process_technical_specific_stage?.length - 1
+                ].time_end,
+                2
+              )}`}
+            />
+          </View>
+          <View style={styles.fiedldWrapper}>
+            <Text style={styles.title}>Mùa vụ</Text>
+            <TextInput
+              readOnly
+              style={styles.content}
+              mode="outlined"
+              activeOutlineColor="#7FB640"
+              textColor="#707070"
+              value={`${specificProcess?.process_technical_standard?.plant_season?.plant?.name} tháng ${specificProcess?.process_technical_standard?.plant_season?.month_start}`}
+              inputMode="text"
+            />
+          </View>
 
-        <View>
-          <Text style={styles.sub_header}>Kế hoạch trồng trọt:</Text>
+          <View>
+            <Text style={styles.sub_header}>Kế hoạch trồng trọt:</Text>
 
-          {stages &&
-            stages?.length > 0 &&
-            stages
-              .filter((stage) => !stage?.is_deleted)
-              .map((stage, indexStage) => (
-                <View
-                  key={`Stage ${indexStage}`}
-                  style={styles.inputStageContainer}
-                >
-                  <View style={styles.inputRow}>
-                    <Text
-                      style={[
-                        styles.sub_header,
-                        { color: "#7FB640", fontWeight: "bold" },
-                      ]}
-                    >
-                      Giai đoạn {indexStage + 1}:
-                    </Text>
-                    <TextInput
-                      mode="outlined"
-                      activeOutlineColor="#7FB640"
-                      textColor="black"
-                      inputMode="text"
-                      style={styles.input}
-                      placeholder={`Tên giai đoạn`}
-                      value={stage.stage_title}
-                      onChangeText={(text) => {
-                        setStages((prevStages) =>
-                          prevStages.map((stageItem) =>
-                            stageItem.process_technical_specific_stage_id ===
-                            stage.process_technical_specific_stage_id
-                              ? {
-                                  ...stageItem,
-                                  stage_title: text,
-                                }
-                              : stageItem
-                          )
-                        );
-                      }}
-                    />
-                    {indexStage ===
-                      stages.filter((stageItem) => !stageItem?.is_deleted)
-                        .length -
-                        1 && (
-                      <TouchableOpacity
-                        style={styles.iconButton}
-                        onPress={addStage}
+            {stages &&
+              stages?.length > 0 &&
+              stages
+                .filter((stage) => !stage?.is_deleted)
+                .map((stage, indexStage) => (
+                  <View
+                    key={`Stage ${indexStage}`}
+                    style={styles.inputStageContainer}
+                  >
+                    <View style={styles.inputRow}>
+                      <Text
+                        style={[
+                          styles.sub_header,
+                          { color: "#7FB640", fontWeight: "bold" },
+                        ]}
                       >
-                        <MaterialCommunityIcons
-                          name="plus-circle-outline"
-                          size={25}
-                          color="#7fb640"
-                        />
-                      </TouchableOpacity>
-                    )}
-                    {indexStage !== 0 && (
-                      <TouchableOpacity
-                        style={styles.iconButton}
-                        onPress={() => {
-                          if (
-                            stages.filter((stageItem) => !stageItem?.is_deleted)
-                              ?.length > 1
-                          ) {
-                            removeStage(
-                              stage.process_technical_specific_stage_id,
-                              indexStage
-                            );
-                          } else {
-                            Toast.show({
-                              type: "error",
-                              text1: "Phải có giai đoạn",
-                            });
-                          }
+                        Giai đoạn {indexStage + 1}:
+                      </Text>
+                      <TextInput
+                        mode="outlined"
+                        activeOutlineColor="#7FB640"
+                        textColor="black"
+                        inputMode="text"
+                        style={styles.input}
+                        placeholder={`Tên giai đoạn`}
+                        value={stage.stage_title}
+                        onChangeText={(text) => {
+                          setStages((prevStages) =>
+                            prevStages.map((stageItem) =>
+                              stageItem.process_technical_specific_stage_id ===
+                              stage.process_technical_specific_stage_id
+                                ? {
+                                    ...stageItem,
+                                    stage_title: text,
+                                  }
+                                : stageItem
+                            )
+                          );
                         }}
-                      >
-                        <MaterialCommunityIcons
-                          name="delete-outline"
-                          size={25}
-                          color="#d91515"
-                        />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-
-                  {stage.process_technical_specific_stage_content.filter(
-                    (stageContent) => !stageContent?.is_deleted
-                  ).length == 0 && (
-                    <Button
-                      style={{
-                        marginTop: 10,
-                        borderRadius: 7,
-                        borderStyle: "dashed",
-                      }}
-                      mode="outlined"
-                      onPress={() =>
-                        addInputBlock(stage.process_technical_specific_stage_id)
-                      }
-                      icon={"plus"}
-                    >
-                      Thêm nội dung
-                    </Button>
-                  )}
-
-                  {/* Dynamic Input Blocks for this stage */}
-                  {stage.process_technical_specific_stage_content
-                    .filter((stageContent) => !stageContent?.is_deleted)
-                    .map((input, inputIndex) => (
-                      <View
-                        key={`Stage content ${inputIndex} in Stage ${indexStage}`}
-                        style={styles.inputDateContainer}
-                      >
-                        <View style={[styles.inputRow, styles.marginTop]}>
-                          <Text style={styles.label}>Từ</Text>
-                          <TouchableOpacity
-                            style={[
-                              styles.inputDate,
-                              indexStage == 0 &&
-                                inputIndex == 0 && {
-                                  backgroundColor: "#cacaca",
-                                  color: "#707070",
-                                },
-                            ]}
-                            onPress={() => {
-                              console.log(
-                                "Press Date start ",
-                                indexStage,
-                                inputIndex
+                      />
+                      {indexStage ===
+                        stages.filter((stageItem) => !stageItem?.is_deleted)
+                          .length -
+                          1 && (
+                        <TouchableOpacity
+                          style={styles.iconButton}
+                          onPress={addStage}
+                        >
+                          <MaterialCommunityIcons
+                            name="plus-circle-outline"
+                            size={25}
+                            color="#7fb640"
+                          />
+                        </TouchableOpacity>
+                      )}
+                      {indexStage !== 0 && (
+                        <TouchableOpacity
+                          style={styles.iconButton}
+                          onPress={() => {
+                            if (
+                              stages.filter(
+                                (stageItem) => !stageItem?.is_deleted
+                              )?.length > 1
+                            ) {
+                              removeStage(
+                                stage.process_technical_specific_stage_id,
+                                indexStage
                               );
-                              if (!(indexStage == 0 && inputIndex == 0)) {
+                            } else {
+                              Toast.show({
+                                type: "error",
+                                text1: "Phải có giai đoạn",
+                              });
+                            }
+                          }}
+                        >
+                          <MaterialCommunityIcons
+                            name="delete-outline"
+                            size={25}
+                            color="#d91515"
+                          />
+                        </TouchableOpacity>
+                      )}
+                    </View>
+
+                    {stage.process_technical_specific_stage_content.filter(
+                      (stageContent) => !stageContent?.is_deleted
+                    ).length == 0 && (
+                      <Button
+                        style={{
+                          marginTop: 10,
+                          borderRadius: 7,
+                          borderStyle: "dashed",
+                        }}
+                        mode="outlined"
+                        onPress={() =>
+                          addInputBlock(
+                            stage.process_technical_specific_stage_id
+                          )
+                        }
+                        icon={"plus"}
+                      >
+                        Thêm nội dung
+                      </Button>
+                    )}
+
+                    {/* Dynamic Input Blocks for this stage */}
+                    {stage.process_technical_specific_stage_content
+                      .filter((stageContent) => !stageContent?.is_deleted)
+                      .map((input, inputIndex) => (
+                        <View
+                          key={`Stage content ${inputIndex} in Stage ${indexStage}`}
+                          style={styles.inputDateContainer}
+                        >
+                          <View style={[styles.inputRow, styles.marginTop]}>
+                            <Text style={styles.label}>Từ</Text>
+                            <TouchableOpacity
+                              style={[
+                                styles.inputDate,
+                                indexStage == 0 &&
+                                  inputIndex == 0 && {
+                                    backgroundColor: "#cacaca",
+                                    color: "#707070",
+                                  },
+                              ]}
+                              onPress={() => {
+                                console.log(
+                                  "Press Date start ",
+                                  indexStage,
+                                  inputIndex
+                                );
+                                if (!(indexStage == 0 && inputIndex == 0)) {
+                                  let newVisibleArr = visibleDatePicker;
+                                  console.log(
+                                    "newVisibleArr press",
+                                    newVisibleArr[indexStage]?.content[
+                                      inputIndex
+                                    ],
+                                    JSON.stringify(newVisibleArr)
+                                  );
+                                  if (
+                                    newVisibleArr[indexStage]?.content[
+                                      inputIndex
+                                    ]
+                                  ) {
+                                    newVisibleArr[indexStage].content[
+                                      inputIndex
+                                    ] = {
+                                      contentEnd: false,
+                                      contentStart: true,
+                                    };
+                                    setVisibleDatePicker([...newVisibleArr]);
+                                  }
+                                }
+                              }}
+                            >
+                              <Text
+                                style={{
+                                  color:
+                                    indexStage == 0 && inputIndex == 0
+                                      ? "#707070"
+                                      : "#000000",
+                                }}
+                              >
+                                {formatDate(
+                                  stage.process_technical_specific_stage_content.filter(
+                                    (stageContent) => !stageContent?.is_deleted
+                                  )[inputIndex].time_start,
+                                  0
+                                )}
+                              </Text>
+                            </TouchableOpacity>
+
+                            {visibleDatePicker[indexStage]?.content[
+                              inputIndex
+                            ] &&
+                              visibleDatePicker[indexStage]?.content[inputIndex]
+                                ?.contentStart && (
+                                <DateTimePicker
+                                  testID="dateTimePicker"
+                                  value={getDateValue(stage, inputIndex)}
+                                  mode="date"
+                                  is24Hour={true}
+                                  display="spinner"
+                                  onChange={(event, selectedDate) => {
+                                    console.log(selectedDate);
+
+                                    setVisibleDatePicker((prevState) =>
+                                      prevState.map((stageItem, index) =>
+                                        index == indexStage
+                                          ? {
+                                              ...stageItem,
+                                              content: stageItem.content.map(
+                                                (content, contentIdx) =>
+                                                  contentIdx == inputIndex
+                                                    ? {
+                                                        contentStart: false,
+                                                        contentEnd: false,
+                                                      }
+                                                    : content
+                                              ),
+                                            }
+                                          : stageItem
+                                      )
+                                    );
+
+                                    const newArr = stages.map(
+                                      (stageItem, stageIdx) =>
+                                        stageIdx === indexStage
+                                          ? {
+                                              ...stageItem,
+                                              process_technical_specific_stage_content:
+                                                stageItem.process_technical_specific_stage_content.map(
+                                                  (contentItem, contentIdx) =>
+                                                    contentIdx === inputIndex
+                                                      ? {
+                                                          ...contentItem,
+                                                          time_start:
+                                                            selectedDate.toISOString(),
+                                                        }
+                                                      : contentItem
+                                                ),
+                                            }
+                                          : stageItem
+                                    );
+                                    setStages((prevState) => [...newArr]);
+                                  }}
+                                  textColor="#7FB640"
+                                />
+                              )}
+                            <Text style={styles.label}>đến</Text>
+
+                            <TouchableOpacity
+                              style={styles.inputDate}
+                              onPress={() => {
+                                console.log(
+                                  "Press date end ",
+                                  indexStage,
+                                  inputIndex
+                                );
                                 let newVisibleArr = visibleDatePicker;
                                 console.log(
                                   "newVisibleArr press",
-                                  newVisibleArr[indexStage]?.content[
-                                    inputIndex
-                                  ],
-                                  JSON.stringify(newVisibleArr)
+                                  newVisibleArr[indexStage].content[inputIndex]
                                 );
                                 if (
                                   newVisibleArr[indexStage]?.content[inputIndex]
@@ -765,305 +909,268 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                   newVisibleArr[indexStage].content[
                                     inputIndex
                                   ] = {
-                                    contentEnd: false,
-                                    contentStart: true,
-                                  };
-                                  setVisibleDatePicker([...newVisibleArr]);
-                                }
-                              }
-                            }}
-                          >
-                            <Text
-                              style={{
-                                color:
-                                  indexStage == 0 && inputIndex == 0
-                                    ? "#707070"
-                                    : "#000000",
-                              }}
-                            >
-                              {formatDate(
-                                stage.process_technical_specific_stage_content.filter(
-                                  (stageContent) => !stageContent?.is_deleted
-                                )[inputIndex].time_start,
-                                0
-                              )}
-                            </Text>
-                          </TouchableOpacity>
-
-                          {visibleDatePicker[indexStage]?.content[inputIndex] &&
-                            visibleDatePicker[indexStage]?.content[inputIndex]
-                              ?.contentStart && (
-                              <DateTimePicker
-                                testID="dateTimePicker"
-                                value={getDateValue(stage, inputIndex)}
-                                mode="date"
-                                is24Hour={true}
-                                display="spinner"
-                                onChange={(event, selectedDate) => {
-                                  console.log(selectedDate);
-
-                                  setVisibleDatePicker((prevState) =>
-                                    prevState.map((stageItem, index) =>
-                                      index == indexStage
-                                        ? {
-                                            ...stageItem,
-                                            content: stageItem.content.map(
-                                              (content, contentIdx) =>
-                                                contentIdx == inputIndex
-                                                  ? {
-                                                      contentStart: false,
-                                                      contentEnd: false,
-                                                    }
-                                                  : content
-                                            ),
-                                          }
-                                        : stageItem
-                                    )
-                                  );
-
-                                  let newArr = stages;
-                                  newArr[
-                                    indexStage
-                                  ].process_technical_specific_stage_content[
-                                    inputIndex
-                                  ].time_start = selectedDate.toISOString();
-                                  setStages([...newArr]);
-                                }}
-                                textColor="#7FB640"
-                              />
-                            )}
-                          <Text style={styles.label}>đến</Text>
-
-                          <TouchableOpacity
-                            style={styles.inputDate}
-                            onPress={() => {
-                              console.log(
-                                "Press date end ",
-                                indexStage,
-                                inputIndex
-                              );
-                              let newVisibleArr = visibleDatePicker;
-                              console.log(
-                                "newVisibleArr press",
-                                newVisibleArr[indexStage].content[inputIndex]
-                              );
-                              if (
-                                newVisibleArr[indexStage]?.content[inputIndex]
-                              ) {
-                                newVisibleArr[indexStage].content[inputIndex] =
-                                  {
                                     contentEnd: true,
                                     contentStart: false,
                                   };
-                                setVisibleDatePicker([...newVisibleArr]);
-                              }
+                                  setVisibleDatePicker([...newVisibleArr]);
+                                }
+                              }}
+                            >
+                              <Text>
+                                {formatDate(
+                                  stage.process_technical_specific_stage_content.filter(
+                                    (stageContent) => !stageContent?.is_deleted
+                                  )[inputIndex].time_end,
+                                  0
+                                )}
+                              </Text>
+                            </TouchableOpacity>
+
+                            {visibleDatePicker[indexStage]?.content[
+                              inputIndex
+                            ] &&
+                              visibleDatePicker[indexStage]?.content[inputIndex]
+                                ?.contentEnd && (
+                                <DateTimePicker
+                                  testID="dateTimePicker"
+                                  value={getDateValue(stage, inputIndex)}
+                                  mode="date"
+                                  is24Hour={true}
+                                  display="spinner"
+                                  onChange={(event, selectedDate) => {
+                                    console.log(selectedDate);
+
+                                    setVisibleDatePicker((prevState) =>
+                                      prevState.map((stageItem, index) =>
+                                        index == indexStage
+                                          ? {
+                                              ...stageItem,
+                                              content: stageItem.content.map(
+                                                (content, contentIdx) =>
+                                                  contentIdx == inputIndex
+                                                    ? {
+                                                        contentStart: false,
+                                                        contentEnd: false,
+                                                      }
+                                                    : content
+                                              ),
+                                            }
+                                          : stageItem
+                                      )
+                                    );
+                                    const newArr = stages.map(
+                                      (stageItem, stageIdx) =>
+                                        stageIdx === indexStage
+                                          ? {
+                                              ...stageItem,
+                                              process_technical_specific_stage_content:
+                                                stageItem.process_technical_specific_stage_content.map(
+                                                  (contentItem, contentIdx) =>
+                                                    contentIdx === inputIndex
+                                                      ? {
+                                                          ...contentItem,
+                                                          time_end:
+                                                            selectedDate.toISOString(),
+                                                        }
+                                                      : contentItem
+                                                ),
+                                            }
+                                          : stageItem
+                                    );
+                                    setStages((prevState) => [...newArr]);
+                                  }}
+                                  textColor="#7FB640"
+                                />
+                              )}
+                            {inputIndex ===
+                              stage.process_technical_specific_stage_content.filter(
+                                (stageContent) => !stageContent?.is_deleted
+                              ).length -
+                                1 && (
+                              <TouchableOpacity
+                                style={styles.iconButton}
+                                onPress={() =>
+                                  addInputBlock(
+                                    stage.process_technical_specific_stage_id
+                                  )
+                                }
+                              >
+                                <MaterialCommunityIcons
+                                  name="plus-circle-outline"
+                                  size={25}
+                                  color="#7fb640"
+                                />
+                              </TouchableOpacity>
+                            )}
+                            {!(indexStage == 0 && inputIndex == 0) && (
+                              <TouchableOpacity
+                                style={styles.iconButton}
+                                onPress={() =>
+                                  removeInputBlock(
+                                    stage.process_technical_specific_stage_id,
+                                    inputIndex
+                                  )
+                                }
+                              >
+                                <MaterialCommunityIcons
+                                  name="delete-outline"
+                                  size={25}
+                                  color="#d91515"
+                                />
+                              </TouchableOpacity>
+                            )}
+                          </View>
+
+                          {/* Additional single line input */}
+                          <TextInput
+                            mode="outlined"
+                            activeOutlineColor="#7FB640"
+                            textColor="black"
+                            inputMode="text"
+                            style={[styles.input, styles.marginVertical]}
+                            value={input.title}
+                            onChangeText={(text) => {
+                              setStages((prevStages) =>
+                                prevStages.map((stageItem) =>
+                                  stageItem.process_technical_specific_stage_id ===
+                                  stage.process_technical_specific_stage_id
+                                    ? {
+                                        ...stageItem,
+                                        process_technical_specific_stage_content:
+                                          stageItem.process_technical_specific_stage_content
+                                            .filter(
+                                              (stageContent) =>
+                                                !stageContent?.is_deleted
+                                            )
+                                            .map((inputItem, idx) =>
+                                              idx === inputIndex
+                                                ? { ...inputItem, title: text }
+                                                : inputItem
+                                            ),
+                                      }
+                                    : stageItem
+                                )
+                              );
+                            }}
+                            placeholder="Tiêu đề"
+                          />
+
+                          <View
+                            style={{
+                              marginBottom: 20,
+                              borderRadius: 5,
+                              borderColor: "#707070",
+                              borderWidth: 1,
+                              overflow: "hidden",
+                              minHeight: 200,
+                              position: "relative",
+                              padding: 5,
+                              paddingLeft: 10,
+                              backgroundColor: "#ffffff",
                             }}
                           >
-                            <Text>
-                              {formatDate(
-                                stage.process_technical_specific_stage_content.filter(
-                                  (stageContent) => !stageContent?.is_deleted
-                                )[inputIndex].time_end,
-                                0
-                              )}
-                            </Text>
-                          </TouchableOpacity>
+                            <TextEditor
+                              value={input.content}
+                              onValueChange={(text) => {
+                                console.log("Text change", text);
+                                let newArr = [...stages];
 
-                          {visibleDatePicker[indexStage]?.content[inputIndex] &&
-                            visibleDatePicker[indexStage]?.content[inputIndex]
-                              ?.contentEnd && (
-                              <DateTimePicker
-                                testID="dateTimePicker"
-                                value={getDateValue(stage, inputIndex)}
-                                mode="date"
-                                is24Hour={true}
-                                display="spinner"
-                                onChange={(event, selectedDate) => {
-                                  console.log(selectedDate);
+                                let updatedStage = { ...newArr[indexStage] };
 
-                                  setVisibleDatePicker((prevState) =>
-                                    prevState.map((stageItem, index) =>
-                                      index == indexStage
+                                let updatedContent = [
+                                  ...updatedStage.process_technical_specific_stage_content,
+                                ];
+
+                                updatedContent[inputIndex] = {
+                                  ...updatedContent[inputIndex],
+                                  content: text,
+                                };
+
+                                updatedStage.process_technical_specific_stage_content =
+                                  updatedContent;
+
+                                newArr[indexStage] = updatedStage;
+                                setStages([...newArr]);
+                              }}
+                              placeholder="Nội dung"
+                            />
+                          </View>
+                        </View>
+                      ))}
+
+                    <Text style={styles.sub_header}>
+                      Vật tư cần cho giai đoạn {indexStage + 1}:
+                    </Text>
+                    {stage.process_technical_specific_stage_material.length ==
+                      0 && (
+                      <Button
+                        style={{
+                          borderRadius: 7,
+                          borderColor: "#7FB640",
+                          borderStyle: "dashed",
+                        }}
+                        mode="outlined"
+                        onPress={() =>
+                          addMaterialBlock(
+                            stage.process_technical_specific_stage_id
+                          )
+                        }
+                        icon={"plus"}
+                      >
+                        Thêm vât tư
+                      </Button>
+                    )}
+                    {/* Dynamic Input Materials for this stage */}
+                    {stage.process_technical_specific_stage_material
+                      .filter((materialItem) => !materialItem?.is_deleted)
+                      .map((material, materialIndex) => (
+                        <View
+                          key={materialIndex}
+                          style={styles.inputDateContainer}
+                        >
+                          <View style={styles.inputMaterialContainer}>
+                            <View style={[styles.materialInput]}>
+                              <DropdownComponent
+                                styleValue={{ marginTop: 0 }}
+                                value={material.material_id}
+                                options={materialOptions}
+                                onScroll={handleScrollMaterialOption}
+                                setValue={(value) => {
+                                  setStages((prevStages) =>
+                                    prevStages.map((stageItem) =>
+                                      stageItem.process_technical_specific_stage_id ===
+                                      stage.process_technical_specific_stage_id
                                         ? {
                                             ...stageItem,
-                                            content: stageItem.content.map(
-                                              (content, contentIdx) =>
-                                                contentIdx == inputIndex
-                                                  ? {
-                                                      contentStart: false,
-                                                      contentEnd: false,
-                                                    }
-                                                  : content
-                                            ),
+                                            process_technical_specific_stage_material:
+                                              stageItem.process_technical_specific_stage_material
+                                                .filter(
+                                                  (materialItem) =>
+                                                    !materialItem?.is_deleted
+                                                )
+                                                .map((materialItem, idx) =>
+                                                  idx === materialIndex
+                                                    ? {
+                                                        ...materialItem,
+                                                        material_id: value,
+                                                      }
+                                                    : materialItem
+                                                ),
                                           }
                                         : stageItem
                                     )
                                   );
-                                  let newArr = stages;
-                                  newArr[
-                                    indexStage
-                                  ].process_technical_specific_stage_content[
-                                    inputIndex
-                                  ].time_end = selectedDate.toISOString();
-                                  setStages([...newArr]);
                                 }}
-                                textColor="#7FB640"
+                                placeholder={"Chọn vật tư"}
                               />
-                            )}
-                          {inputIndex ===
-                            stage.process_technical_specific_stage_content.filter(
-                              (stageContent) => !stageContent?.is_deleted
-                            ).length -
-                              1 && (
-                            <TouchableOpacity
-                              style={styles.iconButton}
-                              onPress={() =>
-                                addInputBlock(
-                                  stage.process_technical_specific_stage_id
-                                )
-                              }
-                            >
-                              <MaterialCommunityIcons
-                                name="plus-circle-outline"
-                                size={25}
-                                color="#7fb640"
-                              />
-                            </TouchableOpacity>
-                          )}
-                          {!(indexStage == 0 && inputIndex == 0) && (
-                            <TouchableOpacity
-                              style={styles.iconButton}
-                              onPress={() =>
-                                removeInputBlock(
-                                  stage.process_technical_specific_stage_id,
-                                  inputIndex
-                                )
-                              }
-                            >
-                              <MaterialCommunityIcons
-                                name="delete-outline"
-                                size={25}
-                                color="#d91515"
-                              />
-                            </TouchableOpacity>
-                          )}
-                        </View>
-
-                        {/* Additional single line input */}
-                        <TextInput
-                          mode="outlined"
-                          activeOutlineColor="#7FB640"
-                          textColor="black"
-                          inputMode="text"
-                          style={[styles.input, styles.marginVertical]}
-                          value={input.title}
-                          onChangeText={(text) => {
-                            setStages((prevStages) =>
-                              prevStages.map((stageItem) =>
-                                stageItem.process_technical_specific_stage_id ===
-                                stage.process_technical_specific_stage_id
-                                  ? {
-                                      ...stageItem,
-                                      process_technical_specific_stage_content:
-                                        stageItem.process_technical_specific_stage_content
-                                          .filter(
-                                            (stageContent) =>
-                                              !stageContent?.is_deleted
-                                          )
-                                          .map((inputItem, idx) =>
-                                            idx === inputIndex
-                                              ? { ...inputItem, title: text }
-                                              : inputItem
-                                          ),
-                                    }
-                                  : stageItem
-                              )
-                            );
-                          }}
-                          placeholder="Tiêu đề"
-                        />
-
-                        <View
-                          style={{
-                            marginBottom: 20,
-                            borderRadius: 5,
-                            borderColor: "#707070",
-                            borderWidth: 1,
-                            overflow: "hidden",
-                            minHeight: 200,
-                            position: "relative",
-                            padding: 5,
-                            paddingLeft: 10,
-                            backgroundColor: "#ffffff",
-                          }}
-                        >
-                          <TextEditor
-                            value={input.content}
-                            onValueChange={(text) => {
-                              console.log("Text change", text);
-                              let newArr = [...stages];
-
-                              let updatedStage = { ...newArr[indexStage] };
-
-                              let updatedContent = [
-                                ...updatedStage.process_technical_specific_stage_content,
-                              ];
-
-                              updatedContent[inputIndex] = {
-                                ...updatedContent[inputIndex],
-                                content: text,
-                              };
-
-                              updatedStage.process_technical_specific_stage_content =
-                                updatedContent;
-
-                              newArr[indexStage] = updatedStage;
-                              setStages([...newArr]);
-                            }}
-                            placeholder="Nội dung"
-                          />
-                        </View>
-                      </View>
-                    ))}
-
-                  <Text style={styles.sub_header}>
-                    Vật tư cần cho giai đoạn {indexStage + 1}:
-                  </Text>
-                  {stage.process_technical_specific_stage_material.length ==
-                    0 && (
-                    <Button
-                      style={{
-                        borderRadius: 7,
-                        borderColor: "#7FB640",
-                        borderStyle: "dashed",
-                      }}
-                      mode="outlined"
-                      onPress={() =>
-                        addMaterialBlock(
-                          stage.process_technical_specific_stage_id
-                        )
-                      }
-                      icon={"plus"}
-                    >
-                      Thêm vât tư
-                    </Button>
-                  )}
-                  {/* Dynamic Input Materials for this stage */}
-                  {stage.process_technical_specific_stage_material
-                    .filter((materialItem) => !materialItem?.is_deleted)
-                    .map((material, materialIndex) => (
-                      <View
-                        key={materialIndex}
-                        style={styles.inputDateContainer}
-                      >
-                        <View style={styles.inputMaterialContainer}>
-                          <View style={[styles.materialInput]}>
-                            <DropdownComponent
-                              styleValue={{ marginTop: 0 }}
-                              value={material.material_id}
-                              options={materialOptions}
-                              onScroll={handleScrollMaterialOption}
-                              setValue={(value) => {
+                            </View>
+                            <TextInput
+                              mode="outlined"
+                              activeOutlineColor="#7FB640"
+                              textColor="black"
+                              inputMode="decimal"
+                              value={material.quantity + ""}
+                              onChangeText={(text) => {
                                 setStages((prevStages) =>
                                   prevStages.map((stageItem) =>
                                     stageItem.process_technical_specific_stage_id ===
@@ -1080,7 +1187,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                                 idx === materialIndex
                                                   ? {
                                                       ...materialItem,
-                                                      material_id: value,
+                                                      quantity: text,
                                                     }
                                                   : materialItem
                                               ),
@@ -1089,84 +1196,50 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                   )
                                 );
                               }}
-                              placeholder={"Chọn vật tư"}
+                              placeholder="Số lượng"
+                              style={[styles.materialInput]}
                             />
-                          </View>
-                          <TextInput
-                            mode="outlined"
-                            activeOutlineColor="#7FB640"
-                            textColor="black"
-                            inputMode="decimal"
-                            value={material.quantity + ""}
-                            onChangeText={(text) => {
-                              setStages((prevStages) =>
-                                prevStages.map((stageItem) =>
-                                  stageItem.process_technical_specific_stage_id ===
-                                  stage.process_technical_specific_stage_id
-                                    ? {
-                                        ...stageItem,
-                                        process_technical_specific_stage_material:
-                                          stageItem.process_technical_specific_stage_material
-                                            .filter(
-                                              (materialItem) =>
-                                                !materialItem?.is_deleted
-                                            )
-                                            .map((materialItem, idx) =>
-                                              idx === materialIndex
-                                                ? {
-                                                    ...materialItem,
-                                                    quantity: text,
-                                                  }
-                                                : materialItem
-                                            ),
-                                      }
-                                    : stageItem
-                                )
-                              );
-                            }}
-                            placeholder="Số lượng"
-                            style={[styles.materialInput]}
-                          />
-                          {materialIndex ===
-                            stage.process_technical_specific_stage_material.filter(
-                              (materialItem) => !materialItem?.is_deleted
-                            ).length -
-                              1 && (
+                            {materialIndex ===
+                              stage.process_technical_specific_stage_material.filter(
+                                (materialItem) => !materialItem?.is_deleted
+                              ).length -
+                                1 && (
+                              <TouchableOpacity
+                                onPress={() =>
+                                  addMaterialBlock(
+                                    stage.process_technical_specific_stage_id
+                                  )
+                                }
+                              >
+                                <MaterialCommunityIcons
+                                  name="plus-circle-outline"
+                                  size={25}
+                                  color="#7fb640"
+                                />
+                              </TouchableOpacity>
+                            )}
                             <TouchableOpacity
                               onPress={() =>
-                                addMaterialBlock(
-                                  stage.process_technical_specific_stage_id
+                                removeMaterialBlock(
+                                  stage.process_technical_specific_stage_id,
+                                  materialIndex
                                 )
                               }
                             >
                               <MaterialCommunityIcons
-                                name="plus-circle-outline"
+                                name="delete-outline"
                                 size={25}
-                                color="#7fb640"
+                                color="#d91515"
                               />
                             </TouchableOpacity>
-                          )}
-                          <TouchableOpacity
-                            onPress={() =>
-                              removeMaterialBlock(
-                                stage.process_technical_specific_stage_id,
-                                materialIndex
-                              )
-                            }
-                          >
-                            <MaterialCommunityIcons
-                              name="delete-outline"
-                              size={25}
-                              color="#d91515"
-                            />
-                          </TouchableOpacity>
+                          </View>
                         </View>
-                      </View>
-                    ))}
-                </View>
-              ))}
-        </View>
-      </ScrollView>
+                      ))}
+                  </View>
+                ))}
+          </View>
+        </ScrollView>
+      )}
       <View style={styles.submitContainer}>
         <Button
           style={styles.submitBtn}

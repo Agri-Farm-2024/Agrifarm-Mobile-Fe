@@ -8,7 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { calculateMonthsBetween, formatDate, formatNumber } from "../../utils";
+import {
+  calculateMonthsBetween,
+  formatDate,
+  formatNumber,
+  isDateGreaterThanTodayPlus7Days,
+} from "../../utils";
 import DropdownComponent from "../../components/DropdownComponent";
 import { useEffect, useState } from "react";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
@@ -376,10 +381,10 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                       display="default"
                       onChange={(event, selectedDate) => {
                         setIsShowDatePicker(false);
-                        if (selectedDate <= new Date()) {
+                        if (!isDateGreaterThanTodayPlus7Days(selectedDate)) {
                           Toast.show({
                             type: "error",
-                            text1: "Ngày bắt đầu phải lớn hơn ngày hôm nay!",
+                            text1: "Ngày bắt đầu phải sau ngày hôm nay 7 ngày!",
                           });
                         } else {
                           setFormInput((prevState) => ({

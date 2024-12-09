@@ -98,7 +98,10 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
       {!serviceInfo && <Text>Không tìm thấy dịch vụ</Text>}
       {serviceInfo && (
         <View style={styles.container}>
-          <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <ScrollView
+            contentContainerStyle={styles.scrollContainer}
+            showsVerticalScrollIndicator={false}
+          >
             <View>
               <Text style={styles.sectionTitle}>Thông tin khách hàng</Text>
               <View style={styles.infoContainer}>

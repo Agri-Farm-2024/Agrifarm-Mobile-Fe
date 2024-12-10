@@ -64,14 +64,17 @@ const TransactionScreen = () => {
                   : transactionData?.booking_land?.land?.name}
               </Text>
             </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.textLabel}>Lượt thanh toán</Text>
-              <Text style={styles.textValue}>
-                {transactionData?.booking_land?.payment_frequency === "single"
-                  ? "Một lần"
-                  : "Nhiều lần"}
-              </Text>
-            </View>
+            {transactionData?.booking_land?.payment_frequency && (
+              <View style={styles.infoRow}>
+                <Text style={styles.textLabel}>Lượt thanh toán</Text>
+                <Text style={styles.textValue}>
+                  {transactionData?.booking_land?.payment_frequency === "single"
+                    ? "Một lần"
+                    : "Nhiều lần"}
+                </Text>
+              </View>
+            )}
+
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Thời gian thuê</Text>
               {transactionData.service_specific ? (
@@ -116,11 +119,23 @@ const TransactionScreen = () => {
               <Text style={styles.textLabel}>Loại thanh toán</Text>
               <Text style={styles.textValue}>
                 {transactionData.purpose === "booking_land"
-                  ? "Thuê đất"
+                  ? "Thanh toán thuê đất"
+                  : transactionData.purpose === "order"
+                  ? "Thanh toán đơn hàng"
                   : transactionData.purpose === "service"
-                  ? "Dịch vụ"
+                  ? "Thanh toán dịch vụ"
                   : transactionData.purpose === "extend"
-                  ? "Gia hạn"
+                  ? "Thanh toán gia hạn"
+                  : transactionData.purpose === "booking_material"
+                  ? "Thanh toán đặt nguyên liệu"
+                  : transactionData.purpose === "report_service_specific"
+                  ? "Báo cáo dịch vụ cụ thể"
+                  : transactionData.purpose === "report_booking_land"
+                  ? "Báo cáo thuê đất"
+                  : transactionData.purpose === "report_booking_material"
+                  ? "Báo cáo vật tư"
+                  : transactionData.purpose === "service_purchase_product"
+                  ? "Hoàn tiền thu hoạch"
                   : "Chưa rõ"}
               </Text>
             </View>
@@ -158,16 +173,18 @@ const TransactionScreen = () => {
         </View>
       </ScrollView>
 
-      <View style={styles.buttonContainer}>
-        <Button
-          mode="contained"
-          style={styles.button}
-          onPress={() => handlePayment(transactionData.payment_link)}
-          disabled={transactionData.status !== "approved"}
-        >
-          Tiến hành thanh toán
-        </Button>
-      </View>
+      {transactionData.type !== "refund" && (
+        <View style={styles.buttonContainer}>
+          <Button
+            mode="contained"
+            style={styles.button}
+            onPress={() => handlePayment(transactionData.payment_link)}
+            disabled={transactionData.status !== "approved"}
+          >
+            Tiến hành thanh toán
+          </Button>
+        </View>
+      )}
     </View>
   );
 };

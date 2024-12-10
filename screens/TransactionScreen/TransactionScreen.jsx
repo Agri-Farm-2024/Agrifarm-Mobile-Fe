@@ -102,6 +102,16 @@ export default function TransactionScreen() {
                     ? "Thanh toán dịch vụ"
                     : transaction.purpose === "extend"
                     ? "Thanh toán gia hạn"
+                    : transaction.purpose === "booking_material"
+                    ? "Thanh toán đặt nguyên liệu"
+                    : transaction.purpose === "report_service_specific"
+                    ? "Báo cáo dịch vụ cụ thể"
+                    : transaction.purpose === "report_booking_land"
+                    ? "Báo cáo thuê đất"
+                    : transaction.purpose === "report_booking_material"
+                    ? "Báo cáo vật tư"
+                    : transaction.purpose === "service_purchase_product"
+                    ? "Hoàn tiền thu hoạch"
                     : "Chưa rõ"}
                 </Text>
                 <Text style={styles.transactionexpired_at}>

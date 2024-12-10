@@ -361,6 +361,8 @@ const TaskList = ({ taskType }) => {
             ? "Kiểm định thu mua"
             : item?.request?.type === "product_puchase_harvest"
             ? "Yêu cầu thu hoạch"
+            : item?.request?.type === "material_process_specfic_stage"
+            ? "Lấy vật tư theo giai đoạn"
             : item?.request?.type}
         </Text>
         <Text

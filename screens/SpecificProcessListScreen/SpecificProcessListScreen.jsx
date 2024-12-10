@@ -101,6 +101,20 @@ const SpecificProcessListScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false} onScroll={handleScroll}>
         <View style={styles.container}>
+          {(!specificProcessSelector?.process_technical_specific ||
+            specificProcessSelector?.process_technical_specific.length ==
+              0) && (
+            <Text
+              style={{
+                color: "#707070",
+                fontSize: 16,
+                fontWeight: "bold",
+                textAlign: "center",
+              }}
+            >
+              Không có quy trình cụ thể
+            </Text>
+          )}
           {specificProcessSelector?.process_technical_specific &&
             specificProcessSelector?.process_technical_specific?.map(
               (diary, index) => (
@@ -121,13 +135,8 @@ const SpecificProcessListScreen = ({ navigation }) => {
                       <Text style={styles.title}>{`${
                         diary?.process_technical_standard?.plant_season?.plant
                           ?.name || ""
-                      } ${formatDate(
-                        diary?.process_technical_specific_stage[0].time_start,
-                        2
-                      )} - ${formatDate(
-                        diary?.process_technical_specific_stage[
-                          diary?.process_technical_specific_stage?.length - 1
-                        ].time_end,
+                      } ${formatDate(diary?.time_start, 2)} - ${formatDate(
+                        diary?.time_end,
                         2
                       )}`}</Text>
                       <Text style={styles.plantType}>

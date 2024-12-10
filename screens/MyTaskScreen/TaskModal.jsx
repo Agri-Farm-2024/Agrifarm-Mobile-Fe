@@ -1,7 +1,12 @@
 import React from "react";
 import { Modal, View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
-import { formatDateToDDMMYYYY, formatTimeViewLand } from "../../utils";
+import {
+  capitalizeFirstLetter,
+  formatDate,
+  formatDateToDDMMYYYY,
+  formatTimeViewLand,
+} from "../../utils";
 import { useNavigation } from "@react-navigation/native";
 
 const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
@@ -70,6 +75,24 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 : taskData?.request?.type}
             </Text>
           </Text>
+          {taskData?.request?.type === "technical_support" && (
+            <Text style={styles.modalText}>
+              Loại hỗ trợ:{" "}
+              {taskData?.request?.support_type === "direct"
+                ? "Trực tiếp"
+                : "Qua chat"}
+            </Text>
+          )}
+
+          {taskData?.request?.type === "product_purchase" && (
+            <Text style={styles.modalText}>
+              Loại cây:{" "}
+              {capitalizeFirstLetter(
+                taskData?.request?.service_specific?.plant_season?.plant?.name
+              )}
+            </Text>
+          )}
+
           <Text style={styles.modalText}>
             Mảnh đất:{" "}
             {taskData?.request?.service_specific
@@ -82,6 +105,45 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               ? taskData?.request?.booking_land?.land?.name
               : "Không có"}
           </Text>
+          {taskData?.request?.process_technical_specific_stage_content
+            ?.process_technical_specific_stage?.process_technical_specific
+            ?.service_specific?.plant_season?.plant?.name && (
+            <Text style={styles.modalText}>
+              Quy trình:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {capitalizeFirstLetter(
+                  taskData?.request?.process_technical_specific_stage_content
+                    ?.process_technical_specific_stage
+                    ?.process_technical_specific?.service_specific?.plant_season
+                    ?.plant?.name
+                )}{" "}
+                {formatDate(
+                  taskData?.request?.process_technical_specific_stage_content
+                    ?.process_technical_specific_stage?.time_start,
+                  2
+                )}{" "}
+                -{" "}
+                {formatDate(
+                  taskData?.request?.process_technical_specific_stage_content
+                    ?.process_technical_specific_stage?.time_end,
+                  2
+                )}
+              </Text>
+            </Text>
+          )}
+          {taskData?.request?.process_technical_specific_stage_content
+            ?.process_technical_specific_stage?.stage_title && (
+            <Text style={styles.modalText}>
+              Giai đoạn:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {
+                  taskData?.request?.process_technical_specific_stage_content
+                    ?.process_technical_specific_stage?.stage_title
+                }
+              </Text>
+            </Text>
+          )}
+
           {taskData?.request?.process_technical_specific_stage_content
             ?.title && (
             <Text style={styles.modalText}>

@@ -165,31 +165,33 @@ const CheckoutScreen = ({ route, navigation }) => {
               <Text style={{ fontWeight: "bold" }}>Người thuê:</Text>{" "}
               {userSelector?.full_name || ""}
             </Text>
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ fontWeight: "bold", width: "40%" }}>
-                Mảnh đất sử dụng:{" "}
-              </Text>
-              <View style={{ width: "60%" }}>
-                <DropdownComponent
-                  styleValue={{
-                    height: 40,
-                  }}
-                  placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                  options={bookingOptions}
-                  placeholder="Chọn mảnh đất"
-                  value={bookingId}
-                  setValue={(value) => {
-                    setBookingId(value);
-                  }}
-                />
+            {isRent && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontWeight: "bold", width: "40%" }}>
+                  Mảnh đất sử dụng:{" "}
+                </Text>
+                <View style={{ width: "60%" }}>
+                  <DropdownComponent
+                    styleValue={{
+                      height: 40,
+                    }}
+                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+                    options={bookingOptions}
+                    placeholder="Chọn mảnh đất"
+                    value={bookingId}
+                    setValue={(value) => {
+                      setBookingId(value);
+                    }}
+                  />
+                </View>
               </View>
-            </View>
+            )}
           </Card.Content>
         </Card>
 

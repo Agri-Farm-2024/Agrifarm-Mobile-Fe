@@ -181,20 +181,17 @@ export function formatTimeViewLand(timestamp) {
 
   const date = new Date(timestamp);
 
-  // Format time
+  // Lấy giờ và phút theo UTC
   const hours = date.getUTCHours();
   const minutes = date.getUTCMinutes().toString().padStart(2, "0");
 
-  // Determine morning or afternoon
-  const period = hours >= 12 ? "chiều" : "sáng";
+  // Lấy ngày, tháng, năm theo UTC
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear();
 
-  // Convert to 12-hour format for display
-  const formattedHours = hours % 12 || 12;
-
-  // Format date
-  const formattedDate = date.toLocaleDateString("en-GB");
-
-  return `${formattedHours}:${minutes} ${period} - ${formattedDate}`;
+  // Kết hợp thời gian và ngày
+  return `${hours}:${minutes} giờ - ${day}/${month}/${year}`;
 }
 
 export const calculateDaysDifference = (date1, date2) => {

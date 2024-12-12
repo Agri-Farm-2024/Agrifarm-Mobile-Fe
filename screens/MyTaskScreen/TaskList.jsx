@@ -10,7 +10,11 @@ import TaskModal from "./TaskModal";
 import Toast from "react-native-toast-message";
 import { useIsFocused } from "@react-navigation/native";
 import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
-import { formatDate, formatDateToDDMMYYYY } from "../../utils";
+import {
+  formatDate,
+  formatDateToDDMMYYYY,
+  formatTimeViewLand,
+} from "../../utils";
 
 const notStartTasks = [
   {
@@ -384,7 +388,7 @@ const TaskList = ({ taskType }) => {
             },
           ]}
         >
-          Ngày tạo: {formatDateToDDMMYYYY(item.created_at)}
+          Ngày tạo: {formatTimeViewLand(item.created_at)}
         </Text>
       </View>
 

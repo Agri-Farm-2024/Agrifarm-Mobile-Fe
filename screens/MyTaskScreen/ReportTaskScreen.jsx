@@ -197,6 +197,8 @@ export const ReportTaskScreen = ({ route, navigation }) => {
             <Text style={styles.content}>
               {taskInfo?.request?.type === "create_process_standard"
                 ? "Tạo quy trình kĩ thuật canh tác"
+                : taskInfo?.request?.type == "material_process_specfic_stage"
+                ? "Lấy vật tư theo giai đoạn"
                 : "Hỗ trợ kĩ thuật"}
             </Text>
           </View>

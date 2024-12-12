@@ -546,8 +546,8 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                 material?.process_technical_specific_stage_material_id
                   ? material?.process_technical_specific_stage_material_id
                   : null,
-              material_id: material.material_id,
-              quantity: material,
+              material_id: material?.material_id,
+              quantity: material?.quantity,
               is_deleted: material?.is_deleted ? true : null,
             })
           ),
@@ -577,14 +577,14 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         processId: processId,
       };
       dispatch(updateSpecificProcess(params)).then((updateResponse) => {
-        console.log("Update response", updateResponse);
-        // if (updateResponse.payload.statusCode != 200) {
-        //   Toast.show({
-        //     type: "error",
-        //     text1: "Duyệt quy trình không thành công!",
-        //   });
-        // }
+        console.log("Update response", JSON.stringify(updateResponse));
         if (updateResponse.payload.statusCode != 200) {
+          Toast.show({
+            type: "error",
+            text1: "Duyệt quy trình không thành công!",
+          });
+        }
+        if (updateResponse.payload.statusCode == 200) {
           dispatch(approveSpecificProcess(processId)).then(
             (approveResponse) => {
               console.log("Approve response", approveResponse);

@@ -96,11 +96,13 @@ export default function HelpScreen() {
       </View>
 
       {/* Help Request Modal */}
-      <HelpRequestModal
-        visible={visible}
-        onDismiss={hideModal}
-        onSubmit={handleFormSubmit}
-      />
+      {visible && (
+        <HelpRequestModal
+          visible={visible}
+          onDismiss={hideModal}
+          onSubmit={handleFormSubmit}
+        />
+      )}
     </SafeAreaView>
   );
 }

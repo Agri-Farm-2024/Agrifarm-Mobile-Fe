@@ -70,6 +70,16 @@ const HistoryOrderDetail = ({ route, navigation }) => {
                   </Text>
                   <Text
                     style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
+                    }}
+                  >
+                    Loại đơn:{" "}
+                    <Text style={{ fontSize: 14 }}>Đơn mua vật tư</Text>
+                  </Text>
+                  <Text
+                    style={{
                       marginBottom: 8,
                       fontWeight: "bold",
                     }}

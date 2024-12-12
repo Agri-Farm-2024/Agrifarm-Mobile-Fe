@@ -77,6 +77,8 @@ const plantTypeOptions = [
   },
 ];
 
+const PAGE_SIZE = 30;
+
 const ServicePackageDetailScreen = ({ navigation, route }) => {
   const [formInput, setFormInput] = useState({
     plot: "",
@@ -108,7 +110,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
     try {
       const formData = {
         page_index: 1,
-        page_size: 30,
+        page_size: PAGE_SIZE,
         type: "booking",
         status: "completed",
       };
@@ -134,7 +136,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
 
   const fetchPlantSeasonOptions = (pageIndex, total_month, time_start) => {
     const params = {
-      page_size: 20,
+      page_size: PAGE_SIZE,
       page_index: pageIndex,
       time_start: time_start || showPreviewParams.time_start,
       total_month: total_month || showPreviewParams.total_month,

@@ -18,7 +18,7 @@ import {
   getListServiceSpecific,
   sendSupportService,
 } from "../../redux/slices/serviceSlice";
-import { capitalizeFirstLetter } from "../../utils";
+import { capitalizeFirstLetter, formatDate } from "../../utils";
 
 const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
   const [filterList, setFilterList] = useState([]);
@@ -39,7 +39,10 @@ const HelpRequestModal = ({ visible, onDismiss, onSubmit }) => {
     );
 
     const optionServices = filterUsed?.map((obj) => ({
-      label: capitalizeFirstLetter(obj?.plant_season?.plant?.name),
+      label: `${capitalizeFirstLetter(
+        obj?.plant_season?.plant?.name
+      )} ${formatDate(obj.time_start, 2)} - ${formatDate(obj.time_end, 2)}
+      `,
       value: obj?.service_specific_id,
       obj: obj,
     }));

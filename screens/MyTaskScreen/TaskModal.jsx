@@ -119,13 +119,15 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 )}{" "}
                 {formatDate(
                   taskData?.request?.process_technical_specific_stage_content
-                    ?.process_technical_specific_stage?.time_start,
+                    ?.process_technical_specific_stage
+                    ?.process_technical_specific?.time_start,
                   2
                 )}{" "}
                 -{" "}
                 {formatDate(
                   taskData?.request?.process_technical_specific_stage_content
-                    ?.process_technical_specific_stage?.time_end,
+                    ?.process_technical_specific_stage
+                    ?.process_technical_specific?.time_end,
                   2
                 )}
               </Text>

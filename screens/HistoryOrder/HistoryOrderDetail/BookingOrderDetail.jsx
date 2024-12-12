@@ -89,6 +89,16 @@ const BookingOrderDetail = ({ route, navigation }) => {
                       marginBottom: 8,
                     }}
                   >
+                    Loại đơn:{" "}
+                    <Text style={{ fontSize: 14 }}>Đơn thuê vật tư</Text>
+                  </Text>
+                  <Text
+                    style={{
+                      fontWeight: "800",
+                      color: "#222",
+                      marginBottom: 8,
+                    }}
+                  >
                     Số ngày thuê:{" "}
                     <Text style={{ fontSize: 14 }}>{dayDifference} ngày</Text>
                   </Text>

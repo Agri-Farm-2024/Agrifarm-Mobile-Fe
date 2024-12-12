@@ -5,9 +5,12 @@ import DiaryProgress from "../../components/DiaryProgress";
 import { Button } from "react-native-paper";
 import PurchaseRequestModal from "./PurchaseRequestModal/PurchaseRequestModal"; // Import the modal
 import { capitalizeFirstLetter } from "../../utils";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const DiarySpecificProcess = ({ diary }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const navigation = useNavigation();
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -43,6 +46,21 @@ const DiarySpecificProcess = ({ diary }) => {
                 ? "Mùa thuận"
                 : "Mùa nghịch"}
             </Text>
+            <Button
+              mode="contained"
+              style={{
+                width: 200,
+                marginTop: 10,
+                backgroundColor: "#7fb640",
+                borderRadius: 5,
+              }}
+              onPress={() => {
+                navigation.navigate("MaterialUsedScreen", { diary: diary });
+              }}
+            >
+              <MaterialCommunityIcons name="tools" size={16} color="white" />{" "}
+              Vật tư
+            </Button>
           </View>
           <ScrollView
             showsVerticalScrollIndicator={false}

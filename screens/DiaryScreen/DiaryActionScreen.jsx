@@ -18,7 +18,7 @@ const DiaryAction = ({ route, navigation }) => {
   const { diary } = route.params;
   const processSpecificDetail = useSelector(getSpecificProcessDetailSelector);
   const loading = useSelector(processLoadingSelector);
-  // console.log("processSpecificDetail", JSON.stringify(processSpecificDetail));
+  console.log("processSpecificDetail", JSON.stringify(processSpecificDetail));
   const isFocused = useIsFocused();
 
   const dispatch = useDispatch();

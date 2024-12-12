@@ -285,7 +285,7 @@ const TaskList = ({ taskType }) => {
       if (res.payload.statusCode === 400) {
         Toast.show({
           type: "error",
-          text1: "chưa bắt đầu công việc!",
+          text1: "Chưa bắt đầu công việc!",
         });
         return;
       }

@@ -49,6 +49,7 @@ import { ReportTaskPurchaseHarvestScreen } from "../screens/MyTaskScreen/ReportT
 import { ReportTaskLandScreen } from "../screens/MyTaskScreen/ReportTaskLandScreen";
 import BookingOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/BookingOrderDetail";
 import StandardProcessDetail from "../screens/StandardProcessScreen/StandardProcessDetail";
+import MaterialUsedScreen from "../screens/DiaryScreen/MaterialUsed";
 
 const Stack = createStackNavigator();
 
@@ -177,6 +178,15 @@ const StackNavigator = () => (
         swipeEnabled: false,
       }}
       component={MaterialDetailScreen}
+    />
+    <Stack.Screen
+      name="MaterialUsedScreen"
+      options={{
+        headerTitle: "Vật tư sử dụng trong quy trình",
+        headerTitleAlign: "center",
+        swipeEnabled: false,
+      }}
+      component={MaterialUsedScreen}
     />
     <Stack.Screen
       name="CartMaterialsScreen"

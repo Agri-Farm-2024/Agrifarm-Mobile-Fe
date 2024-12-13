@@ -269,7 +269,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       } else if (formInput.cultivatedArea - 0 < 1000) {
         Toast.show({
           type: "error",
-          text1: "Diện tích canh tác phải lớn hơn 1000 m²!",
+          text1: "Diện tích canh tác tối thiểu là 1000 m²!",
         });
       } else {
         const bookingObject =

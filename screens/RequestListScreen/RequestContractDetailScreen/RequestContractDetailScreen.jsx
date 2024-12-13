@@ -136,10 +136,10 @@ export default function RequestContractDetailScreen({ navigation, route }) {
             </Button>
           </Text>
         </View>
+
         <Divider style={styles.divider} />
         <View>
           <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
-
           <ContractComponent contract={contract} isDownload={true} />
         </View>
 

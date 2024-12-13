@@ -58,7 +58,7 @@ const RequestListScreen = ({ navigation }) => {
             Dịch vụ
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => setSelectedFilter("purchasing")}
           style={[
             styles.filterButton,
@@ -73,7 +73,7 @@ const RequestListScreen = ({ navigation }) => {
           >
             Thu mua
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
       <View style={{ paddingHorizontal: 20 }}>
         <ScrollView

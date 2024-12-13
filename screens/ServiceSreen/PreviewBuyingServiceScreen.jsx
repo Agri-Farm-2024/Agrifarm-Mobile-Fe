@@ -24,7 +24,7 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
   const serviceDeposit = totalServicePrice * 0.1;
   const totalPrice = totalServicePrice + serviceDeposit;
 
-  console.log("serviceDeposit: " + JSON.stringify(serviceDeposit));
+  console.log("serviceInfo: " + JSON.stringify(serviceInfo));
 
   const handleBuyService = () => {
     try {
@@ -91,6 +91,16 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
     } catch (error) {
       console.log("Error buying service: " + error);
     }
+  };
+
+  const contract = {
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    productName: serviceInfo?.seasonObject?.plant?.name,
+    price: serviceInfo?.seasonObject?.price_purchase_per_kg,
+    area: serviceInfo?.acreage_land,
+    timeStart: serviceInfo?.time_start,
+    timeEnd: serviceInfo?.time_end,
+    landrenter: userSelector,
   };
 
   return (
@@ -204,6 +214,7 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
           <ContractServicesDialog
             isVisible={visibleContract}
             onDismiss={() => setVisibleContract(false)}
+            contract={contract}
           />
         </View>
       )}

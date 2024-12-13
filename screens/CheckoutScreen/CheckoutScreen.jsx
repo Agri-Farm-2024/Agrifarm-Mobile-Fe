@@ -22,6 +22,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import ContractServicesDialog from "../../components/ContractServicesDialog/ContractServicesDialog";
 import { getBookingList } from "../../redux/slices/landSlice";
 import DropdownComponent from "../../components/DropdownComponent";
+import ContractRentDialog from "../../components/ContractRentDialog/ContractRentDialog";
 
 const PAGE_SIZE = 30;
 const CheckoutScreen = ({ route, navigation }) => {
@@ -81,6 +82,13 @@ const CheckoutScreen = ({ route, navigation }) => {
     } catch (error) {
       console.log("Error fetching user bookings", error);
     }
+  };
+
+  const contract = {
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    landrenter: userSelector,
+    productList: objectToArray(cartItemsCheckout),
+    rentDay,
   };
 
   const handleCheckout = () => {
@@ -320,9 +328,10 @@ const CheckoutScreen = ({ route, navigation }) => {
           THANH TOÁN
         </Button>
       </ScrollView>
-      <ContractServicesDialog
+      <ContractRentDialog
         isVisible={visibleContract}
         onDismiss={() => setVisibleContract(false)}
+        contract={contract}
       />
     </>
   );

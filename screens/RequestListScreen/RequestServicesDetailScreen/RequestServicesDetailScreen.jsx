@@ -21,7 +21,17 @@ export default function RequestServicesDetailScreen({ route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const { requestService } = route.params;
   console.log("RequestServicesDetailScreen: " + JSON.stringify(requestService));
-  const contract = [];
+
+  const contract = {
+    createAt: requestService?.created_at,
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    landrenter: requestService?.land_renter,
+    productName: requestService?.plant_season?.plant?.name,
+    price: requestService?.price_purchase_per_kg,
+    area: requestService?.acreage_land,
+    timeStart: requestService?.time_start,
+    timeEnd: requestService?.time_end,
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

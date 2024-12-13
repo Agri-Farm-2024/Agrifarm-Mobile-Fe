@@ -1,8 +1,13 @@
 import { View, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
+import { formatDateToVN, formatNumber } from "../../utils";
 
-export default function ContractServicesDialog({ isVisible, onDismiss }) {
+export default function ContractServicesDialog({
+  isVisible,
+  onDismiss,
+  contract,
+}) {
   const textSize = 14;
   return (
     <Portal>
@@ -21,122 +26,187 @@ export default function ContractServicesDialog({ isVisible, onDismiss }) {
         <Dialog.ScrollArea>
           <ScrollView
             style={{ height: "85%", borderColor: "white" }}
-            contentContainerStyle={{ paddingHorizontal: 24 }}
+            contentContainerStyle={{ paddingBottom: 24 }}
           >
-            <Text style={[styles.subtitle, { fontSize: textSize }]}>
-              Số: …..
+            <Text>
+              <Text style={styles.bold}>Số:</Text> …..
             </Text>
+            <Text style={styles.textCenter}>
+              <Text style={styles.bold}>
+                CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+              </Text>
+              {"\n"}Độc lập - Tự do - Hạnh phúc
+            </Text>
+            <Text style={styles.textRight}>
+              <Text style={styles.bold}>
+                Đồng Nai,{" "}
+                <Text style={styles.italic}>
+                  {new Date().toLocaleDateString()}
+                </Text>
+              </Text>
+            </Text>
+            <Text>
+              <Text style={styles.bold}>Căn cứ:</Text>
+            </Text>
+            <Text>• Bộ luật dân sự số 91/2015/QH13;</Text>
+            <Text>• Luật Thương mại số 36/2005/QH11;</Text>
+            <Text>• Thỏa thuận của các bên.</Text>
+            <Text>
+              Hôm nay, ngày {formatDateToVN(contract?.date || new Date())}, tại
+              địa chỉ {contract?.location}, chúng tôi bao gồm:
+            </Text>
+            <Text>
+              <Text style={styles.bold}>BÊN A (CANH TÁC):</Text>{" "}
+              {contract?.landrenter?.full_name}
+            </Text>
+            <Text>Email: {contract?.landrenter?.email}</Text>
+            <Text>
+              <Text style={styles.bold}>BÊN B (DOANH NGHIỆP):</Text>{" "}
+              {contract?.farmOwner}
+            </Text>
+            <Text>
+              Dưới đây là nội dung điều khoản đã được bổ sung và hoàn chỉnh:
+            </Text>
+            <View>
+              <Text style={styles.sectionHeader}>Điều khoản 1: Bao tiêu</Text>
+              <Text style={styles.subSectionHeader}>
+                Điều 1: Giá thành sản phẩm bao tiêu
+              </Text>
+              <Text>
+                Bên A và bên B ký kết Hợp đồng bao tiêu sản phẩm theo đó, bên B
+                ứng vốn, công nghệ và kỹ thuật để bên A sản xuất các mặt hàng
+                sau đó giao bán lại cho bên B tiêu thụ đối với những sản phẩm
+                như sau:
+              </Text>
+              <View style={styles.table}>
+                <View style={styles.tableRow}>
+                  <Text style={styles.tableCell}>STT</Text>
+                  <Text style={styles.tableCell}>Sản phẩm</Text>
+                  <Text style={styles.tableCell}>Diện tích sản phẩm</Text>
+                  <Text style={styles.tableCell}>Đơn giá</Text>
+                </View>
+                <View style={styles.tableRow}>
+                  <Text style={[styles.tableCell, styles.italic]}>1</Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {contract?.productName}
+                  </Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {contract?.area} m2
+                  </Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {formatNumber(contract?.price)} VND
+                  </Text>
+                </View>
+              </View>
+              <Text>
+                <Text style={styles.bold}>
+                  Quy định giá thu mua và giá dịch vụ bao tiêu:
+                </Text>
+              </Text>
+              <Text>
+                • <Text style={styles.bold}>Giá thu mua:</Text>
+              </Text>
+              <Text>
+                {" "}
+                • Khấu trừ nhỏ hơn hoặc bằng 20% giá thu mua tại thời điểm mua
+                dịch vụ.
+              </Text>
+              <Text>
+                {" "}
+                • Khấu trừ chất lượng tại thời điểm thu hoạch (≤ 10%).
+              </Text>
+              <Text>
+                {" "}
+                • Sản phẩm đạt chất lượng tốt (100%) sẽ không bị khấu trừ chất
+                lượng.
+              </Text>
+              <Text>
+                {" "}
+                • Sản phẩm đạt chất lượng 95% (khấu trừ 5%), sản phẩm đạt 90%
+                (khấu trừ 10%).
+              </Text>
+              <Text>
+                • <Text style={styles.bold}>Giá dịch vụ bao tiêu:</Text> Bao gồm
+                chi phí nhân công thu hoạch, đóng gói, vận chuyển.
+              </Text>
 
-            <Text style={[styles.centerText, { fontSize: textSize }]}>
-              CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
-            </Text>
-            <Text style={[styles.centerText, { fontSize: textSize }]}>
-              Độc lập - Tự do - Hạnh phúc
-            </Text>
-            <Text style={[styles.dateText, { fontSize: textSize }]}>
-              ————o0o————
-            </Text>
-            <Text style={[styles.dateText, { fontSize: textSize }]}>
-              Ngày ….. tháng ….. năm …..
-            </Text>
+              {/* Điều khoản 2 */}
+              <Text style={styles.sectionHeader}>
+                Điều khoản 2: Điều kiện thanh toán
+              </Text>
+              <Text>
+                1. Bên B thanh toán cho Bên A toàn bộ số tiền đã thỏa thuận
+                trong hợp đồng sau khi ký kết hợp đồng.
+              </Text>
+              <Text>
+                2. Phương thức thanh toán: Thanh toán bằng chuyển khoản hoặc
+                tiền mặt.
+              </Text>
+              <Text>
+                3. Thời gian thanh toán sẽ được xác định trong các điều khoản bổ
+                sung của hợp đồng.
+              </Text>
 
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hôm nay, tại [Địa điểm lập hợp đồng], chúng tôi gồm:
-            </Text>
+              {/* Điều khoản 3 */}
+              <Text style={styles.sectionHeader}>
+                Điều khoản 3: Quyền và nghĩa vụ của các bên
+              </Text>
+              <Text>
+                <Text style={styles.bold}>Bên A:</Text>
+                {"\n"}• Đảm bảo chất lượng sản phẩm theo yêu cầu của bên B.
+                {"\n"}• Thực hiện nghĩa vụ cung cấp sản phẩm đúng hạn.
+              </Text>
+              <Text>
+                <Text style={styles.bold}>Bên B:</Text>
+                {"\n"}• Thanh toán đầy đủ và đúng hạn theo hợp đồng.
+                {"\n"}• Cung cấp thông tin và hỗ trợ bên A trong quá trình sản
+                xuất.
+              </Text>
 
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Bên A (Bên cung cấp dịch vụ):
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Tên công ty: [Tên công ty]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Mã số doanh nghiệp: [Mã số doanh nghiệp]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Địa chỉ trụ sở chính: [Địa chỉ công ty]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Đại diện: [Tên người đại diện]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Chức vụ: [Chức vụ người đại diện]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số điện thoại liên hệ: [Số điện thoại]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Email: [Email]
-            </Text>
+              {/* Điều khoản 4 */}
+              <Text style={styles.sectionHeader}>
+                Điều khoản 4: Giải quyết tranh chấp
+              </Text>
+              <Text>
+                1. Mọi tranh chấp phát sinh trong quá trình thực hiện hợp đồng
+                sẽ được giải quyết thông qua thương lượng giữa các bên.
+              </Text>
+              <Text>
+                2. Trong trường hợp không thể giải quyết được tranh chấp, các
+                bên có thể yêu cầu giải quyết tranh chấp tại Tòa án có thẩm
+                quyền.
+              </Text>
 
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Bên B (Bên sử dụng dịch vụ):
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Họ và tên: [Họ và tên]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Địa chỉ thường trú: [Địa chỉ]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số CMND/CCCD: [Số CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Ngày cấp: [Ngày cấp CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Nơi cấp: [Nơi cấp CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số điện thoại liên hệ: [Số điện thoại]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Email: [Email]
-            </Text>
+              {/* Điều khoản 5 */}
+              <Text style={styles.sectionHeader}>
+                Điều khoản 5: Điều khoản chung
+              </Text>
+              <Text>
+                1. Hợp đồng này có hiệu lực kể từ ngày ký và được thực hiện
+                trong thời gian thỏa thuận giữa các bên.
+              </Text>
+              <Text>
+                2. Mọi sửa đổi, bổ sung hợp đồng phải được lập thành văn bản và
+                có sự đồng ý của cả hai bên.
+              </Text>
 
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hai bên cùng thống nhất thỏa thuận và ký kết hợp đồng với các điều
-              khoản sau:
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 1: Nội dung dịch vụ
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Bên A cung cấp cho Bên B các dịch vụ [Mô tả chi tiết nội dung dịch
-              vụ] trong khoảng thời gian từ [Ngày bắt đầu] đến [Ngày kết thúc],
-              hoặc theo các điều kiện được quy định tại hợp đồng này.
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 2: Giá trị hợp đồng và phương thức thanh toán
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Tổng giá trị hợp đồng: [Số tiền] VNĐ.
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Phương thức thanh toán: [Thông tin chi tiết về cách thức thanh
-              toán].
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Thời hạn thanh toán: [Thời hạn thanh toán].
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 3: Quyền và nghĩa vụ của các bên
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Quyền và nghĩa vụ của Bên A: [Chi tiết các quyền và nghĩa vụ].
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Quyền và nghĩa vụ của Bên B: [Chi tiết các quyền và nghĩa vụ].
-            </Text>
-
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hai bên cam kết thực hiện nghiêm túc các điều khoản của hợp đồng.
-              Trong trường hợp có tranh chấp, hai bên sẽ cùng nhau thương lượng
-              giải quyết trên tinh thần hợp tác và thiện chí.
-            </Text>
+              <View
+                style={{
+                  marginTop: 20,
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text>
+                  <Text style={styles.bold}>ĐẠI DIỆN BÊN A</Text>
+                  {"\n"}(Ký, ghi rõ họ tên)
+                </Text>
+                <Text>
+                  <Text style={styles.bold}>ĐẠI DIỆN BÊN B</Text>
+                  {"\n"}(Ký, ghi rõ họ tên)
+                </Text>
+              </View>
+            </View>
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
@@ -148,29 +218,29 @@ export default function ContractServicesDialog({ isVisible, onDismiss }) {
 }
 
 const styles = StyleSheet.create({
-  header: {
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
+  container: {
+    paddingVertical: 20,
+    paddingHorizontal: 5,
+    borderWidth: 1,
+    backgroundColor: "#ffffff",
+    marginTop: 20,
   },
-  subtitle: {
-    textAlign: "center",
-    marginBottom: 5,
+  buttonContainer: {
+    marginTop: 10,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  centerText: {
-    textAlign: "center",
-    marginBottom: 5,
+  textButton: {
+    backgroundColor: "#7fb640",
   },
-  dateText: {
-    textAlign: "center",
-    fontStyle: "italic",
-    marginBottom: 10,
-  },
-  paragraph: {
-    marginBottom: 10,
-  },
-  subsection: {
-    fontWeight: "bold",
-    marginBottom: 5,
-  },
+  textCenter: { textAlign: "center" },
+  textRight: { textAlign: "right" },
+  bold: { fontWeight: "bold" },
+  italic: { fontStyle: "italic" },
+  header: { fontSize: 24, marginBottom: 16 },
+  sectionHeader: { fontSize: 20, marginTop: 16, fontWeight: "bold" },
+  subSectionHeader: { fontSize: 18, marginTop: 8, fontWeight: "bold" },
+  table: { marginTop: 16, borderWidth: 1 },
+  tableRow: { flexDirection: "row", borderBottomWidth: 1 },
+  tableCell: { flex: 1, padding: 8, borderRightWidth: 1 },
 });

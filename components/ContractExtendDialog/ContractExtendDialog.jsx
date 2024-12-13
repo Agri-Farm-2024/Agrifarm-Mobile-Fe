@@ -1,8 +1,13 @@
 import { View, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
+import { formatDateToVN, formatNumber } from "../../utils";
 
-export default function ContractExtendDialog({ isVisible, onDismiss }) {
+export default function ContractExtendDialog({
+  isVisible,
+  onDismiss,
+  contract,
+}) {
   const textSize = 14;
   return (
     <Portal>
@@ -21,122 +26,82 @@ export default function ContractExtendDialog({ isVisible, onDismiss }) {
         <Dialog.ScrollArea>
           <ScrollView
             style={{ height: "85%", borderColor: "white" }}
-            contentContainerStyle={{ paddingHorizontal: 24 }}
+            contentContainerStyle={{ paddingBottom: 24 }}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.subtitle, { fontSize: textSize }]}>
-              Số: …..
-            </Text>
-
-            <Text style={[styles.centerText, { fontSize: textSize }]}>
-              CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
-            </Text>
-            <Text style={[styles.centerText, { fontSize: textSize }]}>
-              Độc lập - Tự do - Hạnh phúc
-            </Text>
-            <Text style={[styles.dateText, { fontSize: textSize }]}>
-              ————o0o————
-            </Text>
-            <Text style={[styles.dateText, { fontSize: textSize }]}>
-              Ngày ….. tháng ….. năm …..
-            </Text>
-
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hôm nay, tại [Địa điểm lập hợp đồng], chúng tôi gồm:
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Bên A (Bên cung cấp dịch vụ):
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Tên công ty: [Tên công ty]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Mã số doanh nghiệp: [Mã số doanh nghiệp]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Địa chỉ trụ sở chính: [Địa chỉ công ty]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Đại diện: [Tên người đại diện]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Chức vụ: [Chức vụ người đại diện]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số điện thoại liên hệ: [Số điện thoại]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Email: [Email]
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Bên B (Bên sử dụng dịch vụ):
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Họ và tên: [Họ và tên]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Địa chỉ thường trú: [Địa chỉ]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số CMND/CCCD: [Số CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Ngày cấp: [Ngày cấp CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Nơi cấp: [Nơi cấp CMND/CCCD]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Số điện thoại liên hệ: [Số điện thoại]
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Email: [Email]
-            </Text>
-
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hai bên cùng thống nhất thỏa thuận và ký kết hợp đồng với các điều
-              khoản sau:
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 1: Nội dung dịch vụ
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Bên A cung cấp cho Bên B các dịch vụ [Mô tả chi tiết nội dung dịch
-              vụ] trong khoảng thời gian từ [Ngày bắt đầu] đến [Ngày kết thúc],
-              hoặc theo các điều kiện được quy định tại hợp đồng này.
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 2: Giá trị hợp đồng và phương thức thanh toán
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Tổng giá trị hợp đồng: [Số tiền] VNĐ.
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Phương thức thanh toán: [Thông tin chi tiết về cách thức thanh
-              toán].
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Thời hạn thanh toán: [Thời hạn thanh toán].
-            </Text>
-
-            <Text style={[styles.subsection, { fontSize: textSize }]}>
-              Điều 3: Quyền và nghĩa vụ của các bên
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Quyền và nghĩa vụ của Bên A: [Chi tiết các quyền và nghĩa vụ].
-            </Text>
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              - Quyền và nghĩa vụ của Bên B: [Chi tiết các quyền và nghĩa vụ].
-            </Text>
-
-            <Text style={[styles.paragraph, { fontSize: textSize }]}>
-              Hai bên cam kết thực hiện nghiêm túc các điều khoản của hợp đồng.
-              Trong trường hợp có tranh chấp, hai bên sẽ cùng nhau thương lượng
-              giải quyết trên tinh thần hợp tác và thiện chí.
-            </Text>
+            <View style={styles.container}>
+              <Text style={styles.subHeader}>
+                CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+                {"\n"}
+                Độc lập - Tự do - Hạnh phúc
+              </Text>
+              <Text style={styles.date}>
+                Đồng Nai,
+                <Text style={styles.italic}>
+                  {" "}
+                  {new Date().toLocaleDateString()}
+                </Text>
+                .
+              </Text>
+              <View style={styles.section}>
+                <Text style={styles.bold}>
+                  1. Người xin gia hạn sử dụng đất:{" "}
+                  <Text style={styles.italic}> {contract.landrenter}</Text>
+                </Text>
+              </View>
+              <View style={styles.section}>
+                <Text style={styles.bold}>
+                  2. Email: <Text style={styles.italic}> {contract.email}</Text>
+                </Text>
+              </View>
+              <View style={styles.section}>
+                <Text style={styles.bold}>
+                  3. Thông tin về thửa đất/khu đất đang sử dụng:
+                </Text>
+              </View>
+              <View style={styles.list}>
+                <Text style={styles.listItem}>
+                  <Text style={styles.bold}>Tên mảnh đất: </Text>
+                  <Text style={styles.italic}> {contract.position}</Text>
+                </Text>
+                <Text style={styles.listItem}>
+                  <Text style={styles.bold}>Diện tích đất (m2): </Text>
+                  <Text style={styles.italic}>
+                    {" "}
+                    {formatNumber(contract.area)} m2
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.section}>
+                <Text style={styles.bold}>
+                  4. Thời gian muốn gia hạn:{" "}
+                  <Text style={styles.italic}>
+                    {" "}
+                    {contract.totalMonth} tháng
+                  </Text>
+                </Text>
+              </View>
+              <View style={styles.section}>
+                <Text style={styles.bold}>5. Cam kết: </Text>
+              </View>
+              <View style={styles.list}>
+                <Text style={styles.listItem}>Sử dụng đất đúng mục đích.</Text>
+                <Text style={styles.listItem}>
+                  Chấp hành đúng các quy định của pháp luật đất đai.
+                </Text>
+                <Text style={styles.listItem}>
+                  Nộp tiền sử dụng đất (nếu có) đầy đủ, đúng hạn.
+                </Text>
+              </View>
+              <View style={styles.signatureSection}>
+                <View style={styles.signature}>
+                  <Text>Người làm đơn</Text>
+                </View>
+                <View style={styles.signature}>
+                  <Text>Doanh nghiệp</Text>
+                </View>
+              </View>
+            </View>
           </ScrollView>
         </Dialog.ScrollArea>
         <Dialog.Actions>
@@ -146,31 +111,50 @@ export default function ContractExtendDialog({ isVisible, onDismiss }) {
     </Portal>
   );
 }
-
 const styles = StyleSheet.create({
+  container: {
+    paddingVertical: 10,
+  },
   header: {
+    textAlign: "center",
+    fontSize: 24,
     fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
   },
-  subtitle: {
+  subHeader: {
+    fontSize: 18,
     textAlign: "center",
-    marginBottom: 5,
   },
-  centerText: {
-    textAlign: "center",
-    marginBottom: 5,
+  date: {
+    fontSize: 14,
+    marginTop: 20,
+    textAlign: "right",
   },
-  dateText: {
-    textAlign: "center",
+  italic: {
     fontStyle: "italic",
-    marginBottom: 10,
   },
-  paragraph: {
-    marginBottom: 10,
-  },
-  subsection: {
+  bold: {
     fontWeight: "bold",
+  },
+  section: {
+    marginTop: 10,
+  },
+  list: {
+    marginTop: 10,
+    marginLeft: 20,
+  },
+  listItem: {
+    fontSize: 16,
     marginBottom: 5,
+  },
+  signatureSection: {
+    marginTop: 30,
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  signature: {
+    alignItems: "center",
+  },
+  signatureLine: {
+    marginTop: 50,
   },
 });

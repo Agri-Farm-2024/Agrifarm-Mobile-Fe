@@ -3,6 +3,7 @@ import { View, Text, ScrollView, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import {
+  capitalizeFirstLetter,
   formatDateToDDMMYYYY,
   formatDateToVN,
   formatNumber,
@@ -118,7 +119,7 @@ const ContractComponent = ({ contract, isDownload }) => {
             <View style={styles.tableRow}>
               <Text style={[styles.tableCell, styles.italic]}>1</Text>
               <Text style={[styles.tableCell, styles.italic]}>
-                {contract?.productName}
+                {capitalizeFirstLetter(contract?.productName)}
               </Text>
               <Text style={[styles.tableCell, styles.italic]}>
                 {contract?.area} m2

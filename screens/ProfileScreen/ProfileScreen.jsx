@@ -63,10 +63,10 @@ const ProfileScreen = ({ navigation }) => {
             {user.gender == "male" ? "Nam" : "Nữ"}
           </Text>
         </View>
-        <View style={styles.userInfoContainer}>
+        {/* <View style={styles.userInfoContainer}>
           <Text style={styles.infoTitle}>Địa chỉ:</Text>
           <Text style={styles.info}>{user.address}</Text>
-        </View>
+        </View> */}
         <View style={styles.userInfoContainer}>
           <Text style={styles.infoTitle}>Số điện thoại:</Text>
           <Text style={styles.info}>

@@ -39,18 +39,16 @@ export default function NotificationScreen() {
   const renderItem = ({ item }) => {
     const iconName = iconMapping[item.type] || "alert-circle-outline";
     return (
-      <View
-        style={[
-          styles.notificationItem,
-          item.is_seen && styles.readNotification,
-        ]}
-      >
-        <MaterialCommunityIcons
-          name={iconName}
-          size={30}
-          color="white"
-          style={styles.icon}
-        />
+      <View style={[styles.notificationItem]}>
+        <View style={styles.iconContainer}>
+          <MaterialCommunityIcons
+            name={iconName}
+            size={30}
+            color="white"
+            style={styles.icon}
+          />
+          {!item.is_seen && <View style={styles.redDot} />}
+        </View>
         <View style={styles.textContainer}>
           <Text style={styles.notificationTitle}>{item.title}</Text>
           <Text style={styles.notificationDesc}>{item.content}</Text>
@@ -148,5 +146,22 @@ const styles = StyleSheet.create({
     borderColor: "#7fb640",
     width: 100,
     borderRadius: 10,
+  },
+  iconContainer: {
+    width: 40,
+    height: 40,
+    marginRight: 12,
+    position: "relative",
+  },
+  redDot: {
+    width: 10,
+    height: 10,
+    backgroundColor: "red",
+    borderRadius: 5,
+    position: "absolute",
+    top: 0,
+    right: 0,
+    borderWidth: 1,
+    borderColor: "white", // Optional for a cleaner look
   },
 });

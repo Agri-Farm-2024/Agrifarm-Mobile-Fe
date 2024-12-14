@@ -1,12 +1,47 @@
-import React from "react";
+import { useIsFocused } from "@react-navigation/native";
+import React, { useEffect, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { getListTaskByUser } from "../../../redux/slices/taskSlice";
 
 const AgricultureExpertEfficiency = () => {
-  // Task data
-  const totalTasks = 20;
-  const completedTasks = 15;
-  const notStartedTasks = 5;
-  const incompleteTasks = 0;
+  // const [totalTasks, setTotalTasks] = useState(0);
+  // const [completedTasks, setCompletedTasks] = useState(0);
+  // const [notStartedTasks, setNotStartedTasks] = useState(0);
+  // const [inProgressTaks, setInProgressTaks] = useState(0);
+
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
+  const { taskList, loading, error } = useSelector((state) => state.taskSlice);
+  console.log("AgricultureExpertEfficiency: ", taskList?.length);
+
+  useEffect(() => {
+    if (isFocused) {
+      console.log("Fetching tasks...");
+      dispatch(
+        getListTaskByUser({
+          status: null,
+        })
+      ).then((res) => {
+        // console.log("Fetch task response: " + JSON.stringify(res));
+      });
+    }
+  }, [isFocused]);
+
+  const totalTasks = taskList?.length;
+  const completedTasks = taskList.filter(
+    (task) =>
+      task?.request?.status === "pending_approval" ||
+      task?.request?.status === "completed"
+  ).length;
+  const notStartedTasks = taskList.filter(
+    (task) =>
+      task?.request?.status === "rejected" ||
+      task?.request?.status === "assigned"
+  ).length;
+  const inProgressTaks = taskList.filter(
+    (task) => task?.request?.status === "in_progress"
+  ).length;
 
   return (
     <View style={styles.container}>
@@ -24,14 +59,14 @@ const AgricultureExpertEfficiency = () => {
           <View
             style={[
               styles.segment,
-              { backgroundColor: "#f44336", flex: incompleteTasks },
+              { backgroundColor: "#ff9800", flex: inProgressTaks },
             ]}
           />
           {/* Segment 3: Not Started */}
           <View
             style={[
               styles.segment,
-              { backgroundColor: "#ff9800", flex: notStartedTasks },
+              { backgroundColor: "#f44336", flex: notStartedTasks },
             ]}
           />
         </View>
@@ -44,12 +79,12 @@ const AgricultureExpertEfficiency = () => {
       <View style={styles.legendContainer}>
         <Text style={styles.legendTitle}>Báo cáo hiệu suất</Text>
         <View style={styles.legendItem}>
-          <View style={[styles.legendColor, { backgroundColor: "#ff9800" }]} />
+          <View style={[styles.legendColor, { backgroundColor: "#f44336" }]} />
           <Text style={styles.textLegend}>Chưa thực hiện</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendColor, { backgroundColor: "#f44336" }]} />
-          <Text style={styles.textLegend}>Không hoàn thành</Text>
+          <View style={[styles.legendColor, { backgroundColor: "#ff9800" }]} />
+          <Text style={styles.textLegend}>Đang thực hiện</Text>
         </View>
         <View style={styles.legendItem}>
           <View style={[styles.legendColor, { backgroundColor: "#4caf50" }]} />

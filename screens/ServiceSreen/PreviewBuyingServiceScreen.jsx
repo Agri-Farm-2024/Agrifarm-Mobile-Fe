@@ -99,6 +99,8 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
     landrenter: userSelector,
   };
 
+  console.log("preview: " + JSON.stringify(contract));
+
   return (
     <>
       {!serviceInfo && <Text>Không tìm thấy dịch vụ</Text>}

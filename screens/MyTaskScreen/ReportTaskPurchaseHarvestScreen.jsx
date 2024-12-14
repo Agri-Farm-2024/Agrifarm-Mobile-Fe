@@ -17,6 +17,7 @@ import { ResizeMode, Video } from "expo-av";
 import { uploadFile } from "../../services/uploadService";
 import { useDispatch } from "react-redux";
 import { reportTask, reportTaskPurchase } from "../../redux/slices/taskSlice";
+import DropdownComponent from "../../components/DropdownComponent";
 
 export const ReportTaskPurchaseHarvestScreen = ({ route, navigation }) => {
   const { taskInfo } = route.params;
@@ -25,12 +26,27 @@ export const ReportTaskPurchaseHarvestScreen = ({ route, navigation }) => {
   console.log("ReportTaskPurchaseHarvestScreen: " + JSON.stringify(taskInfo));
 
   const [note, setNote] = useState("");
-  const [qualityPlantExpect, setQualityPlantExpect] = useState("");
+  const [qualityPlantExpect, setQualityPlantExpect] = useState(100);
   const [massPlantExpect, setMassPlantExpect] = useState("");
   const [imageReports, setImageReports] = useState([]);
   const [videoReport, setVideoReport] = useState(null);
   const video = useRef(null);
   const dispatch = useDispatch();
+
+  const qualityOPtions = [
+    {
+      label: "Tốt 🌳",
+      value: 100,
+    },
+    {
+      label: "Trung bình 🌿",
+      value: 95,
+    },
+    {
+      label: "Xấu 🌱",
+      value: 90,
+    },
+  ];
 
   const handleSubmit = async (event) => {
     try {
@@ -259,7 +275,7 @@ export const ReportTaskPurchaseHarvestScreen = ({ route, navigation }) => {
               inputMode="decimal"
             />
           </View>
-          <View style={styles.rowContainer}>
+          {/* <View style={styles.rowContainer}>
             <Text style={styles.title}>Chất lượng thu hoạch</Text>
             <TextInput
               value={qualityPlantExpect}
@@ -269,6 +285,22 @@ export const ReportTaskPurchaseHarvestScreen = ({ route, navigation }) => {
               maxLength={3}
               placeholder="Chất lượng thu hoạch từ 1 đến 100"
               inputMode="decimal"
+            />
+          </View> */}
+          <View style={styles.rowContainer}>
+            <Text style={styles.title}>Chất lượng thu hoạch</Text>
+            <DropdownComponent
+              styleValue={{
+                height: 40,
+                width: 200,
+              }}
+              placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+              options={qualityOPtions}
+              placeholder="Chọn chất lượng"
+              value={qualityPlantExpect}
+              setValue={(value) => {
+                setQualityPlantExpect(value);
+              }}
             />
           </View>
           <View style={styles.rowContainer}>

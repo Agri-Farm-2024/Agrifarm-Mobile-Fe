@@ -1,13 +1,18 @@
 import { View, ScrollView, StyleSheet } from "react-native";
 import React from "react";
 import { Button, Dialog, Portal, Text } from "react-native-paper";
-import { formatDateToVN, formatNumber } from "../../utils";
+import {
+  capitalizeFirstLetter,
+  formatDateToVN,
+  formatNumber,
+} from "../../utils";
 
 export default function ContractServicesDialog({
   isVisible,
   onDismiss,
   contract,
 }) {
+  console.log("Contract Services", JSON.stringify(contract));
   const textSize = 14;
   return (
     <Portal>
@@ -88,7 +93,7 @@ export default function ContractServicesDialog({
                 <View style={styles.tableRow}>
                   <Text style={[styles.tableCell, styles.italic]}>1</Text>
                   <Text style={[styles.tableCell, styles.italic]}>
-                    {contract?.productName}
+                    {capitalizeFirstLetter(contract?.productName)}
                   </Text>
                   <Text style={[styles.tableCell, styles.italic]}>
                     {contract?.area} m2

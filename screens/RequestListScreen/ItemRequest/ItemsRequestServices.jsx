@@ -28,9 +28,7 @@ export default function ItemsRequestServices() {
           page_index: 1,
           page_size: PAGE_SIZE,
         };
-        dispatch(getListServiceSpecific(formData)).then((response) =>
-          console.log("response: " + JSON.stringify(response))
-        );
+        dispatch(getListServiceSpecific(formData));
       }
     } catch (error) {
       console.log("Error getting service specific", error);

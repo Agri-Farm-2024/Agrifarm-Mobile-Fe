@@ -89,6 +89,16 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
     }
   };
 
+  const contract = {
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    productName: serviceInfo?.seasonObject?.plant?.name,
+    price: serviceInfo?.seasonObject?.price_purchase_per_kg,
+    area: serviceInfo?.acreage_land,
+    timeStart: serviceInfo?.time_start,
+    timeEnd: serviceInfo?.time_end,
+    landrenter: userSelector,
+  };
+
   return (
     <>
       {!serviceInfo && <Text>Không tìm thấy dịch vụ</Text>}
@@ -196,6 +206,7 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
           <ContractServicesDialog
             isVisible={visibleContract}
             onDismiss={() => setVisibleContract(false)}
+            contract={contract}
           />
         </View>
       )}

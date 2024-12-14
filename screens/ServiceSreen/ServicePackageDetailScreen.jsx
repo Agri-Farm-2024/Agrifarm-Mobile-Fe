@@ -24,60 +24,9 @@ import { getBookingList } from "../../redux/slices/landSlice";
 import {
   getBookingSelector,
   getPlantSeasonSelector,
-  landLoadingSelector,
 } from "../../redux/selectors";
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
-import { Checkbox } from "react-native-paper";
-import ContractServicesDialog from "../../components/ContractServicesDialog/ContractServicesDialog";
-
-const plotOptions = [
-  {
-    label: "Mảnh đất số 1",
-    value: "Mảnh đất số 1",
-  },
-  {
-    label: "Mảnh đất số 2",
-    value: "Mảnh đất số 2",
-  },
-];
-
-const plantSeasonOptions = [
-  {
-    label: "Tháng 9 - 12",
-    value: "Tháng 9 - 12",
-  },
-  {
-    label: "Tháng 10 - 1",
-    value: "Tháng 10 - 1",
-  },
-  {
-    label: "Tháng 1 - 3",
-    value: "Tháng 1 - 3",
-  },
-  {
-    value: "Tháng 4 - 8",
-    label: "Tháng 4 - 8",
-  },
-];
-
-const plantTypeOptions = [
-  {
-    label: "Dưa lưới",
-    value: "Dưa lưới",
-  },
-  {
-    label: "Dưa hấu",
-    value: "Dưa hấu",
-  },
-  {
-    label: "Dưa leo",
-    value: "Dưa leo",
-  },
-  {
-    label: "Cây ớt",
-    value: "Cây ớt",
-  },
-];
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const PAGE_SIZE = 30;
 
@@ -106,7 +55,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const bookingSelector = useSelector(getBookingSelector);
   const plantSeasonSelector = useSelector(getPlantSeasonSelector);
-  const loading = useSelector(landLoadingSelector);
 
   const fetchUserBookings = () => {
     try {
@@ -137,7 +85,12 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
     }
   };
 
-  const fetchPlantSeasonOptions = (pageIndex, total_month, time_start) => {
+  const fetchPlantSeasonOptions = (
+    pageIndex,
+    total_month,
+    time_start,
+    bookingId
+  ) => {
     const params = {
       page_size: PAGE_SIZE,
       page_index: pageIndex,
@@ -168,7 +121,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               const bookingObject =
                 bookingSelector?.bookings &&
                 bookingSelector?.bookings.filter(
-                  (booking) => booking.booking_id == formInput.plot
+                  (booking) => booking.booking_id == bookingId
                 )[0];
 
               const seasonOptions =
@@ -181,6 +134,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                     season?.plant?.land_type_id ==
                       bookingObject?.land?.land_type_id
                 );
+              console.log("bookingid", bookingId);
               console.log(
                 "land type of booking",
                 bookingObject?.land?.land_type_id
@@ -224,18 +178,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       });
   };
 
-  const handleScrollPlantSeasonOption = ({ nativeEvent }) => {
-    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-    const isCloseToBottom =
-      contentOffset.y + layoutMeasurement.height >= contentSize.height * 0.75;
-
-    if (isCloseToBottom && !loading) {
-      if (!isLoadingPlantSeason && hasMorePlantSeason) {
-        fetchPlantSeasonOptions(pageNumberPlantSeason + 1);
-      }
-    }
-  };
-
   useEffect(() => {
     fetchUserBookings();
   }, []);
@@ -261,7 +203,8 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       fetchPlantSeasonOptions(
         1,
         totalDateAvailable,
-        new Date(dateStart).getMonth() + 1
+        new Date(dateStart).getMonth() + 1,
+        bookingId
       );
     }
   };
@@ -418,22 +361,21 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               </View>
               <View style={styles.bookingContainer}>
                 <Text style={styles.label}>Áp dụng cho mảnh đất</Text>
-                {/* <View style={styles.detailContentInput}>
-                  <DropdownComponent
-                    styleValue={{
-                      height: 40,
-                    }}
-                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                    options={bookingOptions}
-                    placeholder="Chọn mảnh đất"
-                    value={formInput.plot}
-                    setValue={(value) => {
-                      setFormInput({ ...formInput, plot: value });
-                      showPreviewSeason(value, formInput.dateStart);
-                    }}
-                  />
-                </View> */}
                 <View style={styles.booking}>
+                  {(!bookingSelector ||
+                    !bookingSelector?.bookings ||
+                    bookingSelector.bookings.length == 0) && (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        color: "#707070",
+                      }}
+                    >
+                      Không có mảnh đất
+                    </Text>
+                  )}
                   {bookingSelector &&
                     bookingSelector?.bookings &&
                     bookingSelector.bookings.length > 0 &&
@@ -499,8 +441,9 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               <View style={styles.bookingContainer}>
                 <Text style={styles.label}>Mùa vụ</Text>
                 <View style={styles.booking}>
-                  {!plantSeasonOptions ||
-                    (plantSeasonOptions.length == 0 && (
+                  {isLoadingPlantSeason && <ActivityIndicatorComponent />}
+                  {!isLoadingPlantSeason &&
+                    (!plantSeasonOptions || plantSeasonOptions.length == 0) && (
                       <Text
                         style={{
                           fontSize: 16,
@@ -511,7 +454,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                       >
                         Không có mùa vụ
                       </Text>
-                    ))}
+                    )}
                   {plantSeasonOptions &&
                     plantSeasonOptions.length > 0 &&
                     plantSeasonOptions.map((season, index) => (
@@ -569,47 +512,8 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                         </Text>
                       </TouchableOpacity>
                     ))}
-                  {/* <DropdownComponent
-                    isDisabled={
-                      showPreviewParams.time_start != 0 &&
-                      !showPreviewParams.total_month != 0
-                        ? true
-                        : false
-                    }
-                    styleValue={{
-                      height: 40,
-                    }}
-                    isLoading={isLoadingPlantSeason}
-                    onScroll={handleScrollPlantSeasonOption}
-                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                    options={plantSeasonOptions}
-                    placeholder="Chọn mùa vụ"
-                    value={formInput.plantSeason}
-                    setValue={(value) => {
-                      setFormInput({ ...formInput, plantSeason: value });
-                      console.log(
-                        "season selector",
-                        JSON.stringify(plantSeasonSelector)
-                      );
-                      const seasonObject =
-                        plantSeasonSelector &&
-                        plantSeasonSelector?.plant_seasons?.find(
-                          (season) => season.plant_season_id == value
-                        );
-                      const processPrice = seasonObject.price_process;
-                      setPriceSeason(processPrice);
-                    }}
-                  /> */}
                 </View>
               </View>
-              {/* <View style={styles.detail}>
-                <Text style={styles.detailName}>Giá quy trình của mùa vụ</Text>
-                <Text style={styles.detailContent}>
-                  {priceSeason && priceSeason != 0
-                    ? `${formatNumber(priceSeason)} VND/1000 m²`
-                    : "Hãy chọn mùa vụ"}
-                </Text>
-              </View> */}
               <View style={styles.detail}>
                 <Text
                   style={[

@@ -132,6 +132,16 @@ export default function ExtendFormScreen({ route }) {
       });
   };
 
+  const contract = {
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    landrenter: booking?.land_renter?.full_name,
+    email: booking?.land_renter?.email,
+    totalMonth: totalMonth,
+    area: booking?.land?.acreage_land,
+    position: booking?.land?.name,
+    pricePerMonth: booking?.price_per_month,
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -167,7 +177,6 @@ export default function ExtendFormScreen({ route }) {
             value={formatDateToDDMMYYYY(booking?.time_end)}
             disabled
             style={styles.input}
-            
           />
         </View>
         <Text style={styles.label}>Số tháng muốn gia hạn:</Text>
@@ -212,6 +221,7 @@ export default function ExtendFormScreen({ route }) {
         <ContractExtendDialog
           isVisible={visibleContract}
           onDismiss={() => setVisibleContract(false)}
+          contract={contract}
         />
       </ScrollView>
     </SafeAreaView>

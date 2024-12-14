@@ -23,7 +23,9 @@ const LandItem = ({ item }) => {
 
       <View style={styles.itemDetails}>
         <Text style={styles.itemTitle}>{capitalizeFirstLetter(item.name)}</Text>
-        <Text style={styles.itemDescription}>{item.title}</Text>
+        <Text style={styles.itemArea}>
+          Giá thuê: {formatNumber(item.price_booking_per_month)} VND
+        </Text>
         <Text
           style={[
             styles.itemStatus,
@@ -33,7 +35,7 @@ const LandItem = ({ item }) => {
           {item.status == "booked" ? "Đã thuê" : "Chưa thuê"}
         </Text>
         <Text style={styles.itemArea}>
-          {formatNumber(item.acreage_land)} m2
+          Diện tích: {formatNumber(item.acreage_land)} m2
         </Text>
 
         <TouchableOpacity

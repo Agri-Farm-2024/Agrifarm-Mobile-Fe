@@ -12,8 +12,8 @@ import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Button, Divider } from "react-native-paper";
 import { convertImageURL, formatDateToDDMMYYYY } from "../../utils";
-import ContractComponent from "../RequestListScreen/RequestContractDetailScreen/ContractComponent";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
+import ContractComponent from "./ContractComponent";
 
 export default function ExtendItemScreen({ route }) {
   const navigation = useNavigation();
@@ -24,14 +24,13 @@ export default function ExtendItemScreen({ route }) {
 
   //   FIX CONTACT RENDER
   const contract = {
-    createAt: booking?.created_at,
-    farmOwner: "Trang trại AgriFarm - quản lí trang trại: Trịnh Gia Hân",
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
     landrenter: booking?.land_renter?.full_name,
-    totalMonth: booking?.total_month,
-    purpose: booking?.purpose_rental,
+    email: booking?.land_renter?.email,
+    totalMonth: extend?.total_month,
     area: booking?.land?.acreage_land,
     position: booking?.land?.name,
-    pricePerMonth: booking?.land?.price_booking_per_month,
+    pricePerMonth: booking?.price_per_month,
   };
 
   if (!extend) return <ActivityIndicatorComponent />;
@@ -80,7 +79,6 @@ export default function ExtendItemScreen({ route }) {
           <Text style={styles.label}>Tổng tháng gia hạn:</Text>
           <Text style={styles.value}>{extend?.total_month} tháng</Text>
         </View>
-        <Divider style={styles.divider} />
         <Divider style={styles.divider} />
         <View>
           <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>

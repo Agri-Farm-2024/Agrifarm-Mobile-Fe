@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons";
-import React from "react";
-import { Image } from "react-native";
+import React, { useState } from "react";
+import { Image, Modal, TouchableOpacity } from "react-native";
 import { View, ScrollView, StyleSheet } from "react-native";
 import { Card, Text, Button, Divider } from "react-native-paper";
 import {
@@ -11,8 +11,10 @@ import {
   formatNumber,
   formatNumberToVND,
 } from "../../../utils";
+import ContractComponent from "./ContractComponent";
 
 const BookingOrderDetail = ({ route, navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const { order } = route.params;
   console.log("Booking Order", order);
 
@@ -37,6 +39,14 @@ const BookingOrderDetail = ({ route, navigation }) => {
       (total, item) => total + item?.quantity,
       0
     );
+
+  const contract = {
+    createAt: order?.created_at,
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    landrenter: order?.landrenter,
+    productList: order?.booking_material_detail,
+    rentDay: dayDifference,
+  };
 
   return (
     <>
@@ -193,6 +203,21 @@ const BookingOrderDetail = ({ route, navigation }) => {
                   </Card>
                 ))}
             </View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
+              <ContractComponent contract={contract} isDownload={true} />
+            </View>
+
+            {order?.contract_image ? (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
+                <Button onPress={() => setModalVisible(true)} mode="contained">
+                  Xem hình ảnh đã ký
+                </Button>
+              </View>
+            ) : (
+              <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
+            )}
 
             {/* Summary */}
             <View style={styles.section}>
@@ -214,6 +239,22 @@ const BookingOrderDetail = ({ route, navigation }) => {
             </View>
           </>
         )}
+        <Modal visible={modalVisible} transparent={true} animationType="fade">
+          <View style={styles.modalContainer}>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeText}>Đóng</Text>
+            </TouchableOpacity>
+            <Image
+              source={{
+                uri: convertImageURL(order?.contract_image),
+              }}
+              style={styles.modalImage}
+            />
+          </View>
+        </Modal>
       </ScrollView>
     </>
   );
@@ -290,6 +331,28 @@ const styles = StyleSheet.create({
   status: {
     color: "green",
     marginBottom: 8,
+  },
+
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 30,
+    right: 20,
+  },
+  closeText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  modalImage: {
+    width: "90%",
+    height: "80%",
+    resizeMode: "contain",
   },
 });
 

@@ -153,7 +153,7 @@ export default function LandDetailScreen({ navigation, route }) {
             <MaterialIcons name="attach-money" size={15} color="#555" />
             <Text style={styles.text}>
               Tiền thuê:{" "}
-              {`${formatNumber(land.price_booking_per_month)} / tháng`}
+              {`${formatNumber(land.price_booking_per_month)} VND / tháng`}
             </Text>
           </View>
 
@@ -220,7 +220,7 @@ export default function LandDetailScreen({ navigation, route }) {
         >
           Thuê đất
         </Button>
-        <Button
+        {/* <Button
           mode="outlined"
           style={[
             styles.button,
@@ -232,7 +232,7 @@ export default function LandDetailScreen({ navigation, route }) {
           onPress={() => console.log("Pressed")}
         >
           Gợi ý dịch vụ
-        </Button>
+        </Button> */}
       </View>
 
       {/* Modal for Image Focus */}

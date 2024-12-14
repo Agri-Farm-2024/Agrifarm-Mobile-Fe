@@ -123,6 +123,16 @@ export default function LandLeaseScreen({ navigation, route }) {
       });
   };
 
+  const contract = {
+    farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
+    landrenter: "Ninh",
+    totalMonth: formData?.rentalMonths,
+    purpose: formData?.purpose,
+    area: land?.acreage_land,
+    position: land?.name,
+    pricePerMonth: land?.price_booking_per_month,
+  };
+
   return (
     <ScrollView
       contentContainerStyle={{ paddingBottom: 30 }}
@@ -207,6 +217,7 @@ export default function LandLeaseScreen({ navigation, route }) {
       <ContractLandLeaseDialog
         isVisible={visibleContract}
         onDismiss={() => setVisibleContract(false)}
+        contract={contract}
       />
     </ScrollView>
   );

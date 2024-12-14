@@ -251,7 +251,15 @@ const LandLeaseInput = forwardRef((props, ref) => {
                   </View>
                 ))}
                 {plantSeason?.length <= 0 && (
-                  <Text>Không có cây nào phù hợp</Text>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "bold",
+                      marginTop: 10,
+                    }}
+                  >
+                    Không có cây nào phù hợp
+                  </Text>
                 )}
               </View>
             </ScrollView>

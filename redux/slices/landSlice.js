@@ -82,7 +82,6 @@ export const getBookingList = createAsyncThunk(
         params,
       });
 
-      console.log("getBookingList data:", data);
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -95,7 +94,7 @@ export const landSlice = createSlice({
   name: "landSlice",
   initialState: {
     landList: [],
-    booking: {},
+    booking: null,
     loading: false,
     error: null,
     msg: "",

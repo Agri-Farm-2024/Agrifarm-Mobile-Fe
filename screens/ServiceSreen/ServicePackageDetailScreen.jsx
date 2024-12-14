@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import {
   calculateMonthsBetween,
+  capitalizeFirstLetter,
   formatDate,
   formatNumber,
   isDateGreaterThanTodayPlus7Days,
@@ -25,57 +26,7 @@ import {
   getPlantSeasonSelector,
 } from "../../redux/selectors";
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
-import { Checkbox } from "react-native-paper";
-import ContractServicesDialog from "../../components/ContractServicesDialog/ContractServicesDialog";
-
-const plotOptions = [
-  {
-    label: "Mảnh đất số 1",
-    value: "Mảnh đất số 1",
-  },
-  {
-    label: "Mảnh đất số 2",
-    value: "Mảnh đất số 2",
-  },
-];
-
-const plantSeasonOptions = [
-  {
-    label: "Tháng 9 - 12",
-    value: "Tháng 9 - 12",
-  },
-  {
-    label: "Tháng 10 - 1",
-    value: "Tháng 10 - 1",
-  },
-  {
-    label: "Tháng 1 - 3",
-    value: "Tháng 1 - 3",
-  },
-  {
-    value: "Tháng 4 - 8",
-    label: "Tháng 4 - 8",
-  },
-];
-
-const plantTypeOptions = [
-  {
-    label: "Dưa lưới",
-    value: "Dưa lưới",
-  },
-  {
-    label: "Dưa hấu",
-    value: "Dưa hấu",
-  },
-  {
-    label: "Dưa leo",
-    value: "Dưa leo",
-  },
-  {
-    label: "Cây ớt",
-    value: "Cây ớt",
-  },
-];
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const PAGE_SIZE = 30;
 
@@ -98,7 +49,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
     time_start: 0,
   });
   const [priceSeason, setPriceSeason] = useState(0);
-  const [visibleContract, setVisibleContract] = useState(false);
 
   const { serviceDetail } = route.params;
 
@@ -114,27 +64,33 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
         type: "booking",
         status: "completed",
       };
-      dispatch(getBookingList(formData)).then((response) => {
-        console.log("booking response: " + JSON.stringify(response));
-        if (response.payload.statusCode !== 200) {
-          console.log("Fetch booking fail");
-        }
-        if (response.payload.statusCode === 200) {
-          const newBookingOptions =
-            response.payload?.metadata?.bookings &&
-            response.payload?.metadata?.bookings.map((booking) => ({
-              label: booking?.land?.name,
-              value: booking?.booking_id,
-            }));
-          setBookingOptions(newBookingOptions);
-        }
-      });
+      dispatch(getBookingList(formData));
+      // .then((response) => {
+      //   console.log("booking response: " + JSON.stringify(response));
+      //   if (response.payload.statusCode !== 200) {
+      //     console.log("Fetch booking fail");
+      //   }
+      //   if (response.payload.statusCode === 200) {
+      //     const newBookingOptions =
+      //       response.payload?.metadata?.bookings &&
+      //       response.payload?.metadata?.bookings.map((booking) => ({
+      //         label: booking?.land?.name,
+      //         value: booking?.booking_id,
+      //       }));
+      //     setBookingOptions(newBookingOptions);
+      //   }
+      // });
     } catch (error) {
       console.log("Error fetching user bookings", error);
     }
   };
 
-  const fetchPlantSeasonOptions = (pageIndex, total_month, time_start) => {
+  const fetchPlantSeasonOptions = (
+    pageIndex,
+    total_month,
+    time_start,
+    bookingId
+  ) => {
     const params = {
       page_size: PAGE_SIZE,
       page_index: pageIndex,
@@ -153,6 +109,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
             response.payload.metadata.plant_seasons
           ) {
             if (response.payload.metadata.plant_seasons.length == 0) {
+              console.log("plantSeasonOptions empty");
               Toast.show({
                 type: "error",
                 text1: "Không có mùa vụ phù hợp",
@@ -164,16 +121,24 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               const bookingObject =
                 bookingSelector?.bookings &&
                 bookingSelector?.bookings.filter(
-                  (booking) => booking.booking_id == formInput.plot
+                  (booking) => booking.booking_id == bookingId
                 )[0];
 
               const seasonOptions =
                 response.payload.metadata.plant_seasons.filter(
                   (season) =>
+                    season?.status == "active" &&
+                    season?.plant?.status == "active" &&
                     season.process_technical_standard &&
-                    season.process_technical_standard.status == "accepted" &&
-                    season.plant.land_type_id == bookingObject.land.land_type_id
+                    season?.process_technical_standard.status == "accepted" &&
+                    season?.plant?.land_type_id ==
+                      bookingObject?.land?.land_type_id
                 );
+              console.log("bookingid", bookingId);
+              console.log(
+                "land type of booking",
+                bookingObject?.land?.land_type_id
+              );
               console.log("season options", seasonOptions);
               if (!seasonOptions || seasonOptions.length == 0) {
                 Toast.show({
@@ -188,7 +153,9 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                   seasonOptions.length > 0 &&
                   seasonOptions.map((season) => ({
                     value: season.plant_season_id,
-                    label: `Mùa vụ ${season.plant.name} Tháng ${season.month_start}`,
+                    label: `Mùa vụ ${season.plant.name} tháng ${season.month_start}`,
+                    total_month: season?.total_month,
+                    price_process: season?.price_process,
                   }));
                 console.log("Option data: " + JSON.stringify(optionData));
                 setPlantSeasonOptions(optionData);
@@ -211,18 +178,6 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       });
   };
 
-  const handleScrollPlantSeasonOption = ({ nativeEvent }) => {
-    const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-    const isCloseToBottom =
-      contentOffset.y + layoutMeasurement.height >= contentSize.height * 0.75;
-
-    if (isCloseToBottom && !isLoading) {
-      if (!isLoadingPlantSeason && hasMorePlantSeason) {
-        fetchPlantSeasonOptions(pageNumberPlantSeason + 1);
-      }
-    }
-  };
-
   useEffect(() => {
     fetchUserBookings();
   }, []);
@@ -240,7 +195,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       const totalDateAvailable =
         bookingObject &&
         calculateMonthsBetween(dateStart, bookingObject.time_end);
-
+      setFormInput((prevState) => ({ ...prevState, plantSeason: "" }));
       setShowPreviewParams({
         total_month: totalDateAvailable,
         time_start: new Date(dateStart).getMonth() + 1,
@@ -248,7 +203,8 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
       fetchPlantSeasonOptions(
         1,
         totalDateAvailable,
-        new Date(dateStart).getMonth() + 1
+        new Date(dateStart).getMonth() + 1,
+        bookingId
       );
     }
   };
@@ -283,24 +239,32 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           plantSeasonSelector?.plant_seasons?.find(
             (season) => season.plant_season_id == formInput.plantSeason
           );
-        const serviceInfo = {
-          plant_season_id: formInput.plantSeason,
-          booking_id: formInput.plot,
-          service_package_id: serviceDetail.service_package_id,
-          acreage_land: formInput.cultivatedArea - 0,
-          time_start: formInput.dateStart.toISOString(),
-          service_name: serviceDetail.name,
-          service_price: serviceDetail.price,
-          plot_name: bookingObject ? bookingObject?.land?.name : "",
-          season_name: seasonObject
-            ? `Mùa vụ ${seasonObject?.plant?.name} Tháng ${seasonObject?.month_start}`
-            : "",
-          seasonPrice: priceSeason,
-          seasonObject: seasonObject,
-        };
-        navigation.navigate("PreviewBuyingServiceScreen", {
-          serviceInfo: serviceInfo,
-        });
+
+        //check acreage
+        if (bookingObject?.acreage_land_can_used < formInput.cultivatedArea) {
+          Toast.show({
+            type: "error",
+            text1: "Diện tích mảnh đất có sẵn không đủ!",
+          });
+        } else {
+          const serviceInfo = {
+            plant_season_id: formInput.plantSeason,
+            booking_id: formInput.plot,
+            service_package_id: serviceDetail.service_package_id,
+            acreage_land: formInput.cultivatedArea - 0,
+            time_start: formInput.dateStart.toISOString(),
+            service_name: serviceDetail.name,
+            service_price: serviceDetail.price,
+            plot_name: bookingObject ? bookingObject?.land?.name : "",
+            season_name: seasonObject
+              ? `Mùa vụ ${seasonObject?.plant?.name} Tháng ${seasonObject?.month_start}`
+              : "",
+            seasonPrice: priceSeason,
+          };
+          navigation.navigate("PreviewBuyingServiceScreen", {
+            serviceInfo: serviceInfo,
+          });
+        }
       }
     } catch (error) {
       console.log("Buy service failed", error);
@@ -322,7 +286,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               <Text style={styles.description}>
                 {serviceDetail.description}
               </Text>
-              <Text style={styles.header}>Chi tiết gói dịch vụ</Text>
+              <Text style={styles.header}>Thông tin gói dịch vụ</Text>
               <View style={styles.detail}>
                 <Text style={styles.detailName}>Gói dịch vụ</Text>
                 <Text style={styles.detailContent}>{serviceDetail.name}</Text>
@@ -330,7 +294,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               <View style={styles.detail}>
                 <Text style={styles.detailName}>Giá gói dịch vụ</Text>
                 <Text style={styles.detailContent}>
-                  {formatNumber(serviceDetail.price)} VND
+                  {formatNumber(serviceDetail.price)} VND/tháng
                 </Text>
               </View>
               <View style={styles.detail}>
@@ -345,26 +309,18 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                   {serviceDetail.material == true ? "Có" : "Không"}
                 </Text>
               </View>
+              <Text style={[styles.header, { marginTop: 30 }]}>
+                Mua gói dịch vụ
+              </Text>
               <View style={styles.detail}>
-                <Text style={styles.detailName}>Áp dụng cho mảnh đất</Text>
-                <View style={styles.detailContentInput}>
-                  <DropdownComponent
-                    styleValue={{
-                      height: 40,
-                    }}
-                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                    options={bookingOptions}
-                    placeholder="Chọn mảnh đất"
-                    value={formInput.plot}
-                    setValue={(value) => {
-                      setFormInput({ ...formInput, plot: value });
-                      showPreviewSeason(value, formInput.dateStart);
-                    }}
-                  />
-                </View>
-              </View>
-              <View style={styles.detail}>
-                <Text style={styles.detailName}>Ngày bắt đầu canh tác</Text>
+                <Text
+                  style={[
+                    styles.detailName,
+                    { color: "#141414", fontWeight: "bold" },
+                  ]}
+                >
+                  Ngày bắt đầu canh tác
+                </Text>
                 <View style={styles.detailContentInput}>
                   <TouchableOpacity
                     style={[styles.inputDate]}
@@ -390,6 +346,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                             text1: "Ngày bắt đầu phải sau ngày hôm nay 7 ngày!",
                           });
                         } else {
+                          console.log("Select date", selectedDate);
                           setFormInput((prevState) => ({
                             ...prevState,
                             dateStart: selectedDate,
@@ -402,52 +359,170 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                   )}
                 </View>
               </View>
-              <View style={styles.detail}>
-                <Text style={styles.detailName}>Mùa vụ</Text>
-                <View style={styles.detailContentInput}>
-                  <DropdownComponent
-                    isDisabled={
-                      showPreviewParams.time_start != 0 &&
-                      !showPreviewParams.total_month != 0
-                        ? true
-                        : false
-                    }
-                    styleValue={{
-                      height: 40,
-                    }}
-                    isLoading={isLoadingPlantSeason}
-                    onScroll={handleScrollPlantSeasonOption}
-                    placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-                    options={plantSeasonOptions}
-                    placeholder="Chọn mùa vụ"
-                    value={formInput.plantSeason}
-                    setValue={(value) => {
-                      setFormInput({ ...formInput, plantSeason: value });
-                      console.log(
-                        "season selector",
-                        JSON.stringify(plantSeasonSelector)
-                      );
-                      const seasonObject =
-                        plantSeasonSelector &&
-                        plantSeasonSelector?.plant_seasons?.find(
-                          (season) => season.plant_season_id == value
-                        );
-                      const processPrice = seasonObject.price_process;
-                      setPriceSeason(processPrice);
-                    }}
-                  />
+              <View style={styles.bookingContainer}>
+                <Text style={styles.label}>Áp dụng cho mảnh đất</Text>
+                <View style={styles.booking}>
+                  {(!bookingSelector ||
+                    !bookingSelector?.bookings ||
+                    bookingSelector.bookings.length == 0) && (
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        textAlign: "center",
+                        color: "#707070",
+                      }}
+                    >
+                      Không có mảnh đất
+                    </Text>
+                  )}
+                  {bookingSelector &&
+                    bookingSelector?.bookings &&
+                    bookingSelector.bookings.length > 0 &&
+                    bookingSelector.bookings.map((booking, index) => (
+                      <TouchableOpacity
+                        key={`booking ${index}`}
+                        style={[
+                          styles.bookingItem,
+                          booking?.booking_id == formInput?.plot &&
+                            styles.selectItem,
+                          booking?.acreage_land_can_used < 1000 &&
+                            styles.disabledItem,
+                        ]}
+                        onPress={() => {
+                          if (booking?.acreage_land_can_used >= 1000) {
+                            console.log("select booking", booking.booking_id);
+                            setFormInput((prevState) => ({
+                              ...prevState,
+                              plot: booking?.booking_id,
+                            }));
+                            showPreviewSeason(
+                              booking?.booking_id,
+                              formInput.dateStart
+                            );
+                          }
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.landName,
+                            booking?.booking_id == formInput?.plot &&
+                              styles.selectText,
+                            booking?.acreage_land_can_used < 1000 &&
+                              styles.disabledText,
+                          ]}
+                        >
+                          {capitalizeFirstLetter(booking?.land?.name)}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.landAcreage,
+                            booking?.booking_id == formInput?.plot &&
+                              styles.selectText,
+                          ]}
+                        >
+                          Còn trống:{" "}
+                          {formatNumber(booking?.acreage_land_can_used)} m²
+                        </Text>
+                        <Text
+                          style={[
+                            styles.landAcreage,
+                            booking?.booking_id == formInput?.plot &&
+                              styles.selectText,
+                          ]}
+                        >
+                          Ngày hết hạn: {formatDate(booking.time_end, 0)}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                </View>
+              </View>
+
+              <View style={styles.bookingContainer}>
+                <Text style={styles.label}>Mùa vụ</Text>
+                <View style={styles.booking}>
+                  {isLoadingPlantSeason && <ActivityIndicatorComponent />}
+                  {!isLoadingPlantSeason &&
+                    (!plantSeasonOptions || plantSeasonOptions.length == 0) && (
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: "bold",
+                          textAlign: "center",
+                          color: "#707070",
+                        }}
+                      >
+                        Không có mùa vụ
+                      </Text>
+                    )}
+                  {plantSeasonOptions &&
+                    plantSeasonOptions.length > 0 &&
+                    plantSeasonOptions.map((season, index) => (
+                      <TouchableOpacity
+                        key={`season ${index}`}
+                        style={[
+                          styles.bookingItem,
+                          season?.value == formInput?.plantSeason &&
+                            styles.selectItem,
+                        ]}
+                        onPress={() => {
+                          setFormInput((prevState) => ({
+                            ...prevState,
+                            plantSeason: season.value,
+                          }));
+                          const seasonObject =
+                            plantSeasonSelector &&
+                            plantSeasonSelector?.plant_seasons?.find(
+                              (plantSeason) =>
+                                plantSeason.plant_season_id == season.value
+                            );
+                          const processPrice = seasonObject.price_process;
+                          setPriceSeason(processPrice);
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.landName,
+                            season.value == formInput?.plantSeason &&
+                              styles.selectText,
+                          ]}
+                        >
+                          {season?.label}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.landAcreage,
+                            season.value == formInput?.plantSeason &&
+                              styles.selectText,
+                          ]}
+                        >
+                          Số tháng trồng: {formatNumber(season?.total_month)}{" "}
+                          tháng
+                        </Text>
+                        <Text
+                          style={[
+                            styles.landAcreage,
+                            { maxWidth: "100%" },
+                            season.value == formInput?.plantSeason &&
+                              styles.selectText,
+                          ]}
+                        >
+                          Giá quy trình của mùa vụ:{" "}
+                          {formatNumber(season?.price_process)} VND/1000 m²
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
                 </View>
               </View>
               <View style={styles.detail}>
-                <Text style={styles.detailName}>Giá quy trình của mùa vụ</Text>
-                <Text style={styles.detailContent}>
-                  {priceSeason && priceSeason != 0
-                    ? `${formatNumber(priceSeason)} VND/1000 m²`
-                    : "Hãy chọn mùa vụ"}
+                <Text
+                  style={[
+                    styles.detailName,
+                    { color: "#141414", fontWeight: "bold" },
+                  ]}
+                >
+                  Diện tích canh tác (m²)
                 </Text>
-              </View>
-              <View style={styles.detail}>
-                <Text style={styles.detailName}>Diện tích canh tác (m²)</Text>
                 <View style={styles.detailContent}>
                   <TextInput
                     keyboardType="decimal-pad"
@@ -455,7 +530,10 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                     style={styles.input}
                     value={formInput.cultivatedArea}
                     onChangeText={(text) =>
-                      setFormInput({ ...formInput, cultivatedArea: text })
+                      setFormInput((prevState) => ({
+                        ...prevState,
+                        cultivatedArea: text,
+                      }))
                     }
                   ></TextInput>
                 </View>
@@ -569,6 +647,55 @@ const styles = StyleSheet.create({
   checkboxLink: {
     color: "#7fb640",
     fontWeight: "bold",
+  },
+  label: {
+    color: "#141414",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  bookingContainer: {
+    marginVertical: 10,
+  },
+  booking: {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "wrap",
+    gap: 10,
+    padding: 10,
+    marginTop: 10,
+  },
+  bookingItem: {
+    width: "100%",
+    borderRadius: 7,
+    backgroundColor: "#f5f5f5",
+    shadowColor: "rgba(0, 0, 0, 0.5)",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    elevation: 5,
+  },
+  landName: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  landAcreage: {
+    marginTop: 5,
+    fontSize: 14,
+    color: "#707070",
+  },
+  selectItem: {
+    backgroundColor: "#7fb640",
+  },
+  selectText: {
+    color: "#f5f5f5",
+  },
+  disabledItem: {
+    backgroundColor: "#cacaca",
+  },
+  disabledText: {
+    color: "#707070",
   },
 });
 

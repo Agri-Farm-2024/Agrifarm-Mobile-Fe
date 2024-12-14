@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { formatDate, formatNumber } from "../../utils";
+import { capitalizeFirstLetter, formatDate, formatNumber } from "../../utils";
 import { Button, Checkbox } from "react-native-paper";
 import { getUserSelector } from "../../redux/selectors";
 import { buyService } from "../../redux/slices/serviceSlice";
@@ -21,10 +21,6 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
   const totalServicePrice =
     (serviceInfo.service_price / 1000) * serviceInfo.acreage_land +
     (serviceInfo.seasonPrice / 1000) * serviceInfo.acreage_land;
-  const serviceDeposit = totalServicePrice * 0.1;
-  const totalPrice = totalServicePrice + serviceDeposit;
-
-  console.log("serviceInfo: " + JSON.stringify(serviceInfo));
 
   const handleBuyService = () => {
     try {
@@ -123,7 +119,9 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
                 </View>
                 <View style={styles.infoRow}>
                   <Text style={styles.textLabel}>Mảnh đất</Text>
-                  <Text style={styles.textValue}>{serviceInfo.plot_name}</Text>
+                  <Text style={styles.textValue}>
+                    {capitalizeFirstLetter(serviceInfo.plot_name)}
+                  </Text>
                 </View>
               </View>
             </View>
@@ -168,17 +166,11 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
                   </Text>
                 </View>
                 <View style={styles.infoRow}>
-                  <Text style={styles.textLabel}>Tiền cọc dịch vụ</Text>
-                  <Text style={styles.textValue}>
-                    {formatNumber(serviceDeposit)} VND
-                  </Text>
-                </View>
-                <View style={styles.infoRow}>
                   <Text style={{ color: "#313638", fontWeight: "bold" }}>
                     Tổng tiền thanh toán
                   </Text>
                   <Text style={{ color: "#313638", fontWeight: "bold" }}>
-                    {totalPrice && formatNumber(totalPrice)} VND
+                    {totalServicePrice && formatNumber(totalServicePrice)} VND
                   </Text>
                 </View>
               </View>

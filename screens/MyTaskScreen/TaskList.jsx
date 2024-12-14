@@ -11,10 +11,12 @@ import Toast from "react-native-toast-message";
 import { useIsFocused } from "@react-navigation/native";
 import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 import {
+  capitalizeFirstLetter,
   formatDate,
   formatDateToDDMMYYYY,
   formatTimeViewLand,
 } from "../../utils";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 const notStartTasks = [
   {
@@ -303,7 +305,7 @@ const TaskList = ({ taskType }) => {
       return <AntDesign name="playcircleo" size={24} color={iconColor} />;
     }
     if (priority == "in_progress") {
-      return <Entypo name="circle" size={24} color={iconColor} />;
+      return <Ionicons name="hourglass-outline" size={24} color={iconColor} />;
     }
     return <AntDesign name="checkcircleo" size={24} color={iconColor} />;
   };
@@ -356,7 +358,21 @@ const TaskList = ({ taskType }) => {
           {item?.request?.type === "create_process_standard"
             ? "Tạo quy trình kĩ thuật canh tác"
             : item?.request?.type === "cultivate_process_content"
-            ? "Canh tác và ghi nhật ký"
+            ? `Canh tác và ghi nhật ký - ${capitalizeFirstLetter(
+                item?.request?.process_technical_specific_stage_content
+                  ?.process_technical_specific_stage?.process_technical_specific
+                  ?.service_specific?.plant_season?.plant?.name
+              )} ${formatDate(
+                item?.request?.process_technical_specific_stage_content
+                  ?.process_technical_specific_stage?.process_technical_specific
+                  ?.time_start,
+                2
+              )} - ${formatDate(
+                item?.request?.process_technical_specific_stage_content
+                  ?.process_technical_specific_stage?.process_technical_specific
+                  ?.time_end,
+                2
+              )}`
             : item?.request?.type === "report_land"
             ? "Báo cáo mảnh đất"
             : item?.request?.type === "technical_support"
@@ -400,6 +416,7 @@ const TaskList = ({ taskType }) => {
     <View style={{ minHeight: 120 }}>
       {taskListData.length > 0 && (
         <FlatList
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item, index) => item.task_id + index}
           data={taskListData}
           renderItem={renderItem}
@@ -435,6 +452,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 5,
+    maxWidth: "100%",
   },
 });
 

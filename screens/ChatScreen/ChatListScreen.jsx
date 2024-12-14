@@ -48,6 +48,8 @@ export default function ChatListScreen({ navigation }) {
   const { userInfo } = useSelector((state) => state.userSlice);
   const isFocused = useIsFocused();
 
+  console.log("chatList: " + JSON.stringify(chatList));
+
   useEffect(() => {
     if (isFocused) {
       dispatch(getChatList());
@@ -70,12 +72,16 @@ export default function ChatListScreen({ navigation }) {
   //   }
   // }, []);
 
+  const sortedChatList = [...(chatList || [])].sort(
+    (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
+  );
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.chatBody}>
         <ScrollView>
           {chatList && chatList?.length != 0 ? (
-            chatList?.map((chatItem, index) => (
+            sortedChatList?.map((chatItem, index) => (
               <ChatListItem
                 key={chatItem?.channel_id}
                 seen={false}

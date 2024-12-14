@@ -260,6 +260,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               ? `Mùa vụ ${seasonObject?.plant?.name} Tháng ${seasonObject?.month_start}`
               : "",
             seasonPrice: priceSeason,
+            seasonObject: seasonObject,
           };
           navigation.navigate("PreviewBuyingServiceScreen", {
             serviceInfo: serviceInfo,

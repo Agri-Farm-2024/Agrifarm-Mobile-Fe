@@ -41,7 +41,7 @@ const ContractComponent = ({ contract, isDownload }) => {
   return (
     <View>
       <View style={styles.buttonContainer}>
-        {isDownload && (
+        {/* {isDownload && (
           <Button
             mode="contained"
             onPress={() => {
@@ -58,7 +58,7 @@ const ContractComponent = ({ contract, isDownload }) => {
           >
             Tải PDF
           </Button>
-        )}
+        )} */}
       </View>
       <ScrollView style={styles.container}>
         <Text style={[styles.textCenter, styles.header]}>HỢP ĐỒNG DỊCH VỤ</Text>

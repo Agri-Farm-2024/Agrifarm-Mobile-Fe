@@ -15,6 +15,8 @@ import ContractComponent from "./ContractComponent";
 
 const BookingOrderDetail = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const { order } = route.params;
   console.log("Booking Order", order);
 
@@ -39,6 +41,16 @@ const BookingOrderDetail = ({ route, navigation }) => {
       (total, item) => total + item?.quantity,
       0
     );
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalVisible(false);
+  };
 
   const contract = {
     createAt: order?.created_at,
@@ -204,23 +216,6 @@ const BookingOrderDetail = ({ route, navigation }) => {
                 ))}
             </View>
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
-              <ContractComponent contract={contract} isDownload={true} />
-            </View>
-
-            {order?.contract_image ? (
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
-                <Button onPress={() => setModalVisible(true)} mode="contained">
-                  Xem hình ảnh đã ký
-                </Button>
-              </View>
-            ) : (
-              <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
-            )}
-
-            {/* Summary */}
-            <View style={styles.section}>
               <View style={styles.summaryRow}>
                 <Text style={styles.textLabelPrice}>Tổng đơn:</Text>
                 <Text>{formatNumberToVND(totalPrice)} VND</Text>
@@ -237,19 +232,60 @@ const BookingOrderDetail = ({ route, navigation }) => {
                 </Text>
               </View>
             </View>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Thông tin hợp đồng</Text>
+              <ContractComponent contract={contract} isDownload={true} />
+            </View>
+
+            {order?.contract_image ? (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.imageSlider}
+                >
+                  {order?.contract_image
+                    ?.replace(/[\[\]\n]/g, "")
+                    .trim()
+                    .split(",").length >= 0 &&
+                    order?.contract_image
+                      ?.replace(/[\[\]\n]/g, "")
+                      .trim()
+                      .split(",")
+                      ?.map((item, index) => (
+                        <TouchableOpacity
+                          key={index}
+                          onPress={() => openModal(item)}
+                        >
+                          <Image
+                            source={{
+                              uri: convertImageURL(item),
+                            }}
+                            style={styles.image}
+                          />
+                        </TouchableOpacity>
+                      ))}
+                </ScrollView>
+              </View>
+            ) : (
+              <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
+            )}
+
+            {/* Summary */}
           </>
         )}
         <Modal visible={modalVisible} transparent={true} animationType="fade">
           <View style={styles.modalContainer}>
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}
+              onPress={closeModal}
             >
               <Text style={styles.closeText}>Đóng</Text>
             </TouchableOpacity>
             <Image
               source={{
-                uri: convertImageURL(order?.contract_image),
+                uri: convertImageURL(selectedImage),
               }}
               style={styles.modalImage}
             />
@@ -353,6 +389,11 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "80%",
     resizeMode: "contain",
+  },
+  image: {
+    width: 400,
+    height: 400,
+    marginRight: 10,
   },
 });
 

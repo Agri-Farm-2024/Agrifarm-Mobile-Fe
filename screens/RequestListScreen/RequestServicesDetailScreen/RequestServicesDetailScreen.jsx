@@ -21,6 +21,7 @@ export default function RequestServicesDetailScreen({ route }) {
   const [modalVisible, setModalVisible] = useState(false);
   const { requestService } = route.params;
   console.log("RequestServicesDetailScreen: " + JSON.stringify(requestService));
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const contract = {
     createAt: requestService?.created_at,
@@ -31,6 +32,16 @@ export default function RequestServicesDetailScreen({ route }) {
     area: requestService?.acreage_land,
     timeStart: requestService?.time_start,
     timeEnd: requestService?.time_end,
+  };
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalVisible(false);
   };
 
   return (
@@ -137,9 +148,33 @@ export default function RequestServicesDetailScreen({ route }) {
             <Text style={[styles.sectionTitle, { marginBottom: 10 }]}>
               Hình ảnh hợp đồng
             </Text>
-            <Button onPress={() => setModalVisible(true)} mode="contained">
-              Xem hình ảnh đã ký
-            </Button>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.imageSlider}
+            >
+              {requestService?.contract_image
+                ?.replace(/[\[\]\n]/g, "")
+                .trim()
+                .split(",").length >= 0 &&
+                requestService?.contract_image
+                  ?.replace(/[\[\]\n]/g, "")
+                  .trim()
+                  .split(",")
+                  ?.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => openModal(item)}
+                    >
+                      <Image
+                        source={{
+                          uri: convertImageURL(item),
+                        }}
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  ))}
+            </ScrollView>
           </View>
         ) : (
           <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
@@ -148,13 +183,13 @@ export default function RequestServicesDetailScreen({ route }) {
           <View style={styles.modalContainer}>
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}
+              onPress={closeModal}
             >
               <Text style={styles.closeText}>Đóng</Text>
             </TouchableOpacity>
             <Image
               source={{
-                uri: convertImageURL(requestService?.contract_image),
+                uri: convertImageURL(selectedImage),
               }}
               style={styles.modalImage}
             />
@@ -309,5 +344,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "white",
+  },
+  image: {
+    width: 400,
+    height: 400,
+    marginRight: 10,
   },
 });

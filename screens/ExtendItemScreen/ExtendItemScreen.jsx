@@ -19,8 +19,18 @@ export default function ExtendItemScreen({ route }) {
   const navigation = useNavigation();
   const { booking, extend } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   console.log(`ExtendItemScreen: ` + JSON.stringify(extend));
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalVisible(false);
+  };
 
   //   FIX CONTACT RENDER
   const contract = {
@@ -63,7 +73,6 @@ export default function ExtendItemScreen({ route }) {
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Trạng thái:</Text>
           <Text style={styles.value}>
-            {" "}
             {extend?.status === "completed" && "Đang hiệu lực"}
             {extend?.status === "pending" && "Chờ xác nhận"}
             {extend?.status === "pending_contract" && "Chờ phê duyệt"}
@@ -89,9 +98,33 @@ export default function ExtendItemScreen({ route }) {
         {extend?.contract_image ? (
           <View>
             <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
-            <Button onPress={() => setModalVisible(true)} mode="contained">
-              Xem hình ảnh đã ký
-            </Button>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.imageSlider}
+            >
+              {extend?.contract_image
+                ?.replace(/[\[\]\n]/g, "")
+                .trim()
+                .split(",").length >= 0 &&
+                extend?.contract_image
+                  ?.replace(/[\[\]\n]/g, "")
+                  .trim()
+                  .split(",")
+                  ?.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => openModal(item)}
+                    >
+                      <Image
+                        source={{
+                          uri: convertImageURL(item),
+                        }}
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  ))}
+            </ScrollView>
           </View>
         ) : (
           <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
@@ -108,6 +141,22 @@ export default function ExtendItemScreen({ route }) {
           <Image
             source={{
               uri: convertImageURL(extend?.contract_image),
+            }}
+            style={styles.modalImage}
+          />
+        </View>
+      </Modal>
+      <Modal visible={modalVisible} transparent={true} animationType="fade">
+        <View style={styles.modalContainer}>
+          <TouchableOpacity
+            style={styles.modalCloseButton}
+            onPress={closeModal}
+          >
+            <Text style={styles.closeText}>Đóng</Text>
+          </TouchableOpacity>
+          <Image
+            source={{
+              uri: convertImageURL(selectedImage),
             }}
             style={styles.modalImage}
           />
@@ -213,5 +262,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "white",
+  },
+  image: {
+    width: 400,
+    height: 400,
+    marginRight: 10,
   },
 });

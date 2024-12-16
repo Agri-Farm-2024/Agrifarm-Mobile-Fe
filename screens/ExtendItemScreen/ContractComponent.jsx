@@ -33,7 +33,7 @@ const ContractComponent = ({ contract, isDownload }) => {
         >
           Thu nhỏ
         </Button> */}
-        {isDownload && (
+        {/* {isDownload && (
           <Button
             mode="contained"
             onPress={() => {
@@ -50,7 +50,7 @@ const ContractComponent = ({ contract, isDownload }) => {
           >
             Tải PDF
           </Button>
-        )}
+        )} */}
       </View>
       <ScrollView style={styles.container}>
         <Text style={styles.subHeader}>

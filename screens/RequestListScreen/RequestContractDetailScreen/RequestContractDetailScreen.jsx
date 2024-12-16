@@ -24,6 +24,7 @@ import { DownloadPDF } from "../../../components/DownloadPDF/DownloadPDF";
 export default function RequestContractDetailScreen({ navigation, route }) {
   const downLoadRef = useRef();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const { requestID } = route.params;
   const dispatch = useDispatch();
@@ -31,6 +32,16 @@ export default function RequestContractDetailScreen({ navigation, route }) {
   const { booking, loading, error } = useSelector(
     (state) => state.requestSlice
   );
+
+  const openModal = (image) => {
+    setSelectedImage(image);
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setSelectedImage(null);
+    setModalVisible(false);
+  };
 
   useEffect(() => {
     if (requestID) {
@@ -147,9 +158,33 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         {booking?.contract_image ? (
           <View>
             <Text style={styles.sectionTitle}>Hình ảnh hợp đồng</Text>
-            <Button onPress={() => setModalVisible(true)} mode="contained">
-              Xem hình ảnh đã ký
-            </Button>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.imageSlider}
+            >
+              {booking?.contract_image
+                ?.replace(/[\[\]\n]/g, "")
+                .trim()
+                .split(",").length >= 0 &&
+                booking?.contract_image
+                  ?.replace(/[\[\]\n]/g, "")
+                  .trim()
+                  .split(",")
+                  ?.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => openModal(item)}
+                    >
+                      <Image
+                        source={{
+                          uri: convertImageURL(item),
+                        }}
+                        style={styles.image}
+                      />
+                    </TouchableOpacity>
+                  ))}
+            </ScrollView>
           </View>
         ) : (
           <Text style={styles.sectionTitle}>Chưa có hình ảnh hợp đồng</Text>
@@ -158,44 +193,18 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           <View style={styles.modalContainer}>
             <TouchableOpacity
               style={styles.modalCloseButton}
-              onPress={() => setModalVisible(false)}
+              onPress={closeModal}
             >
               <Text style={styles.closeText}>Đóng</Text>
             </TouchableOpacity>
             <Image
               source={{
-                uri: convertImageURL(booking?.contract_image),
+                uri: convertImageURL(selectedImage),
               }}
               style={styles.modalImage}
             />
           </View>
         </Modal>
-
-        {/* <View style={styles.checkboxContainer}>
-          <Checkbox
-            status={checked ? "checked" : "unchecked"}
-            onPress={() => setChecked(!checked)}
-            color="#7fb640"
-          />
-          <View style={styles.checkboxLabelContainer}>
-            <Text style={styles.checkboxLabel}>
-              Tôi đã đọc và{" "}
-              <Text style={styles.link}>
-                đồng ý với các điều khoản của hợp đồng
-              </Text>
-            </Text>
-          </View>
-        </View> */}
-        {/* <Button
-          mode="contained"
-          style={styles.button}
-          disabled={!checked}
-          onPress={() => {
-            navigation.navigate("PaymentScreen");
-          }}
-        >
-          Tiến hành thanh toán
-        </Button> */}
       </ScrollView>
       {booking?.status === "completed" && (
         <TouchableOpacity
@@ -307,5 +316,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "600",
     color: "white",
+  },
+  image: {
+    width: 400,
+    height: 400,
+    marginRight: 10,
   },
 });

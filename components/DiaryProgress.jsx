@@ -83,6 +83,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                     isDone: isFutureDate(content?.time_start) ? false : true,
                     process_technical_specific_stage_content_id:
                       content.process_technical_specific_stage_content_id,
+                    canWriteDiary: content?.can_write_dinary,
                   })
                 );
               }

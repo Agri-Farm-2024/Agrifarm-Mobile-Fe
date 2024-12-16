@@ -12,6 +12,7 @@ import DropdownComponent from "../../components/DropdownComponent";
 import TextEditor from "../../components/TextEditor";
 import { getMaterial } from "../../redux/slices/materialSlice";
 import { useDispatch } from "react-redux";
+import { capitalizeFirstLetter } from "../../utils";
 
 const PAGE_SIZE = 30;
 
@@ -47,7 +48,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
             const optionData = response.payload.metadata.materials.map(
               (material) => ({
                 value: material.material_id,
-                label: material.name,
+                label: capitalizeFirstLetter(material.name),
               })
             );
             console.log("Option data: " + JSON.stringify(optionData));

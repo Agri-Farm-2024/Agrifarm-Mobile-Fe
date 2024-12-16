@@ -39,7 +39,7 @@ const DropdownComponent = ({
         labelField="label"
         valueField="value"
         placeholder={placeholder || "Select item"}
-        value={value}
+        value={value || ""}
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         onChange={(item) => {

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSpecificProcess } from "../../redux/slices/processSlice";
 import { useIsFocused } from "@react-navigation/core";
 import { getSpecificProcessSelector } from "../../redux/selectors";
-import { formatDate } from "../../utils";
+import { capitalizeFirstLetter, formatDate } from "../../utils";
 
 const diaryList = [
   {
@@ -135,18 +135,21 @@ const DiaryScreen = ({ navigation }) => {
                   <>
                     <View style={styles.contentWrapper}>
                       <Text style={styles.title}>{`${
-                        diary?.process_technical_standard?.plant_season?.plant
-                          ?.name || ""
+                        capitalizeFirstLetter(
+                          diary?.process_technical_standard?.plant_season?.plant
+                            ?.name
+                        ) || ""
                       } ${formatDate(diary?.time_start, 2)} - ${formatDate(
                         diary?.time_end,
                         2
                       )}`}</Text>
                       <Text style={styles.plantType}>
-                        {diary.is_public ? "Công khai" : "Riêng tư"}
+                        Hiển thị: {diary.is_public ? "Công khai" : "Riêng tư"}
                       </Text>
                       <Text style={styles.plantType}>
-                        Khách hàng:{" "}
-                        {diary?.service_specific?.land_renter?.full_name}
+                        {capitalizeFirstLetter(
+                          diary?.service_specific?.booking_land?.land?.name
+                        )}
                       </Text>
                       <Text
                         style={[

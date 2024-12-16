@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import { formatDate, isFutureDate, isTodayInRange } from "../../utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import { useSelector } from "react-redux";
+import { getUserSelector } from "../../redux/selectors";
 
 const actionDetail = {
   title: "Chuẩn bị nhà màng",
@@ -22,17 +25,29 @@ const actionDetail = {
 const SpecificProcessDetailScreen = ({ route, navigation }) => {
   const [visibleImageVIew, setVisibleImageVIew] = useState(false);
   const { processDetail } = route.params;
+  const userInfo = useSelector(getUserSelector);
+  console.log("userInfo", JSON.stringify(userInfo));
   console.log("processDetail", JSON.stringify(processDetail));
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          style={{ padding: 10 }}
-          onPress={() =>
-            isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo) &&
-            navigation.navigate("WriteDiaryScreen", { diary: processDetail })
-          }
+          style={[{ padding: 10 }, userInfo?.role != 3 && { display: "none" }]}
+          onPress={() => {
+            if (isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo)) {
+              if (processDetail.canWriteDiary == true) {
+                navigation.navigate("WriteDiaryScreen", {
+                  diary: processDetail,
+                });
+              } else {
+                Toast.show({
+                  type: "error",
+                  text1: "Hãy bắt đầu task để ghi nhật ký!",
+                });
+              }
+            }
+          }}
         >
           <MaterialCommunityIcons
             name="pencil-plus"

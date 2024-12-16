@@ -44,7 +44,7 @@ const StandardProcessScreen = ({ navigation }) => {
   const standardProcessList = useSelector(getStandardProcessSelector);
   const loading = useSelector(processLoadingSelector);
 
-  console.log("Standard Process", JSON.stringify(standardProcessList));
+  // console.log("Standard Process", JSON.stringify(standardProcessList));
 
   const fetchStandardprocess = () => {
     try {
@@ -76,10 +76,17 @@ const StandardProcessScreen = ({ navigation }) => {
                   key={index}
                   rippleColor="rgba(127, 182, 64, 0.2)"
                   onPress={
-                    () =>
-                      navigation.navigate("StandardProcessDetail", {
-                        standardProcess: diary,
-                      })
+                    () => {
+                      if (diary.status === "rejected") {
+                        navigation.navigate("UpdateStandardProcessScreen", {
+                          standardProcess: diary,
+                        });
+                      } else {
+                        navigation.navigate("StandardProcessDetail", {
+                          standardProcess: diary,
+                        });
+                      }
+                    }
                     // console.log("Press")
                   }
                   style={styles.diaryContainer}

@@ -21,6 +21,7 @@ import {
   createStandardProcess,
   getPlantSeason,
 } from "../../redux/slices/processSlice";
+import { capitalizeFirstLetter } from "../../utils";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -30,7 +31,7 @@ const StandardProcessSchema = Yup.object().shape({
   plantSeason: Yup.string().required("Vui lòng chọn loại cây!"),
 });
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 50;
 
 export default function CreateStandardProcessScreen({ navigation }) {
   const [openStandardProcess, setOpenStandardProcess] = useState(false);
@@ -57,12 +58,14 @@ export default function CreateStandardProcessScreen({ navigation }) {
             response.payload.metadata.plant_seasons &&
             response.payload.metadata.plant_seasons.length > 0
           ) {
-            const optionData = response.payload.metadata.plant_seasons.map(
-              (season) => ({
+            const optionData = response.payload.metadata.plant_seasons
+              .filter((season) => season.process_technical_standard == null)
+              .map((season) => ({
                 value: season.plant_season_id,
-                label: `Mùa vụ ${season.plant.name} Tháng ${season.month_start}`,
-              })
-            );
+                label: `Mùa vụ ${capitalizeFirstLetter(
+                  season.plant.name
+                )} Tháng ${season.month_start}`,
+              }));
             console.log("Option data: " + JSON.stringify(optionData));
             setPlantSeasonOptions(optionData);
             setPageNumberPlantSeason(pageIndex);
@@ -232,7 +235,6 @@ export default function CreateStandardProcessScreen({ navigation }) {
 
                 <Text style={styles.label}>Mùa vụ</Text>
                 <DropdownComponent
-                  onScroll={handleScrollPlantSeasonOption}
                   options={plantSeasonOptions}
                   placeholder="Chọn mùa vụ"
                   value={values.plantSeason}

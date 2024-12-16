@@ -105,6 +105,34 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               ? taskData?.request?.booking_land?.land?.name
               : "Không có"}
           </Text>
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Giống cây:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {capitalizeFirstLetter(
+                  taskData?.request?.plant_season?.plant?.name || "Không có"
+                )}
+              </Text>
+            </Text>
+          )}
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Tháng bắt đầu:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {`${taskData?.request?.plant_season?.month_start}` ||
+                  "Không có"}
+              </Text>
+            </Text>
+          )}
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Thời gian trồng:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {`${taskData?.request?.plant_season?.total_month} tháng` ||
+                  "Không có"}
+              </Text>
+            </Text>
+          )}
           {taskData?.request?.process_technical_specific_stage_content
             ?.process_technical_specific_stage?.process_technical_specific
             ?.service_specific?.plant_season?.plant?.name && (

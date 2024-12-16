@@ -103,6 +103,12 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                   ?.service_specific?.booking_land?.land?.name
               : taskData?.request?.booking_land
               ? taskData?.request?.booking_land?.land?.name
+              : taskData?.request?.process_technical_specific_stage
+                  ?.process_technical_specific?.service_specific?.booking_land
+                  ?.land?.name
+              ? taskData?.request?.process_technical_specific_stage
+                  ?.process_technical_specific?.service_specific?.booking_land
+                  ?.land?.name
               : "Không có"}
           </Text>
           {taskData?.request?.process_technical_specific_stage_content

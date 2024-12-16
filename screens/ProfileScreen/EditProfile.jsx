@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Formik } from "formik";
 import { useState } from "react";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import { useSelector } from "react-redux";
 
 const validationSchema = Yup.object().shape({
   textName: Yup.string()
@@ -29,17 +30,17 @@ const validationSchema = Yup.object().shape({
     .required("Vui lòng không bỏ trống!"),
 });
 
-const initialValues = {
-  textName: "",
-  dateOfBirth: new Date(),
-  textAddress: "",
-  genderSelected: "",
-  phone: "",
-  textEmail: "",
-};
-
 const EditProfileScreen = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const { userInfo } = useSelector((state) => state.userSlice);
+  console.log("userInfo:" + JSON.stringify(userInfo));
+
+  const initialValues = {
+    textName: userInfo?.full_name,
+    dateOfBirth: userInfo?.dob,
+    phone: userInfo?.phone,
+    textEmail: userInfo?.email,
+  };
 
   return (
     <SafeAreaView>
@@ -111,7 +112,7 @@ const EditProfileScreen = () => {
                     <Text style={styles.errorText}>{errors.dateOfBirth}</Text>
                   )}
                 </View>
-                <View style={styles.infoTextContainer}>
+                {/* <View style={styles.infoTextContainer}>
                   <Text style={styles.textTitle}>Giới tính</Text>
                   <View
                     style={{
@@ -188,21 +189,21 @@ const EditProfileScreen = () => {
                       {errors.genderSelected}
                     </Text>
                   )}
-                </View>
+                </View> */}
                 <View style={styles.infoTextContainer}>
-                  <Text style={styles.textTitle}>Địa chỉ</Text>
+                  <Text style={styles.textTitle}>Số điện thoại</Text>
                   <TextInput
                     style={[
                       styles.input,
                       errors.textAddress && styles.errorOutline,
                     ]}
-                    onChangeText={handleChange("textAddress")}
-                    onBlur={handleBlur("textAddress")}
-                    value={values.textAddress}
+                    onChangeText={handleChange("phone")}
+                    onBlur={handleBlur("phone")}
+                    value={values.phone}
                     placeholder="Điạ chỉ"
                   />
-                  {touched.textAddress && errors.textAddress && (
-                    <Text style={styles.errorText}>{errors.textAddress}</Text>
+                  {touched.phone && errors.phone && (
+                    <Text style={styles.errorText}>{errors.phone}</Text>
                   )}
                 </View>
                 <View style={styles.infoTextContainer}>

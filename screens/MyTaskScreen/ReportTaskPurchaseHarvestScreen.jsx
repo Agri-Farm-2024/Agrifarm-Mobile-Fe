@@ -35,15 +35,15 @@ export const ReportTaskPurchaseHarvestScreen = ({ route, navigation }) => {
 
   const qualityOPtions = [
     {
-      label: "Tốt 🌳",
+      label: "Tốt - 100%",
       value: 100,
     },
     {
-      label: "Trung bình 🌿",
+      label: "Khá - 95%",
       value: 95,
     },
     {
-      label: "Xấu 🌱",
+      label: "Trung bình - 90%",
       value: 90,
     },
   ];

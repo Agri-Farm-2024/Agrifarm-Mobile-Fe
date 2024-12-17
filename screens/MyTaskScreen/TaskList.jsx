@@ -358,7 +358,7 @@ const TaskList = ({ taskType }) => {
           {item?.request?.type === "create_process_standard"
             ? "Tạo quy trình kĩ thuật canh tác"
             : item?.request?.type === "cultivate_process_content"
-            ? `Canh tác và ghi nhật ký - ${capitalizeFirstLetter(
+            ? `Canh tác và ghi nhật ký\n${capitalizeFirstLetter(
                 item?.request?.process_technical_specific_stage_content
                   ?.process_technical_specific_stage?.process_technical_specific
                   ?.service_specific?.plant_season?.plant?.name
@@ -378,11 +378,34 @@ const TaskList = ({ taskType }) => {
             : item?.request?.type === "technical_support"
             ? "Hỗ trợ kĩ thuật"
             : item?.request?.type === "product_purchase"
-            ? "Kiểm định thu mua"
+            ? `Kiểm định thu mua\n${capitalizeFirstLetter(
+                item?.request?.service_specific?.plant_season?.plant?.name
+              )} ${formatDate(
+                item?.request?.service_specific?.time_start,
+                2
+              )} - ${formatDate(item?.request?.service_specific?.time_end, 2)}`
             : item?.request?.type === "product_puchase_harvest"
-            ? "Yêu cầu thu hoạch"
+            ? `Yêu cầu thu hoạch\n${capitalizeFirstLetter(
+                item?.request?.service_specific?.plant_season?.plant?.name
+              )} ${formatDate(
+                item?.request?.service_specific?.time_start,
+                2
+              )} - ${formatDate(item?.request?.service_specific?.time_end, 2)}
+            `
             : item?.request?.type === "material_process_specfic_stage"
-            ? "Lấy vật tư theo giai đoạn"
+            ? `Lấy vật tư theo giai đoạn \n${capitalizeFirstLetter(
+                item?.request?.process_technical_specific_stage
+                  .process_technical_specific?.service_specific?.plant_season
+                  ?.plant?.name
+              )} ${formatDate(
+                item?.request?.process_technical_specific_stage
+                  ?.process_technical_specific?.time_start,
+                2
+              )} - ${formatDate(
+                item?.request?.process_technical_specific_stage
+                  ?.process_technical_specific?.time_end,
+                2
+              )}`
             : item?.request?.type}
         </Text>
         <Text
@@ -404,7 +427,10 @@ const TaskList = ({ taskType }) => {
             },
           ]}
         >
-          Ngày tạo: {formatTimeViewLand(item.created_at)}
+          Bắt đầu:{" "}
+          {item?.request?.time_start
+            ? formatTimeViewLand(item?.request?.time_start)
+            : "Bất cứ lúc nào"}
         </Text>
       </View>
 

@@ -13,6 +13,16 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
   const navigation = useNavigation();
   console.log(JSON.stringify(taskData));
 
+  const timeStartDate = new Date(taskData?.request?.time_start);
+  const now = new Date();
+  const isCanStart =
+    taskData?.request?.time_start === null || timeStartDate <= now;
+
+  console.log("timeStartDate: " + timeStartDate);
+  console.log("now: " + now);
+
+  console.log(isCanStart);
+
   const filterStatus = (status) => {
     if (status === "assigned") {
       return "Chờ bắt đầu";
@@ -151,6 +161,17 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               </Text>
             </Text>
           )}
+          {taskData?.request?.process_technical_specific_stage?.stage_title && (
+            <Text style={styles.modalText}>
+              Giai đoạn:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {
+                  taskData?.request?.process_technical_specific_stage
+                    ?.stage_title
+                }
+              </Text>
+            </Text>
+          )}
 
           {taskData?.request?.process_technical_specific_stage_content
             ?.title && (
@@ -168,7 +189,7 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             Bắt đầu lúc:{" "}
             {taskData?.request?.time_start
               ? formatTimeViewLand(taskData?.request?.time_start)
-              : "Ngay bây giờ"}
+              : "Bất cứ lúc nào"}
           </Text>
           {taskData?.request?.process_technical_specific_stage
             ?.process_technical_specific_stage_material?.length >= 1 && (
@@ -246,10 +267,18 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             {taskData?.request?.status === "rejected" ||
             taskData?.request?.status === "assigned" ? (
               <TouchableOpacity
-                style={styles.closeButton}
-                onPress={handleStartTask}
+                style={[
+                  styles.closeButton,
+                  isCanStart ? null : { backgroundColor: "#808080" },
+                ]}
+                onPress={() => {
+                  handleStartTask();
+                }}
+                disabled={!isCanStart}
               >
-                <Text style={styles.buttonText}>Bắt đầu</Text>
+                <Text style={styles.buttonText}>
+                  {isCanStart ? "Bắt đầu" : "Chưa thể bắt đầu"}
+                </Text>
               </TouchableOpacity>
             ) : taskData?.request?.status === "in_progress" ? (
               <TouchableOpacity

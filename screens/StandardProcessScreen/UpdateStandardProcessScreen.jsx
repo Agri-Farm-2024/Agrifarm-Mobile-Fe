@@ -21,6 +21,7 @@ import {
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import DropdownComponent from "../../components/DropdownComponent";
 import { getMaterial } from "../../redux/slices/materialSlice";
+import { getPlantSeasonList } from "../../redux/slices/plantSlice";
 
 const PAGE_SIZE = 30;
 
@@ -119,7 +120,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
       page_index: pageIndex,
     };
     setIsLoadingMaterial(true);
-    dispatch(getPlantSeason(params))
+    dispatch(getPlantSeasonList(params))
       .then((response) => {
         console.log("response plantSeasonOptions: " + JSON.stringify(response));
         if (response.payload && response.payload.statusCode === 200) {

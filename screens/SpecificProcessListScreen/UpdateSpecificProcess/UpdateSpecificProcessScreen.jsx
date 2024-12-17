@@ -1134,7 +1134,6 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                 styleValue={{ marginTop: 0 }}
                                 value={material.material_id}
                                 options={materialOptions}
-                                onScroll={handleScrollMaterialOption}
                                 setValue={(value) => {
                                   setStages((prevStages) =>
                                     prevStages.map((stageItem) =>

@@ -99,7 +99,7 @@ const SpecificProcessListScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
-      <ScrollView showsVerticalScrollIndicator={false} onScroll={handleScroll}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           {(!specificProcessSelector?.process_technical_specific ||
             specificProcessSelector?.process_technical_specific.length ==

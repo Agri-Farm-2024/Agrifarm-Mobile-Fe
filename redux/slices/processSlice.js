@@ -16,9 +16,9 @@ export const createStandardProcess = createAsyncThunk(
 
 export const getPlantSeason = createAsyncThunk(
   "processSlice/getPlantSeason",
-  async (params, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const data = await api.get(`/plants/plantSeasons`, params);
+      const data = await api.get(`/plants/getPlantSeasonByExpert`);
       return data.data;
     } catch (error) {
       console.log("error", error);

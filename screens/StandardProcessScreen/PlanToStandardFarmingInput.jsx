@@ -596,7 +596,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                       styleValue={{ marginTop: 0 }}
                       value={material.materialId}
                       options={materialOptions}
-                      onScroll={handleScrollMaterialOption}
                       setValue={(value) => {
                         setStages((prevStages) =>
                           prevStages.map((stageItem) =>

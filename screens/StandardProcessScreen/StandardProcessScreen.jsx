@@ -11,6 +11,7 @@ import { useState } from "react";
 import { getStandardProcess } from "../../redux/slices/processSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { capitalizeFirstLetter } from "../../utils";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
 
 const diaryList = [
   {
@@ -78,9 +79,16 @@ const StandardProcessScreen = ({ navigation }) => {
                   onPress={
                     () => {
                       if (diary.status === "rejected") {
-                        navigation.navigate("UpdateStandardProcessScreen", {
-                          standardProcess: diary,
-                        });
+                        if (diary?.can_edit == true) {
+                          navigation.navigate("UpdateStandardProcessScreen", {
+                            standardProcess: diary,
+                          });
+                        } else {
+                          Toast.show({
+                            type: "error",
+                            text1: "Hãy bắt đầu nhiệm vụ!",
+                          });
+                        }
                       } else {
                         navigation.navigate("StandardProcessDetail", {
                           standardProcess: diary,

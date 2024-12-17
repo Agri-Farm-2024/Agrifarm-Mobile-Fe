@@ -144,7 +144,7 @@ export default function ExtendFormScreen({ route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>Thông tin cá nhân</Text>
         <View style={styles.infoContainer}>
           <Text style={styles.label}>Họ và Tên:</Text>

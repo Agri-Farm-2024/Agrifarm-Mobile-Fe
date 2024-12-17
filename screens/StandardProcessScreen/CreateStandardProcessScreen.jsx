@@ -1,19 +1,17 @@
 import {
-  View,
   Text,
   SafeAreaView,
   KeyboardAvoidingView,
   StyleSheet,
-  Platform,
   ScrollView,
   TouchableOpacity,
+  Linking,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native-paper";
 import DropdownComponent from "../../components/DropdownComponent";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import DateTimePicker from "@react-native-community/datetimepicker";
 import StandardProcessComponent from "./StandardProcessComponent";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useDispatch } from "react-redux";
@@ -22,6 +20,8 @@ import {
   getPlantSeason,
 } from "../../redux/slices/processSlice";
 import { capitalizeFirstLetter } from "../../utils";
+import { useLayoutEffect } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const today = new Date();
 today.setHours(0, 0, 0, 0);
@@ -40,25 +40,40 @@ export default function CreateStandardProcessScreen({ navigation }) {
   const [hasMorePlantSeason, setHasMorePlantSeason] = useState(true);
   const [isLoadingPlantSeason, setIsLoadingPlantSeason] = useState(false);
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          style={{ paddingRight: 10 }}
+          onPress={() => {
+            const url = "https://cef.vn/tag/quy-trinh-ky-thuat/";
+            Linking.openURL(url).catch((err) =>
+              console.error("Không thể mở URL: ", err)
+            );
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+            Tham khảo
+          </Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
   const dispatch = useDispatch();
 
   const fetchPlantSeasonOptions = (pageIndex) => {
-    const params = {
-      page_size: PAGE_SIZE,
-      page_index: pageIndex,
-    };
-
     setIsLoadingPlantSeason(true);
-    dispatch(getPlantSeason(params))
+    dispatch(getPlantSeason())
       .then((response) => {
         console.log("response plantSeasonOptions: " + JSON.stringify(response));
         if (response.payload && response.payload.statusCode === 200) {
           if (
             response.payload.metadata &&
-            response.payload.metadata.plant_seasons &&
-            response.payload.metadata.plant_seasons.length > 0
+            response.payload.metadata &&
+            response.payload.metadata.length > 0
           ) {
-            const optionData = response.payload.metadata.plant_seasons
+            const optionData = response.payload.metadata
               .filter((season) => season.process_technical_standard == null)
               .map((season) => ({
                 value: season.plant_season_id,
@@ -70,11 +85,6 @@ export default function CreateStandardProcessScreen({ navigation }) {
             setPlantSeasonOptions(optionData);
             setPageNumberPlantSeason(pageIndex);
             setIsLoadingPlantSeason(false);
-
-            //Check whether has more options to fetch
-            if (response.payload.metadata.pagination.total_page == pageIndex) {
-              setHasMorePlantSeason(false);
-            }
           }
         }
       })
@@ -234,12 +244,27 @@ export default function CreateStandardProcessScreen({ navigation }) {
                 </Text>
 
                 <Text style={styles.label}>Mùa vụ</Text>
-                <DropdownComponent
-                  options={plantSeasonOptions}
-                  placeholder="Chọn mùa vụ"
-                  value={values.plantSeason}
-                  setValue={(value) => setFieldValue("plantSeason", value)}
-                />
+                {plantSeasonOptions.length > 0 && (
+                  <DropdownComponent
+                    options={plantSeasonOptions}
+                    placeholder="Chọn mùa vụ"
+                    value={values.plantSeason}
+                    setValue={(value) => setFieldValue("plantSeason", value)}
+                  />
+                )}
+                {plantSeasonOptions.length == 0 && (
+                  <Text
+                    style={{
+                      marginTop: 10,
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      color: "#707070",
+                      textAlign: "center",
+                    }}
+                  >
+                    Chưa có mùa vụ cần tạo quy trình chuẩn
+                  </Text>
+                )}
                 <Text style={styles.errorMessage}>
                   {touched.plantSeason && errors.plantSeason}
                 </Text>

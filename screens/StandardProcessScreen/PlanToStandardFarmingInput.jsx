@@ -171,10 +171,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
           : stage
       )
     );
-    Toast.show({
-      type: "error",
-      text1: "Phải có vật tư của giai đoạn",
-    });
   };
 
   const handleCheckValidateMaterial = () => {

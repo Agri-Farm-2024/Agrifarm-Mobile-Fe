@@ -419,35 +419,37 @@ const UpdateStandardProcessScreen = ({ route }) => {
               isFalse = true;
             }
           }
-          stage.process_standard_stage_content.map((input, idxInput) => {
-            //   Check validate from and to
-            if (input.time_start > input.time_end) {
-              Toast.show({
-                type: "error",
-                text1: `Kiểm tra lại ngày của giai đoạn ${idxStage + 1}`,
-                text2: `Tại bước ${idxInput + 1} của giai đoạn`,
-              });
-              isFalse = true;
-            }
-
-            //   Check from date between input of Stage
-            if (idxInput > 0) {
-              const lastToInputPrev =
-                stage.process_standard_stage_content[idxInput - 1].time_end;
-              const firstFromInputPresent = input.time_start;
-
-              if (firstFromInputPresent <= lastToInputPrev) {
+          stage.process_standard_stage_content
+            .filter((item) => !item?.is_deleted)
+            .map((input, idxInput) => {
+              //   Check validate from and to
+              if (input.time_start > input.time_end) {
                 Toast.show({
                   type: "error",
                   text1: `Kiểm tra lại ngày của giai đoạn ${idxStage + 1}`,
-                  text2: `Tại bước ${idxInput} và bước ${
-                    idxInput + 1
-                  } của giai đoạn`,
+                  text2: `Tại bước ${idxInput + 1} của giai đoạn`,
                 });
                 isFalse = true;
               }
-            }
-          });
+
+              //   Check from date between input of Stage
+              if (idxInput > 0) {
+                const lastToInputPrev =
+                  stage.process_standard_stage_content[idxInput - 1].time_end;
+                const firstFromInputPresent = input.time_start;
+
+                if (firstFromInputPresent <= lastToInputPrev) {
+                  Toast.show({
+                    type: "error",
+                    text1: `Kiểm tra lại ngày của giai đoạn ${idxStage + 1}`,
+                    text2: `Tại bước ${idxInput} và bước ${
+                      idxInput + 1
+                    } của giai đoạn`,
+                  });
+                  isFalse = true;
+                }
+              }
+            });
         }
       });
 
@@ -713,15 +715,18 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                       ? {
                                           ...stageItem,
                                           process_standard_stage_content:
-                                            stageItem.process_standard_stage_content.map(
-                                              (inputItem, idx) =>
+                                            stageItem.process_standard_stage_content
+                                              .filter(
+                                                (item) => !item?.is_deleted
+                                              )
+                                              .map((inputItem, idx) =>
                                                 idx === inputIndex
                                                   ? {
                                                       ...inputItem,
                                                       time_start: text,
                                                     }
                                                   : inputItem
-                                            ),
+                                              ),
                                         }
                                       : stageItem
                                   )
@@ -746,15 +751,18 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                       ? {
                                           ...stageItem,
                                           process_standard_stage_content:
-                                            stageItem.process_standard_stage_content.map(
-                                              (inputItem, idx) =>
+                                            stageItem.process_standard_stage_content
+                                              .filter(
+                                                (item) => !item?.is_deleted
+                                              )
+                                              .map((inputItem, idx) =>
                                                 idx === inputIndex
                                                   ? {
                                                       ...inputItem,
                                                       time_end: text,
                                                     }
                                                   : inputItem
-                                            ),
+                                              ),
                                         }
                                       : stageItem
                                   )

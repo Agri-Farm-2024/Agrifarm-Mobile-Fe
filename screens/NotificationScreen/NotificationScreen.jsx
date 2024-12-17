@@ -41,12 +41,14 @@ export default function NotificationScreen() {
     return (
       <View style={[styles.notificationItem]}>
         <View style={styles.iconContainer}>
-          <MaterialCommunityIcons
-            name={iconName}
-            size={30}
-            color="white"
-            style={styles.icon}
-          />
+          <View style={styles.iconBg}>
+            <MaterialCommunityIcons
+              name={iconName}
+              size={30}
+              color="white"
+              style={styles.icon}
+            />
+          </View>
           {!item.is_seen && <View style={styles.redDot} />}
         </View>
         <View style={styles.textContainer}>
@@ -124,6 +126,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     color: "#7fb640",
   },
+
   textContainer: {
     flex: 1,
   },

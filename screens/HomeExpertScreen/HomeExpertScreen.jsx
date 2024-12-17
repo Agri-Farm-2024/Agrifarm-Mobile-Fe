@@ -66,7 +66,7 @@ function HomeExpertScreen({ navigation }) {
                 </Text>
               </View>
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               onPress={() => navigation.navigate("CartMaterialsScreen")}
             >
               <MaterialCommunityIcons name="cart" size={30} color="#7FB640" />
@@ -84,7 +84,7 @@ function HomeExpertScreen({ navigation }) {
                   {cartCount}
                 </Badge>
               )}
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
           {/* 
           <Image
@@ -100,17 +100,16 @@ function HomeExpertScreen({ navigation }) {
             <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => navigation.navigate("RequestMaterialsScreen")}
+                onPress={() => navigation.navigate("MyTaskScreen")}
               >
                 <MaterialCommunityIcons
-                  name="basket-plus-outline"
+                  name="format-list-checkbox"
                   size={40}
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Vật tư</Text>
+              <Text style={styles.iconLabel}>Danh sách công việc</Text>
             </View>
-
             <View style={styles.iconContainer}>
               <TouchableOpacity
                 onPress={() => navigation.navigate("StandardProcessScreen")}
@@ -137,25 +136,11 @@ function HomeExpertScreen({ navigation }) {
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Quy trình canh tác cụ thể</Text>
             </View>
-
-            <View style={styles.iconContainer}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("DiaryScreen")}
-                style={styles.iconButton}
-              >
-                <MaterialCommunityIcons
-                  name="book-outline"
-                  size={40}
-                  color="#7FB640"
-                />
-              </TouchableOpacity>
-              <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
-            </View>
           </View>
 
           {/* Second Row */}
           <View style={styles.row}>
-            <View style={styles.iconContainer}>
+            {/* <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => navigation.navigate("HistoryOrder")}
@@ -180,19 +165,33 @@ function HomeExpertScreen({ navigation }) {
                 />
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Hỗ trợ</Text>
-            </View>
+            </View> */}
             <View style={styles.iconContainer}>
               <TouchableOpacity
+                onPress={() => navigation.navigate("DiaryScreen")}
                 style={styles.iconButton}
-                onPress={() => navigation.navigate("MyTaskScreen")}
               >
                 <MaterialCommunityIcons
-                  name="format-list-checkbox"
+                  name="book-outline"
                   size={40}
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Danh sách công việc</Text>
+              <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
+            </View>
+
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("RequestMaterialsScreen")}
+              >
+                <MaterialCommunityIcons
+                  name="basket-plus-outline"
+                  size={40}
+                  color="#7FB640"
+                />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Vật tư</Text>
             </View>
             <View style={styles.iconContainer}></View>
           </View>

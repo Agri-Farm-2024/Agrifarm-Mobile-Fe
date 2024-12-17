@@ -1,6 +1,10 @@
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
-import { convertImageURL, formatNumberToVND } from "../utils";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatNumberToVND,
+} from "../utils";
 import { useNavigation } from "@react-navigation/native";
 
 export default function MaterialItem({ material }) {
@@ -21,7 +25,9 @@ export default function MaterialItem({ material }) {
         }}
       ></Image>
       <View style={styles.productInfo}>
-        <Text style={styles.nameProduct}>{material?.name || ""}</Text>
+        <Text style={styles.nameProduct}>
+          {capitalizeFirstLetter(material?.name) || ""}
+        </Text>
         <Text style={styles.priceProduct}>
           {material?.type == "buy"
             ? formatNumberToVND(material?.price_per_piece)

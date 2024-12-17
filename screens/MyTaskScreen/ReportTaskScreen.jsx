@@ -235,12 +235,12 @@ export const ReportTaskScreen = ({ route, navigation }) => {
                 justifyContent: "flex-end",
               }}
             >
-              <IconButton
+              {/* <IconButton
                 icon="video-plus"
                 iconColor="#ffffff"
                 style={styles.fab}
                 onPress={pickVideo}
-              />
+              /> */}
               <IconButton
                 icon="image-plus"
                 iconColor="#ffffff"

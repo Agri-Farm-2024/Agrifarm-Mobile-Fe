@@ -16,7 +16,7 @@ import { useDispatch } from "react-redux";
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [loginForm, setLoginForm] = useState({
-    username: "landrenter@gmail.com",
+    username: "ninhpdse161296@fpt.edu.vn",
     password: "123",
   });
   const [errorMessage, setErrorMessage] = useState(null);

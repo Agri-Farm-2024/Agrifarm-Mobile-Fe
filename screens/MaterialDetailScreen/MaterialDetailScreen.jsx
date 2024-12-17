@@ -4,7 +4,11 @@ import { Button, IconButton, Appbar, Badge } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart, clearCart } from "../../redux/slices/cartSlice";
-import { convertImageURL, formatNumberToVND } from "../../utils";
+import {
+  capitalizeFirstLetter,
+  convertImageURL,
+  formatNumberToVND,
+} from "../../utils";
 
 export default function MaterialDetailScreen({ route, navigation }) {
   const { material } = route.params;
@@ -47,7 +51,7 @@ export default function MaterialDetailScreen({ route, navigation }) {
         />
         <Appbar.Content
           title="Chi Tiết Vật Liệu"
-          color="white" // Text color
+          color="white"
           titleStyle={{ color: "white", fontSize: 20 }}
         />
         <Appbar.Action
@@ -78,7 +82,9 @@ export default function MaterialDetailScreen({ route, navigation }) {
             uri: convertImageURL(material?.image_material),
           }}
         />
-        <Text style={styles.nameProduct}>{material?.name}</Text>
+        <Text style={styles.nameProduct}>
+          {capitalizeFirstLetter(material?.name)}
+        </Text>
         <Text style={styles.typeProduct}>
           {material?.type == "buy" ? "Bán" : "Cho thuê"}
         </Text>

@@ -154,7 +154,7 @@ function HomeScreen({ navigation }) {
 
           {/* Second Row */}
           <View style={styles.row}>
-            <View style={styles.iconContainer}>
+            {/* <View style={styles.iconContainer}>
               <TouchableOpacity style={styles.iconButton}>
                 <MaterialCommunityIcons
                   name="text-box-check-outline"
@@ -163,8 +163,20 @@ function HomeScreen({ navigation }) {
                 />
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Quy trình canh tác</Text>
+            </View> */}
+            <View style={styles.iconContainer}>
+              <TouchableOpacity
+                style={styles.iconButton}
+                onPress={() => navigation.navigate("RequestListScreen")}
+              >
+                <MaterialCommunityIcons
+                  name="format-list-checkbox"
+                  size={40}
+                  color="#7FB640"
+                />
+              </TouchableOpacity>
+              <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
             </View>
-
             <View style={styles.iconContainer}>
               <TouchableOpacity
                 onPress={() => navigation.navigate("DiaryScreen")}
@@ -211,25 +223,13 @@ function HomeScreen({ navigation }) {
             <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
-                onPress={() => navigation.navigate("RequestListScreen")}
-              >
-                <MaterialCommunityIcons
-                  name="format-list-checkbox"
-                  size={40}
-                  color="#7FB640"
-                />
-              </TouchableOpacity>
-              <Text style={styles.iconLabel}>Danh sách yêu cầu</Text>
-            </View>
-            <View style={styles.iconContainer}>
-              <TouchableOpacity
-                style={styles.iconButton}
                 onPress={() => navigation.navigate("TransactionScreen")}
               >
                 <MaterialCommunityIcons name="cash" size={40} color="#7FB640" />
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Danh sách giao dịch</Text>
             </View>
+            <View style={styles.iconContainer}></View>
           </View>
         </View>
       </ScrollView>

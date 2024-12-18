@@ -100,135 +100,147 @@ const ContractComponent = ({ contract, isDownload }) => {
           Dưới đây là nội dung điều khoản đã được bổ sung và hoàn chỉnh:
         </Text>
         <View>
-          <Text style={styles.sectionHeader}>Điều khoản 1: Bao tiêu</Text>
-          <Text style={{ fontWeight: "bold" }}>
-            Điều 1: Giá thành sản phẩm bao tiêu
-          </Text>
-          <Text>
-            Bên A và bên B ký kết Hợp đồng bao tiêu sản phẩm theo đó, bên B ứng
-            vốn, công nghệ và kỹ thuật để bên A sản xuất các mặt hàng sau đó
-            giao bán lại cho bên B tiêu thụ đối với những sản phẩm như sau:
-          </Text>
-          <View style={styles.table}>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>STT</Text>
-              <Text style={styles.tableCell}>Sản phẩm</Text>
-              <Text style={styles.tableCell}>Diện tích sản phẩm</Text>
-              <Text style={styles.tableCell}>Đơn giá</Text>
+          {contract?.isPurchase === true && (
+            <View>
+              <Text style={styles.sectionHeader}>Điều khoản 1: Bao tiêu</Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 1: Giá thành sản phẩm bao tiêu
+              </Text>
+              <Text>
+                Bên A và bên B ký kết Hợp đồng bao tiêu sản phẩm theo đó, bên B
+                ứng vốn, công nghệ và kỹ thuật để bên A sản xuất các mặt hàng
+                sau đó giao bán lại cho bên B tiêu thụ đối với những sản phẩm
+                như sau:
+              </Text>
+              <View style={styles.table}>
+                <View style={styles.tableRow}>
+                  <Text style={styles.tableCell}>STT</Text>
+                  <Text style={styles.tableCell}>Sản phẩm</Text>
+                  <Text style={styles.tableCell}>Diện tích sản phẩm</Text>
+                  <Text style={styles.tableCell}>Đơn giá</Text>
+                </View>
+                <View style={styles.tableRow}>
+                  <Text style={[styles.tableCell, styles.italic]}>1</Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {capitalizeFirstLetter(contract?.productName)}
+                  </Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {contract?.area} m2
+                  </Text>
+                  <Text style={[styles.tableCell, styles.italic]}>
+                    {formatNumber(contract?.price)} VND
+                  </Text>
+                </View>
+              </View>
+              <Text>
+                <Text style={styles.bold}>
+                  Quy định giá thu mua và giá dịch vụ bao tiêu:
+                </Text>
+              </Text>
+              <Text>
+                • <Text style={styles.bold}>Giá thu mua:</Text>
+              </Text>
+              <Text>
+                {" "}
+                • Khấu trừ 20% so với giá thị trường bao gồm: chi phí lợi nhuận,
+                giá cả thị trường.
+              </Text>
+              <Text>
+                {" "}
+                • Khấu trừ chất lượng tại thời điểm thu hoạch (≤ 10%).
+              </Text>
+              <Text>
+                {" "}
+                • Sản phẩm đạt chất lượng tốt (100%) sẽ không bị khấu trừ chất
+                lượng.
+              </Text>
+              <Text>
+                {" "}
+                • Sản phẩm đạt chất lượng khá (khấu trừ 5%), sản phẩm đạt trung
+                bình (khấu trừ 10%).
+              </Text>
+              <Text>
+                • <Text style={styles.bold}>Giá dịch vụ bao tiêu:</Text> Bao gồm
+                chi phí nhân công thu hoạch, đóng gói, vận chuyển.
+              </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 2: Yêu cầu về sản xuất sản phẩm
+              </Text>
+              <Text>
+                Nguồn gốc sản phẩm: Bên A phải đảm bảo được chất lượng nguồn gốc
+                sản phẩm;
+              </Text>
+              <Text>
+                Sử dụng quy trình chuẩn: bên A cam kết sử dụng cách thức quy
+                trình quy chuẩn và quy định pháp luật về sản xuất các sản phẩm
+                trong hợp đồng;
+              </Text>
+              <Text>
+                Thu hoạch: bên A đảm bảo thu hoạch theo đúng quy trình, cách
+                thức theo các quy chuẩn về thu hoạch;
+              </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 3: Kiểm soát chất lượng sản phẩm sau thu hoạch
+              </Text>
+              <Text>
+                • Chuyên viên kiểm tra chất lượng sản phẩm về màu sắc, mùi vị,
+                kích thước và trạng thái sản phẩm sau thu hoạch;
+              </Text>
+              <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                Điều 4: Quyền lợi và nghĩa vụ của các bên
+              </Text>
+              <Text>
+                • Được cung cấp công nghệ, kỹ thuật để thực hiện sản xuất;
+              </Text>
+              <Text>
+                • Được thanh toán theo quy định của Hợp đồng bao tiêu sản phẩm.
+              </Text>
+              <Text>
+                • Bao tiêu theo giá thành tại thời điểm ký hợp đồng dịch vụ.
+              </Text>
+              <Text>
+                • Doanh nghiệp đảm bảo bao tiêu sản phẩm có sử dụng dịch vụ canh
+                tác theo quy trình chuẩn của chuyên viên thuộc doanh nghiệp.
+              </Text>
+              <Text>
+                • Doanh nghiệp phân công chuyên viên phụ trách canh tác cùng bên
+                A để đảm bảo quá trình canh tác đạt chất lượng và hiệu suất cao.
+                Giảm hao hụt chất lượng và lợi nhuận cho cả hai bên.
+              </Text>
+              <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                Điều 5: Chấm dứt điều khoản bao tiêu
+              </Text>
+              <Text>
+                1. Hợp đồng có thể chấm dứt trong các trường hợp sau đây:
+              </Text>
+              <Text>
+                • Bên A hủy hợp đồng lúc báo cáo kiểm định hủy hợp đồng; bên hủy
+                phải bồi thường gấp 3 lần tổng sản lượng dự kiến nhân với giá
+                tiền lúc ký dịch vụ bao tiêu.
+              </Text>
+              <Text>
+                • Bất kể Hợp đồng chấm dứt trong trường hợp nào, Bên B có trách
+                nhiệm thanh toán đầy đủ các chi phí Bên A đến thời điểm Hợp đồng
+                chấm dứt.
+              </Text>
+              <Text>
+                • Các khoản phạt và bồi thường thiệt hại, cùng với nghĩa vụ
+                thanh toán của bất kỳ Bên nào đối với Bên còn lại, phải được
+                thực hiện trong vòng ba mươi (30) ngày kể từ ngày chấm dứt Hợp
+                đồng.
+              </Text>
+              <Text>
+                • Trường hợp bất khả kháng (thiên tai), doanh nghiệp sẽ miễn
+                trách nhiệm thu mua. Doanh nghiệp sẽ đàm phán với khách hàng để
+                hỗ trợ một phần tài chính và phối hợp với chính quyền để có
+                chính sách hỗ trợ.
+              </Text>
             </View>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.italic]}>1</Text>
-              <Text style={[styles.tableCell, styles.italic]}>
-                {capitalizeFirstLetter(contract?.productName)}
-              </Text>
-              <Text style={[styles.tableCell, styles.italic]}>
-                {contract?.area} m2
-              </Text>
-              <Text style={[styles.tableCell, styles.italic]}>
-                {formatNumber(contract?.price)} VND
-              </Text>
-            </View>
-          </View>
-          <Text>
-            <Text style={styles.bold}>
-              Quy định giá thu mua và giá dịch vụ bao tiêu:
-            </Text>
-          </Text>
-          <Text>
-            • <Text style={styles.bold}>Giá thu mua:</Text>
-          </Text>
-          <Text>
-            {" "}
-            • Khấu trừ 20% so với giá thị trường bao gồm: chi phí lợi nhuận, giá
-            cả thị trường.
-          </Text>
-          <Text> • Khấu trừ chất lượng tại thời điểm thu hoạch (≤ 10%).</Text>
-          <Text>
-            {" "}
-            • Sản phẩm đạt chất lượng tốt (100%) sẽ không bị khấu trừ chất
-            lượng.
-          </Text>
-          <Text>
-            {" "}
-            • Sản phẩm đạt chất lượng khá (khấu trừ 5%), sản phẩm đạt trung bình
-            (khấu trừ 10%).
-          </Text>
-          <Text>
-            • <Text style={styles.bold}>Giá dịch vụ bao tiêu:</Text> Bao gồm chi
-            phí nhân công thu hoạch, đóng gói, vận chuyển.
-          </Text>
-          <Text style={{ fontWeight: "bold" }}>
-            Điều 2: Yêu cầu về sản xuất sản phẩm
-          </Text>
-          <Text>
-            Nguồn gốc sản phẩm: Bên A phải đảm bảo được chất lượng nguồn gốc sản
-            phẩm;
-          </Text>
-          <Text>
-            Sử dụng quy trình chuẩn: bên A cam kết sử dụng cách thức quy trình
-            quy chuẩn và quy định pháp luật về sản xuất các sản phẩm trong hợp
-            đồng;
-          </Text>
-          <Text>
-            Thu hoạch: bên A đảm bảo thu hoạch theo đúng quy trình, cách thức
-            theo các quy chuẩn về thu hoạch;
-          </Text>
-          <Text style={{ fontWeight: "bold" }}>
-            Điều 3: Kiểm soát chất lượng sản phẩm sau thu hoạch
-          </Text>
-          <Text>
-            • Chuyên viên kiểm tra chất lượng sản phẩm về màu sắc, mùi vị, kích
-            thước và trạng thái sản phẩm sau thu hoạch;
-          </Text>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
-            Điều 4: Quyền lợi và nghĩa vụ của các bên
-          </Text>
-          <Text>
-            • Được cung cấp công nghệ, kỹ thuật để thực hiện sản xuất;
-          </Text>
-          <Text>
-            • Được thanh toán theo quy định của Hợp đồng bao tiêu sản phẩm.
-          </Text>
-          <Text>
-            • Bao tiêu theo giá thành tại thời điểm ký hợp đồng dịch vụ.
-          </Text>
-          <Text>
-            • Doanh nghiệp đảm bảo bao tiêu sản phẩm có sử dụng dịch vụ canh tác
-            theo quy trình chuẩn của chuyên viên thuộc doanh nghiệp.
-          </Text>
-          <Text>
-            • Doanh nghiệp phân công chuyên viên phụ trách canh tác cùng bên A
-            để đảm bảo quá trình canh tác đạt chất lượng và hiệu suất cao. Giảm
-            hao hụt chất lượng và lợi nhuận cho cả hai bên.
-          </Text>
-          <Text style={{ fontWeight: "bold", marginTop: 10 }}>
-            Điều 5: Chấm dứt điều khoản bao tiêu
-          </Text>
-          <Text>1. Hợp đồng có thể chấm dứt trong các trường hợp sau đây:</Text>
-          <Text>
-            • Bên A hủy hợp đồng lúc báo cáo kiểm định hủy hợp đồng; bên hủy
-            phải bồi thường gấp 3 lần tổng sản lượng dự kiến nhân với giá tiền
-            lúc ký dịch vụ bao tiêu.
-          </Text>
-          <Text>
-            • Bất kể Hợp đồng chấm dứt trong trường hợp nào, Bên B có trách
-            nhiệm thanh toán đầy đủ các chi phí Bên A đến thời điểm Hợp đồng
-            chấm dứt.
-          </Text>
-          <Text>
-            • Các khoản phạt và bồi thường thiệt hại, cùng với nghĩa vụ thanh
-            toán của bất kỳ Bên nào đối với Bên còn lại, phải được thực hiện
-            trong vòng ba mươi (30) ngày kể từ ngày chấm dứt Hợp đồng.
-          </Text>
-          <Text>
-            • Trường hợp bất khả kháng (thiên tai), doanh nghiệp sẽ miễn trách
-            nhiệm thu mua. Doanh nghiệp sẽ đàm phán với khách hàng để hỗ trợ một
-            phần tài chính và phối hợp với chính quyền để có chính sách hỗ trợ.
-          </Text>
-
+          )}
           {/* Điều khoản 2 */}
           <Text style={styles.sectionHeader}>
-            Điều khoản 2: Bao thiết bị vật tư
+            Điều khoản {contract?.isPurchase === true ? 2 : 1}: Bao thiết bị vật
+            tư
           </Text>
           <Text style={{ fontWeight: "bold" }}>
             Điều 1: Phạm vi cung cấp vật phẩm thiết bị
@@ -261,7 +273,8 @@ const ContractComponent = ({ contract, isDownload }) => {
 
           {/* Điều khoản 3 */}
           <Text style={styles.sectionHeader}>
-            Điều khoản 3: Đặc quyền quy trình
+            Điều khoản {contract?.isPurchase === true ? 3 : 2}: Đặc quyền quy
+            trình
           </Text>
           <Text>
             {" "}
@@ -299,7 +312,8 @@ const ContractComponent = ({ contract, isDownload }) => {
 
           {/* Điều khoản 5 */}
           <Text style={styles.sectionHeader}>
-            Điều khoản 4: Hiệu lực của hợp đồng
+            Điều khoản {contract?.isPurchase === true ? 4 : 3}: Hiệu lực của hợp
+            đồng
           </Text>
           <Text>
             1. Hợp đồng này có hiệu lực kể từ ngày ký và được thực hiện trong

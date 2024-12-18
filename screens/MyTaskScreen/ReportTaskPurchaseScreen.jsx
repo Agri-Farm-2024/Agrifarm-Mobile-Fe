@@ -79,13 +79,9 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
       if (Number(qualityPlantExpect) < 0 || Number(qualityPlantExpect) >= 101) {
         Toast.show({
           type: "error",
-          text1: "Chất lượng phải nằm khoảng 1 đến 100",
+          text1: "Chất lượng phải nằm khoảng 0 đến 100",
         });
         return;
-      }
-
-      if (!isChecked) {
-        setQualityPlantExpect(0);
       }
 
       if (!note || note == "") {
@@ -99,7 +95,7 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
       console.log("note: " + note);
       let reportData = {
         content: note,
-        quality_plant_expect: Number(qualityPlantExpect),
+        quality_plant_expect: isChecked ? Number(qualityPlantExpect) : 0,
         mass_plant_expect: Number(massPlantExpect),
         url: [],
       };
@@ -173,7 +169,7 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
         taskId: taskInfo.task_id,
         formData: reportData,
       };
-      console.log("formData to report:", JSON.stringify(formData));
+      console.log("formData to report:", JSON.stringify(formData), isChecked);
       dispatch(reportTaskPurchase(formData)).then((response) => {
         console.log("response:", JSON.stringify(response));
         if (response.payload.statusCode === 201) {

@@ -112,6 +112,8 @@ export default function TransactionScreen() {
                     ? "Báo cáo vật tư"
                     : transaction.purpose === "service_purchase_product"
                     ? "Hoàn tiền thu hoạch"
+                    : transaction.purpose === "cancel_purchase_product"
+                    ? "Hủy thu mua"
                     : "Chưa rõ"}
                 </Text>
                 <Text style={styles.transactionexpired_at}>

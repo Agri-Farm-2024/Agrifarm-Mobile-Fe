@@ -6,7 +6,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getSpecificProcess } from "../../redux/slices/processSlice";
 import { useIsFocused } from "@react-navigation/core";
 import { getSpecificProcessSelector } from "../../redux/selectors";
-import { formatDate } from "../../utils";
+import { capitalizeFirstLetter, formatDate } from "../../utils";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const diaryList = [
   {
@@ -31,34 +32,57 @@ const diaryList = [
   },
 ];
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 50;
 
 const DiaryScreen = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const isFocused = useIsFocused();
+  const [diaryList, setDiaryList] = useState(null);
 
   const dispatch = useDispatch();
 
   const specificProcessSelector = useSelector(getSpecificProcessSelector);
-  console.log(
-    "specificProcessSelector",
-    JSON.stringify(specificProcessSelector)
-  );
+  // console.log(
+  //   "specificProcessSelector",
+  //   JSON.stringify(specificProcessSelector)
+  // );
+
   useEffect(() => {
     try {
       if (isFocused) {
+        setIsLoading(true);
         const formData = {
           status: "active",
           page_index: 1,
           page_size: PAGE_SIZE,
         };
-        dispatch(getSpecificProcess(formData));
+        dispatch(getSpecificProcess(formData)).then((response) => {
+          setIsLoading(false);
+        });
       }
     } catch (error) {
+      setIsLoading(false);
       console.log("Error fetch specific process: " + JSON.stringify(error));
     }
   }, [isFocused]);
+
+  useEffect(() => {
+    if (
+      specificProcessSelector?.process_technical_specific &&
+      specificProcessSelector?.process_technical_specific.length > 0
+    ) {
+      // console.log(
+      //   "specificProcessSelector",
+      //   specificProcessSelector?.process_technical_specific.length
+      // );
+      const newDiaryList = [
+        ...specificProcessSelector?.process_technical_specific,
+      ].sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+      // console.log("newDiaryList", newDiaryList);
+      setDiaryList(newDiaryList);
+    }
+  }, [specificProcessSelector]);
 
   const handleScroll = (event) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
@@ -101,87 +125,92 @@ const DiaryScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
-      <ScrollView showsVerticalScrollIndicator={false} onScroll={handleScroll}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {(!specificProcessSelector?.process_technical_specific ||
-            specificProcessSelector?.process_technical_specific.length ==
-              0) && (
-            <Text
-              style={{
-                color: "#707070",
-                fontSize: 16,
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
-            >
-              Không có nhật ký
-            </Text>
-          )}
-          {specificProcessSelector?.process_technical_specific &&
-            specificProcessSelector.process_technical_specific.map(
-              (diary, index) => (
-                <TouchableRipple
-                  key={index}
-                  rippleColor="rgba(127, 182, 64, 0.2)"
-                  onPress={() =>
-                    diary.status == "active" &&
-                    diary.service_specific.status != "pending_sign" &&
-                    navigation.navigate("DiaryActionScreen", {
-                      diary: diary,
-                    })
-                  }
-                  style={styles.diaryContainer}
-                >
-                  <>
-                    <View style={styles.contentWrapper}>
-                      <Text style={styles.title}>{`${
-                        diary?.process_technical_standard?.plant_season?.plant
-                          ?.name || ""
-                      } ${formatDate(diary?.time_start, 2)} - ${formatDate(
-                        diary?.time_end,
-                        2
-                      )}`}</Text>
-                      <Text style={styles.plantType}>
-                        {diary.is_public ? "Công khai" : "Riêng tư"}
-                      </Text>
-                      <Text style={styles.plantType}>
-                        Khách hàng:{" "}
-                        {diary?.service_specific?.land_renter?.full_name}
-                      </Text>
-                      <Text
-                        style={[
-                          styles.status,
-                          diary.status == "active" &&
-                            diary.service_specific.status == "expired" && {
-                              color: "#74483F",
-                            },
-                          diary.status == "active" &&
-                            diary.service_specific.status == "pending_sign" && {
-                              color: "#00bcd4",
-                            },
-                        ]}
-                      >
-                        {diary.status == "pending" && "Chờ duyệt"}
-                        {diary.status == "active" &&
-                          diary.service_specific.status == "used" &&
-                          "Đang sử dụng"}
-                        {diary.status == "active" &&
-                          diary.service_specific.status == "expired" &&
-                          "Đã hoàn thành"}
-                        {diary.status == "active" &&
-                          diary.service_specific.status == "pending_sign" &&
-                          "Đợi ký"}
-                      </Text>
-                    </View>
-                    <MaterialIcons
-                      name="arrow-forward-ios"
-                      size={24}
-                      color="#707070"
-                    />
-                  </>
-                </TouchableRipple>
-              )
+          {isLoading && <ActivityIndicatorComponent />}
+          {!isLoading &&
+            (!specificProcessSelector?.process_technical_specific ||
+              specificProcessSelector?.process_technical_specific.length ==
+                0) && (
+              <Text
+                style={{
+                  color: "#707070",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                Không có nhật ký
+              </Text>
             )}
+          {!isLoading &&
+            diaryList &&
+            diaryList.length > 0 &&
+            diaryList.map((diary, index) => (
+              <TouchableRipple
+                key={index}
+                rippleColor="rgba(127, 182, 64, 0.2)"
+                onPress={() =>
+                  diary.status == "active" &&
+                  diary.service_specific.status != "pending_sign" &&
+                  navigation.navigate("DiaryActionScreen", {
+                    diary: diary,
+                  })
+                }
+                style={styles.diaryContainer}
+              >
+                <>
+                  <View style={styles.contentWrapper}>
+                    <Text style={styles.title}>{`${
+                      capitalizeFirstLetter(
+                        diary?.process_technical_standard?.plant_season?.plant
+                          ?.name
+                      ) || ""
+                    } ${formatDate(diary?.time_start, 2)} - ${formatDate(
+                      diary?.time_end,
+                      2
+                    )}`}</Text>
+                    <Text style={styles.plantType}>
+                      Hiển thị: {diary.is_public ? "Công khai" : "Riêng tư"}
+                    </Text>
+                    <Text style={styles.plantType}>
+                      {capitalizeFirstLetter(
+                        diary?.service_specific?.booking_land?.land?.name
+                      )}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.status,
+                        diary.status == "active" &&
+                          diary.service_specific.status == "expired" && {
+                            color: "#74483F",
+                          },
+                        diary.status == "active" &&
+                          diary.service_specific.status == "pending_sign" && {
+                            color: "#00bcd4",
+                          },
+                      ]}
+                    >
+                      {diary.status == "pending" && "Chờ duyệt"}
+                      {diary.status == "active" &&
+                        diary.service_specific.status == "used" &&
+                        "Đang sử dụng"}
+                      {diary.status == "active" &&
+                        diary.service_specific.status == "expired" &&
+                        "Đã hoàn thành"}
+                      {diary.status == "active" &&
+                        diary.service_specific.status == "pending_sign" &&
+                        "Đợi ký"}
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="arrow-forward-ios"
+                    size={24}
+                    color="#707070"
+                  />
+                </>
+              </TouchableRipple>
+            ))}
         </View>
       </ScrollView>
       {/* <FAB

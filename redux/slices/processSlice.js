@@ -16,9 +16,9 @@ export const createStandardProcess = createAsyncThunk(
 
 export const getPlantSeason = createAsyncThunk(
   "processSlice/getPlantSeason",
-  async (params, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const data = await api.get(`/plants/plantSeasons`, params);
+      const data = await api.get(`/plants/getPlantSeasonByExpert`);
       return data.data;
     } catch (error) {
       console.log("error", error);
@@ -79,6 +79,23 @@ export const updateSpecificProcess = createAsyncThunk(
       const { formData, processId } = params;
       const data = await api.put(
         `/processes/updateProcessSpecific/${processId}`,
+        formData
+      );
+      return data.data;
+    } catch (error) {
+      console.log("error", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const updateStandardProcess = createAsyncThunk(
+  "processSlice/updateStandardProcess",
+  async (params, { rejectWithValue }) => {
+    try {
+      const { formData, processId } = params;
+      const data = await api.put(
+        `/processes/updateProcessStandard/${processId}`,
         formData
       );
       return data.data;
@@ -177,6 +194,16 @@ export const processSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateSpecificProcess.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(updateStandardProcess.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateStandardProcess.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(updateStandardProcess.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })

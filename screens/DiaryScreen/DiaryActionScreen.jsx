@@ -3,7 +3,7 @@ import DiaryActionTabs from "./DiaryActionTab";
 import { useEffect, useState } from "react";
 import DiaryHistory from "./DiaryHistory";
 import DiarySpecificProcess from "./DiarySpecificProcess";
-import { formatDate } from "../../utils";
+import { capitalizeFirstLetter, formatDate } from "../../utils";
 import DiaryView from "./DiaryView";
 import { useDispatch, useSelector } from "react-redux";
 import { getSpecificProcessDetail } from "../../redux/slices/processSlice";
@@ -42,7 +42,9 @@ const DiaryAction = ({ route, navigation }) => {
     if (diary) {
       fetchSpecificProcessDetail();
       const diaryTitle = `${
-        diary?.process_technical_standard?.plant_season?.plant?.name || ""
+        capitalizeFirstLetter(
+          diary?.process_technical_standard?.plant_season?.plant?.name
+        ) || ""
       } ${formatDate(diary?.time_start, 2)} - ${formatDate(
         diary?.time_end,
         2

@@ -12,6 +12,7 @@ import DropdownComponent from "../../components/DropdownComponent";
 import TextEditor from "../../components/TextEditor";
 import { getMaterial } from "../../redux/slices/materialSlice";
 import { useDispatch } from "react-redux";
+import { capitalizeFirstLetter } from "../../utils";
 
 const PAGE_SIZE = 30;
 
@@ -47,7 +48,7 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
             const optionData = response.payload.metadata.materials.map(
               (material) => ({
                 value: material.material_id,
-                label: material.name,
+                label: capitalizeFirstLetter(material.name),
               })
             );
             console.log("Option data: " + JSON.stringify(optionData));
@@ -170,10 +171,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
           : stage
       )
     );
-    Toast.show({
-      type: "error",
-      text1: "Phải có vật tư của giai đoạn",
-    });
   };
 
   const handleCheckValidateMaterial = () => {
@@ -595,7 +592,6 @@ const PlanToStandardFarmingInput = forwardRef((props, ref) => {
                       styleValue={{ marginTop: 0 }}
                       value={material.materialId}
                       options={materialOptions}
-                      onScroll={handleScrollMaterialOption}
                       setValue={(value) => {
                         setStages((prevStages) =>
                           prevStages.map((stageItem) =>

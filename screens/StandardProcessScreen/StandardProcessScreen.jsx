@@ -11,6 +11,8 @@ import { useState } from "react";
 import { getStandardProcess } from "../../redux/slices/processSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { capitalizeFirstLetter } from "../../utils";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const diaryList = [
   {
@@ -44,7 +46,7 @@ const StandardProcessScreen = ({ navigation }) => {
   const standardProcessList = useSelector(getStandardProcessSelector);
   const loading = useSelector(processLoadingSelector);
 
-  console.log("Standard Process", JSON.stringify(standardProcessList));
+  // console.log("Standard Process", JSON.stringify(standardProcessList));
 
   const fetchStandardprocess = () => {
     try {
@@ -68,7 +70,9 @@ const StandardProcessScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {standardProcessList &&
+          {loading && <ActivityIndicatorComponent />}
+          {!loading &&
+            standardProcessList &&
             standardProcessList?.process_technical_standard &&
             standardProcessList?.process_technical_standard.map(
               (diary, index) => (
@@ -76,10 +80,24 @@ const StandardProcessScreen = ({ navigation }) => {
                   key={index}
                   rippleColor="rgba(127, 182, 64, 0.2)"
                   onPress={
-                    () =>
-                      navigation.navigate("StandardProcessDetail", {
-                        standardProcess: diary,
-                      })
+                    () => {
+                      if (diary.status === "rejected") {
+                        if (diary?.can_edit == true) {
+                          navigation.navigate("UpdateStandardProcessScreen", {
+                            standardProcess: diary,
+                          });
+                        } else {
+                          Toast.show({
+                            type: "error",
+                            text1: "Hãy bắt đầu nhiệm vụ!",
+                          });
+                        }
+                      } else {
+                        navigation.navigate("StandardProcessDetail", {
+                          standardProcess: diary,
+                        });
+                      }
+                    }
                     // console.log("Press")
                   }
                   style={styles.diaryContainer}

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { Text, useWindowDimensions } from "react-native";
 import { Image } from "react-native";
 import { View } from "react-native";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native";
 import { capitalizeFirstLetter, convertImageURL } from "../../utils";
 import { StyleSheet } from "react-native";
+import RenderHTML from "react-native-render-html";
 
 const StandardProcessDetail = ({ route, navigation }) => {
+  const { width } = useWindowDimensions();
   const { standardProcess } = route.params;
   console.log("standardProcessDetail", JSON.stringify(standardProcess));
   const [processDetail, setProcessDetail] = useState(null);
@@ -67,78 +69,77 @@ const StandardProcessDetail = ({ route, navigation }) => {
                 </Text>
               </View>
               <View style={styles.processWrapper}>
-                {standardProcess &&
-                  standardProcess?.process_standard_stage &&
-                  standardProcess?.process_standard_stage.map(
-                    (stage, index) => (
-                      <View
-                        key={`Stage ${index}`}
-                        style={styles.processContainer}
-                      >
-                        <Text style={styles.stageDate}>
-                          Giai đoạn {index + 1}: {stage?.stage_title} - Ngày{" "}
-                          {stage?.time_start} - {stage?.time_end}
-                        </Text>
-                        <View style={styles.stageContainer}>
-                          {stage?.process_standard_stage_content.map(
-                            (step, stepIndex) => (
+                {processDetail &&
+                  processDetail?.process_standard_stage &&
+                  processDetail?.process_standard_stage.map((stage, index) => (
+                    <View
+                      key={`Stage ${index}`}
+                      style={styles.processContainer}
+                    >
+                      <Text style={styles.stageDate}>
+                        Giai đoạn {index + 1}: {stage?.stage_title} - Ngày{" "}
+                        {stage?.time_start} - {stage?.time_end}
+                      </Text>
+                      <View style={styles.stageContainer}>
+                        {stage?.process_standard_stage_content.map(
+                          (step, stepIndex) => (
+                            <View
+                              key={`Step ${stepIndex} in Stage ${index}`}
+                              style={styles.stepContainer}
+                            >
+                              <Text style={styles.stepDate}>
+                                {step?.time_start != step?.time_end
+                                  ? `Ngày ${step?.time_start} - ngày ${step?.time_end}`
+                                  : `Ngày ${step?.time_start}`}
+                                : {step?.title}
+                              </Text>
+                              <RenderHTML
+                                contentWidth={width}
+                                source={{ html: step?.content }}
+                              />
+                            </View>
+                          )
+                        )}
+                      </View>
+                      <Text style={styles.materialTitle}>
+                        Vật tư sử dụng trong giai đoạn:{" "}
+                      </Text>
+                      <View style={styles.materialContainer}>
+                        {stage?.process_standard_stage_material &&
+                          stage?.process_standard_stage_material.length ==
+                            0 && (
+                            <Text style={styles.emptyText}>
+                              Không có vật tư
+                            </Text>
+                          )}
+                        {stage?.process_standard_stage_material &&
+                          stage?.process_standard_stage_material.length > 0 &&
+                          stage?.process_standard_stage_material?.map(
+                            (material, materialIndex) => (
                               <View
-                                key={`Step ${stepIndex} in Stage ${index}`}
-                                style={styles.stepContainer}
+                                style={styles.materialContent}
+                                key={`mateirial ${materialIndex} in Stage ${index}`}
                               >
-                                <Text style={styles.stepDate}>
-                                  {step?.time_start != step?.time_end
-                                    ? `Ngày ${step?.time_start} - ngày ${step?.time_end}`
-                                    : `Ngày ${step?.time_start}`}
-                                  : {step?.title}
-                                </Text>
-                                <Text style={styles.stepContent}>
-                                  {step?.content}
+                                <Image
+                                  style={styles.materialImg}
+                                  source={{
+                                    uri: convertImageURL(
+                                      material?.material?.image_material
+                                    ),
+                                  }}
+                                />
+                                <Text style={styles.materialInfo}>
+                                  {capitalizeFirstLetter(
+                                    material?.material?.name
+                                  )}{" "}
+                                  - Số lượng: {material?.quantity}
                                 </Text>
                               </View>
                             )
                           )}
-                        </View>
-                        <Text style={styles.materialTitle}>
-                          Vật tư sử dụng trong giai đoạn:{" "}
-                        </Text>
-                        <View style={styles.materialContainer}>
-                          {stage?.process_standard_stage_material &&
-                            stage?.process_standard_stage_material.length ==
-                              0 && (
-                              <Text style={styles.emptyText}>
-                                Không có vật tư
-                              </Text>
-                            )}
-                          {stage?.process_standard_stage_material &&
-                            stage?.process_standard_stage_material.length > 0 &&
-                            stage?.process_standard_stage_material?.map(
-                              (material, materialIndex) => (
-                                <View
-                                  style={styles.materialContent}
-                                  key={`mateirial ${materialIndex} in Stage ${index}`}
-                                >
-                                  <Image
-                                    style={styles.materialImg}
-                                    source={{
-                                      uri: convertImageURL(
-                                        material?.material?.image_material
-                                      ),
-                                    }}
-                                  />
-                                  <Text style={styles.materialInfo}>
-                                    {capitalizeFirstLetter(
-                                      material?.material?.name
-                                    )}{" "}
-                                    - Số lượng: {material?.quantity}
-                                  </Text>
-                                </View>
-                              )
-                            )}
-                        </View>
                       </View>
-                    )
-                  )}
+                    </View>
+                  ))}
               </View>
             </>
           )}

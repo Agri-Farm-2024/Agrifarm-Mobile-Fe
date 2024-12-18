@@ -389,9 +389,14 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                             styles.selectItem,
                           booking?.acreage_land_can_used < 1000 &&
                             styles.disabledItem,
+                          new Date(booking?.time_start) > new Date() &&
+                            styles.disabledItem,
                         ]}
                         onPress={() => {
-                          if (booking?.acreage_land_can_used >= 1000) {
+                          if (
+                            booking?.acreage_land_can_used >= 1000 &&
+                            new Date(booking?.time_start) <= new Date()
+                          ) {
                             console.log("select booking", booking.booking_id);
                             setFormInput((prevState) => ({
                               ...prevState,
@@ -410,6 +415,8 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                             booking?.booking_id == formInput?.plot &&
                               styles.selectText,
                             booking?.acreage_land_can_used < 1000 &&
+                              styles.disabledText,
+                            new Date(booking?.time_start) > new Date() &&
                               styles.disabledText,
                           ]}
                         >

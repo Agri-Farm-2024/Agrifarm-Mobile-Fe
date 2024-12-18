@@ -8,7 +8,6 @@ export const getListTaskByUser = createAsyncThunk(
 
     try {
       const data = await api.get(`/tasks/getByUser`);
-      console.log("Slice data", JSON.stringify(data));
       return data.data;
     } catch (error) {
       console.log("error", error);

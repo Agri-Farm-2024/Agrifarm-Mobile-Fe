@@ -3,11 +3,15 @@ import DiaryProgress from "../../components/DiaryProgress";
 import { useEffect, useState } from "react";
 import { Button } from "react-native-paper";
 import ConfirmationModal from "../../components/ConfirmationModal/ConfirmationModal";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import { publicDiary } from "../../redux/slices/processSlice";
+import {
+  getSpecificProcessDetail,
+  publicDiary,
+} from "../../redux/slices/processSlice";
 import QRModal from "./QRModal";
 import { capitalizeFirstLetter } from "../../utils";
+import { getUserSelector } from "../../redux/selectors";
 
 const diaryContent = [
   {
@@ -76,7 +80,20 @@ const DiaryView = ({ diary }) => {
   console.log("Diary View", JSON.stringify(diary));
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const userInfo = useSelector(getUserSelector);
   const dispatch = useDispatch();
+
+  const fetchSpecificProcessDetail = () => {
+    try {
+      if (diary?.process_technical_specific_id) {
+        dispatch(
+          getSpecificProcessDetail(diary?.process_technical_specific_id)
+        );
+      }
+    } catch (error) {
+      console.log("Error fetch specific process ", error);
+    }
+  };
 
   const handlePublicDiary = () => {
     console.log("public diary", diary?.process_technical_specific_id);
@@ -90,6 +107,7 @@ const DiaryView = ({ diary }) => {
                 type: "success",
                 text1: "Đã công khai nhật ký",
               });
+              fetchSpecificProcessDetail();
               setIsModalOpen(false);
             } else {
               Toast.show({
@@ -131,43 +149,47 @@ const DiaryView = ({ diary }) => {
             ? "Mùa thuận"
             : "Mùa nghịch"}
         </Text>
-        <Text style={styles.diaryInfo}>
-          <Text style={{ color: "#707070", fontWeight: "bold" }}>
-            Phạm vi hiển thị:
-          </Text>{" "}
-          {diary.is_public ? "Công khai" : "Riêng tư"}
-        </Text>
-        {!diary.is_public && (
-          <Button
-            mode="contained"
-            style={{
-              width: 200,
-              marginTop: 10,
-              backgroundColor: "#7fb640",
-              borderRadius: 5,
-            }}
-            onPress={() => {
-              setIsModalOpen(true);
-            }}
-          >
-            Công khai nhật ký
-          </Button>
-        )}
-        {diary.is_public && (
-          <Button
-            mode="contained"
-            style={{
-              width: 200,
-              marginTop: 10,
-              backgroundColor: "#7fb640",
-              borderRadius: 5,
-            }}
-            onPress={() => {
-              setIsQRModalOpen(true);
-            }}
-          >
-            Xem QR Code
-          </Button>
+        {userInfo?.role == 4 && (
+          <>
+            <Text style={styles.diaryInfo}>
+              <Text style={{ color: "#707070", fontWeight: "bold" }}>
+                Phạm vi hiển thị:
+              </Text>{" "}
+              {diary.is_public ? "Công khai" : "Riêng tư"}
+            </Text>
+            {!diary.is_public && (
+              <Button
+                mode="contained"
+                style={{
+                  width: 200,
+                  marginTop: 10,
+                  backgroundColor: "#7fb640",
+                  borderRadius: 5,
+                }}
+                onPress={() => {
+                  setIsModalOpen(true);
+                }}
+              >
+                Công khai nhật ký
+              </Button>
+            )}
+            {diary.is_public && (
+              <Button
+                mode="contained"
+                style={{
+                  width: 200,
+                  marginTop: 10,
+                  backgroundColor: "#7fb640",
+                  borderRadius: 5,
+                }}
+                onPress={() => {
+                  setIsQRModalOpen(true);
+                }}
+              >
+                Xem QR Code
+              </Button>
+            )}
+          </>
         )}
       </View>
       <ScrollView

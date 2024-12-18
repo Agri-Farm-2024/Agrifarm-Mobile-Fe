@@ -121,6 +121,34 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                   ?.land?.name
               : "Không có"}
           </Text>
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Giống cây:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {capitalizeFirstLetter(
+                  taskData?.request?.plant_season?.plant?.name || "Không có"
+                )}
+              </Text>
+            </Text>
+          )}
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Tháng bắt đầu:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {`${taskData?.request?.plant_season?.month_start}` ||
+                  "Không có"}
+              </Text>
+            </Text>
+          )}
+          {taskData?.request?.type == "create_process_standard" && (
+            <Text style={styles.modalText}>
+              Thời gian trồng:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {`${taskData?.request?.plant_season?.total_month} tháng` ||
+                  "Không có"}
+              </Text>
+            </Text>
+          )}
           {taskData?.request?.process_technical_specific_stage_content
             ?.process_technical_specific_stage?.process_technical_specific
             ?.service_specific?.plant_season?.plant?.name && (
@@ -295,33 +323,35 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 </Text>
               </TouchableOpacity>
             ) : taskData?.request?.status === "in_progress" ? (
-              <TouchableOpacity
-                onPress={() => {
-                  onClose();
-                  if (taskData?.request?.type === "product_purchase") {
-                    navigation.navigate("ReportTaskPurchaseScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else if (
-                    taskData?.request?.type === "product_puchase_harvest"
-                  ) {
-                    navigation.navigate("ReportTaskPurchaseHarvestScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else if (taskData?.request?.type === "report_land") {
-                    navigation.navigate("ReportTaskLandScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else {
-                    navigation.navigate("ReportTaskScreen", {
-                      taskInfo: taskData,
-                    });
-                  }
-                }}
-                style={styles.closeButton}
-              >
-                <Text style={styles.buttonText}>Báo cáo</Text>
-              </TouchableOpacity>
+              taskData?.request?.type !== "create_process_standard" && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onClose();
+                    if (taskData?.request?.type === "product_purchase") {
+                      navigation.navigate("ReportTaskPurchaseScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else if (
+                      taskData?.request?.type === "product_puchase_harvest"
+                    ) {
+                      navigation.navigate("ReportTaskPurchaseHarvestScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else if (taskData?.request?.type === "report_land") {
+                      navigation.navigate("ReportTaskLandScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else {
+                      navigation.navigate("ReportTaskScreen", {
+                        taskInfo: taskData,
+                      });
+                    }
+                  }}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.buttonText}>Báo cáo</Text>
+                </TouchableOpacity>
+              )
             ) : null}
           </View>
         </View>

@@ -1,16 +1,26 @@
 import { useNavigation } from "@react-navigation/native";
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import {
+  capitalizeFirstLetter,
   convertImageURL,
   formatDate,
   isFutureDate,
   shortenText,
 } from "../utils";
 import { useEffect, useState } from "react";
+import RenderHTML from "react-native-render-html";
 
 const DiaryProgress = ({ diaryProgress, isDiary }) => {
   const navigation = useNavigation();
+  const { width } = useWindowDimensions();
+
   const [diaryRender, setDiaryRender] = useState(null);
   useEffect(() => {
     console.log(
@@ -83,6 +93,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                     isDone: isFutureDate(content?.time_start) ? false : true,
                     process_technical_specific_stage_content_id:
                       content.process_technical_specific_stage_content_id,
+                    canWriteDiary: content?.can_write_dinary,
                   })
                 );
               }
@@ -181,9 +192,27 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                   <Text style={[styles.actionTitle]}>
                     {progressItem.actionTitle}
                   </Text>
-                  <Text style={[styles.actionDescription]}>
-                    {shortenText(progressItem.actionDescription, 100)}
-                  </Text>
+                  {!isDiary && (
+                    <RenderHTML
+                      contentWidth={width}
+                      source={{
+                        html: shortenText(progressItem.actionDescription, 100),
+                      }}
+                    />
+                  )}
+                  {isDiary && (
+                    <Text
+                      style={[styles.actionDescription, { marginBottom: 5 }]}
+                    >
+                      {capitalizeFirstLetter(progressItem.diaryNote, 100)}
+                    </Text>
+                  )}
+                  {isDiary && (
+                    <Text style={[styles.actionDescription]}>
+                      Chất lượng hoạt động canh tác:{" "}
+                      {progressItem?.actionQuality}%
+                    </Text>
+                  )}
                   {progressItem.isDone &&
                     progressItem?.imageReport &&
                     progressItem?.imageReport.length > 0 && (

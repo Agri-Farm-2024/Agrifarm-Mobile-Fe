@@ -356,7 +356,9 @@ const TaskList = ({ taskType }) => {
           ]}
         >
           {item?.request?.type === "create_process_standard"
-            ? "Tạo quy trình kĩ thuật canh tác"
+            ? `Tạo quy trình kĩ thuật chuẩn - ${capitalizeFirstLetter(
+                item?.request?.plant_season?.plant?.name
+              )}`
             : item?.request?.type === "cultivate_process_content"
             ? `Canh tác và ghi nhật ký\n${capitalizeFirstLetter(
                 item?.request?.process_technical_specific_stage_content

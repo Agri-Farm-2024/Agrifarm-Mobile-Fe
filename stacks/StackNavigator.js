@@ -50,6 +50,7 @@ import { ReportTaskLandScreen } from "../screens/MyTaskScreen/ReportTaskLandScre
 import BookingOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/BookingOrderDetail";
 import StandardProcessDetail from "../screens/StandardProcessScreen/StandardProcessDetail";
 import MaterialUsedScreen from "../screens/DiaryScreen/MaterialUsed";
+import UpdateStandardProcessScreen from "../screens/StandardProcessScreen/UpdateStandardProcessScreen";
 
 const Stack = createStackNavigator();
 
@@ -306,6 +307,14 @@ const StackNavigator = () => (
       component={CreateStandardProcessScreen}
       options={{
         headerTitle: "Tạo quy trình chuẩn",
+        headerTitleAlign: "center",
+      }}
+    />
+    <Stack.Screen
+      name="UpdateStandardProcessScreen"
+      component={UpdateStandardProcessScreen}
+      options={{
+        headerTitle: "Cập nhật quy trình chuẩn",
         headerTitleAlign: "center",
       }}
     />

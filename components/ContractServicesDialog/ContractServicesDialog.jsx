@@ -74,7 +74,7 @@ export default function ContractServicesDialog({
             </Text>
             <View>
               <Text style={styles.sectionHeader}>Điều khoản 1: Bao tiêu</Text>
-              <Text style={styles.subSectionHeader}>
+              <Text style={{ fontWeight: "bold" }}>
                 Điều 1: Giá thành sản phẩm bao tiêu
               </Text>
               <Text>
@@ -113,8 +113,8 @@ export default function ContractServicesDialog({
               </Text>
               <Text>
                 {" "}
-                • Khấu trừ nhỏ hơn hoặc bằng 20% giá thu mua tại thời điểm mua
-                dịch vụ.
+                • Khấu trừ 20% so với giá thị trường bao gồm: chi phí lợi nhuận,
+                giá cả thị trường.
               </Text>
               <Text>
                 {" "}
@@ -127,77 +127,163 @@ export default function ContractServicesDialog({
               </Text>
               <Text>
                 {" "}
-                • Sản phẩm đạt chất lượng 95% (khấu trừ 5%), sản phẩm đạt 90%
-                (khấu trừ 10%).
+                • Sản phẩm đạt chất lượng khá (khấu trừ 5%), sản phẩm đạt trung
+                bình (khấu trừ 10%).
               </Text>
               <Text>
                 • <Text style={styles.bold}>Giá dịch vụ bao tiêu:</Text> Bao gồm
                 chi phí nhân công thu hoạch, đóng gói, vận chuyển.
               </Text>
-               <Text>
-                          Bên A hủy hợp đồng lúc báo cáo kiểm định hủy hợp đồng bên hủy phải
-                          bồi thường gấp 3 lần tổng sản lượng dự kiến nhân với giá tiền lúc ký
-                          dịch vụ bao tiêu.
-                        </Text>
-                        <Text>
-                          Bất kể Hợp đồng chấm dứt trong trường hợp nào, Bên B có trách nhiệm
-                          thanh toán đầy đủ các chi phí Bên A đến thời điểm Hợp đồng chấm dứt.
-                        </Text>
-                        <Text>
-                          Trường hợp bất khả kháng (thiên tai) doanh nghiệp sẽ miễn trách
-                          nhiệm thu mua. Đàm phán với
-                        </Text>
-
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 2: Yêu cầu về sản xuất sản phẩm
+              </Text>
+              <Text>
+                Nguồn gốc sản phẩm: Bên A phải đảm bảo được chất lượng nguồn gốc
+                sản phẩm;
+              </Text>
+              <Text>
+                Sử dụng quy trình chuẩn: bên A cam kết sử dụng cách thức quy
+                trình quy chuẩn và quy định pháp luật về sản xuất các sản phẩm
+                trong hợp đồng;
+              </Text>
+              <Text>
+                Thu hoạch: bên A đảm bảo thu hoạch theo đúng quy trình, cách
+                thức theo các quy chuẩn về thu hoạch;
+              </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 3: Kiểm soát chất lượng sản phẩm sau thu hoạch
+              </Text>
+              <Text>
+                • Chuyên viên kiểm tra chất lượng sản phẩm về màu sắc, mùi vị,
+                kích thước và trạng thái sản phẩm sau thu hoạch;
+              </Text>
+              <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                Điều 4: Quyền lợi và nghĩa vụ của các bên
+              </Text>
+              <Text>
+                • Được cung cấp công nghệ, kỹ thuật để thực hiện sản xuất;
+              </Text>
+              <Text>
+                • Được thanh toán theo quy định của Hợp đồng bao tiêu sản phẩm.
+              </Text>
+              <Text>
+                • Bao tiêu theo giá thành tại thời điểm ký hợp đồng dịch vụ.
+              </Text>
+              <Text>
+                • Doanh nghiệp đảm bảo bao tiêu sản phẩm có sử dụng dịch vụ canh
+                tác theo quy trình chuẩn của chuyên viên thuộc doanh nghiệp.
+              </Text>
+              <Text>
+                • Doanh nghiệp phân công chuyên viên phụ trách canh tác cùng bên
+                A để đảm bảo quá trình canh tác đạt chất lượng và hiệu suất cao.
+                Giảm hao hụt chất lượng và lợi nhuận cho cả hai bên.
+              </Text>
+              <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                Điều 5: Chấm dứt điều khoản bao tiêu
+              </Text>
+              <Text>
+                1. Hợp đồng có thể chấm dứt trong các trường hợp sau đây:
+              </Text>
+              <Text>
+                • Bên A hủy hợp đồng lúc báo cáo kiểm định hủy hợp đồng; bên hủy
+                phải bồi thường gấp 3 lần tổng sản lượng dự kiến nhân với giá
+                tiền lúc ký dịch vụ bao tiêu.
+              </Text>
+              <Text>
+                • Bất kể Hợp đồng chấm dứt trong trường hợp nào, Bên B có trách
+                nhiệm thanh toán đầy đủ các chi phí Bên A đến thời điểm Hợp đồng
+                chấm dứt.
+              </Text>
+              <Text>
+                • Các khoản phạt và bồi thường thiệt hại, cùng với nghĩa vụ
+                thanh toán của bất kỳ Bên nào đối với Bên còn lại, phải được
+                thực hiện trong vòng ba mươi (30) ngày kể từ ngày chấm dứt Hợp
+                đồng.
+              </Text>
+              <Text>
+                • Trường hợp bất khả kháng (thiên tai), doanh nghiệp sẽ miễn
+                trách nhiệm thu mua. Doanh nghiệp sẽ đàm phán với khách hàng để
+                hỗ trợ một phần tài chính và phối hợp với chính quyền để có
+                chính sách hỗ trợ.
+              </Text>
               {/* Điều khoản 2 */}
               <Text style={styles.sectionHeader}>
-                Điều khoản 2: Điều kiện thanh toán
+                Điều khoản 2: Bao thiết bị vật tư
+              </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 1: Phạm vi cung cấp vật phẩm thiết bị
               </Text>
               <Text>
-                1. Bên B thanh toán cho Bên A toàn bộ số tiền đã thỏa thuận
-                trong hợp đồng sau khi ký kết hợp đồng.
+                • Doanh nghiệp đảm bảo cung cấp đủ số lượng,phân loại và chất
+                lượng vật tư
               </Text>
               <Text>
-                2. Phương thức thanh toán: Thanh toán bằng chuyển khoản hoặc
-                tiền mặt.
+                • Các vật tư thiết bị được chuyên viên mang đến mảnh vườn theo
+                từng giai đoạn canh tác của quy trình.
               </Text>
               <Text>
-                3. Thời gian thanh toán sẽ được xác định trong các điều khoản bổ
-                sung của hợp đồng.
+                • Thời gian giao vật tư đảm bảo trong quá trình canh tác của
+                khách hàng.
+              </Text>
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 2:Quyền lợi công dân
+              </Text>
+              <Text> • Hàng hóa được thanh toán từ lúc mua dịch vụ.</Text>
+              <Text>
+                {" "}
+                • Các vật tư thiết bị được bảo hành theo định kỳ máy móc..
+              </Text>
+
+              <Text style={{ fontWeight: "bold" }}>
+                Điều 3:Vi phạm hợp đồng
+              </Text>
+              <Text>
+                {" "}
+                • Nếu bên doanh nghiệp không cung cấp đủ vật tư cho người canh
+                tác thì đền bù thiệt hại cho quá trình canh tác của người thuê.
               </Text>
 
               {/* Điều khoản 3 */}
               <Text style={styles.sectionHeader}>
-                Điều khoản 3: Quyền và nghĩa vụ của các bên
+                Điều khoản 3: Đặc quyền quy trình
               </Text>
               <Text>
-                <Text style={styles.bold}>Bên A:</Text>
-                {"\n"}• Đảm bảo chất lượng sản phẩm theo yêu cầu của bên B.
-                {"\n"}• Thực hiện nghĩa vụ cung cấp sản phẩm đúng hạn.
+                {" "}
+                • Gói dịch vụ canh tác sạch VietGAP sẽ được phân công cho nhân
+                viên kỹ thuật để canh tác theo yêu cầu
               </Text>
               <Text>
-                <Text style={styles.bold}>Bên B:</Text>
-                {"\n"}• Thanh toán đầy đủ và đúng hạn theo hợp đồng.
-                {"\n"}• Cung cấp thông tin và hỗ trợ bên A trong quá trình sản
-                xuất.
-              </Text>
-
-              {/* Điều khoản 4 */}
-              <Text style={styles.sectionHeader}>
-                Điều khoản 4: Giải quyết tranh chấp
+                {" "}
+                • Với quy trình chuẩn doanh nghiệp đưa vào sử dụng doanh nghiệp
+                đã dự báo tính toán chất lượng và năng suất cho quy trình đó và
+                định giá thị trường thu mua tại mùa vụ của quy trình ngay lúc
+                mua dịch vụ.
               </Text>
               <Text>
-                1. Mọi tranh chấp phát sinh trong quá trình thực hiện hợp đồng
-                sẽ được giải quyết thông qua thương lượng giữa các bên.
+                {" "}
+                • Expert tạo quy trình chuẩn đảm nhận review khi tạo ra quy
+                trình cụ thể
               </Text>
               <Text>
-                2. Trong trường hợp không thể giải quyết được tranh chấp, các
-                bên có thể yêu cầu giải quyết tranh chấp tại Tòa án có thẩm
-                quyền.
+                {" "}
+                • Quy trình cụ thể để thông báo từng giai đoạn quan trọng cho ng
+                thuê vào 5:00pm trước ngày giai đoạn quan trọng bắt đầu.
+              </Text>
+              <Text>
+                {" "}
+                • Các giai đoạn trong quy trình được hệ thống thông báo nhắc nhở
+                kĩ càng
+              </Text>
+              <Text>
+                {" "}
+                • Khi tạo quy trình kỹ thuật chuẩn có giá vật tư không thay
+                đổi.Trong khi tạo quy trình canh tác cụ thể vẫn giữ nguyên giá
+                vật tư ban đầu dù có phát sinh thêm vấn đề.
               </Text>
 
               {/* Điều khoản 5 */}
               <Text style={styles.sectionHeader}>
-                Điều khoản 5: Điều khoản chung
+                Điều khoản 4: Hiệu lực của hợp đồng
               </Text>
               <Text>
                 1. Hợp đồng này có hiệu lực kể từ ngày ký và được thực hiện

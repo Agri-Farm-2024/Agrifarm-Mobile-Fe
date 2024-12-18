@@ -40,25 +40,25 @@ export default function CreateStandardProcessScreen({ navigation }) {
   const [hasMorePlantSeason, setHasMorePlantSeason] = useState(true);
   const [isLoadingPlantSeason, setIsLoadingPlantSeason] = useState(false);
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <TouchableOpacity
-          style={{ paddingRight: 10 }}
-          onPress={() => {
-            const url = "https://cef.vn/tag/quy-trinh-ky-thuat/";
-            Linking.openURL(url).catch((err) =>
-              console.error("Không thể mở URL: ", err)
-            );
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
-            Tham khảo
-          </Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  // useLayoutEffect(() => {
+  //   navigation.setOptions({
+  //     headerRight: () => (
+  //       <TouchableOpacity
+  //         style={{ paddingRight: 10 }}
+  //         onPress={() => {
+  //           const url = "https://cef.vn/tag/quy-trinh-ky-thuat/";
+  //           Linking.openURL(url).catch((err) =>
+  //             console.error("Không thể mở URL: ", err)
+  //           );
+  //         }}
+  //       >
+  //         <Text style={{ color: "white", fontSize: 16, fontWeight: "bold" }}>
+  //           Tham khảo
+  //         </Text>
+  //       </TouchableOpacity>
+  //     ),
+  //   });
+  // }, [navigation]);
 
   const dispatch = useDispatch();
 
@@ -104,11 +104,11 @@ export default function CreateStandardProcessScreen({ navigation }) {
         type: "error",
         text1: `Tên quy trình không được bỏ trống`,
       });
-    } else if (values.plantSeason == "") {
-      Toast.show({
-        type: "error",
-        text1: `Mùa vụ không được bỏ trống`,
-      });
+      // } else if (values.plantSeason == "") {
+      //   Toast.show({
+      //     type: "error",
+      //     text1: `Mùa vụ không được bỏ trống`,
+      //   });
     } else {
       //format data for api
       const stageData = values.stages.map((stageItem, index) => ({

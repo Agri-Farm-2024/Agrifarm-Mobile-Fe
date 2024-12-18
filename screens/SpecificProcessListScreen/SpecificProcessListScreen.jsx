@@ -8,6 +8,7 @@ import { useState } from "react";
 import { getSpecificProcessSelector } from "../../redux/selectors";
 import { capitalizeFirstLetter, formatDate } from "../../utils";
 import { useIsFocused } from "@react-navigation/core";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const diaryList = [
   {
@@ -35,7 +36,7 @@ const diaryList = [
 const PAGE_SIZE = 30;
 
 const SpecificProcessListScreen = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [pageNumber, setPageNumber] = useState(1);
   const isFocused = useIsFocused();
 
@@ -46,15 +47,18 @@ const SpecificProcessListScreen = ({ navigation }) => {
   useEffect(() => {
     try {
       if (isFocused == true) {
+        setIsLoading(true);
         const formData = {
           page_index: 1,
           page_size: PAGE_SIZE,
         };
-        dispatch(getSpecificProcess(formData)).then((response) =>
-          console.log("response: " + JSON.stringify(response))
-        );
+        dispatch(getSpecificProcess(formData)).then((response) => {
+          console.log("response: " + JSON.stringify(response));
+          setIsLoading(false);
+        });
       }
     } catch (error) {
+      setIsLoading(false);
       console.log("Error getting specific process", error);
     }
   }, [isFocused]);
@@ -101,21 +105,24 @@ const SpecificProcessListScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {(!specificProcessSelector?.process_technical_specific ||
-            specificProcessSelector?.process_technical_specific.length ==
-              0) && (
-            <Text
-              style={{
-                color: "#707070",
-                fontSize: 16,
-                fontWeight: "bold",
-                textAlign: "center",
-              }}
-            >
-              Không có quy trình cụ thể
-            </Text>
-          )}
-          {specificProcessSelector?.process_technical_specific &&
+          {isLoading && <ActivityIndicatorComponent />}
+          {!isLoading &&
+            (!specificProcessSelector?.process_technical_specific ||
+              specificProcessSelector?.process_technical_specific.length ==
+                0) && (
+              <Text
+                style={{
+                  color: "#707070",
+                  fontSize: 16,
+                  fontWeight: "bold",
+                  textAlign: "center",
+                }}
+              >
+                Không có quy trình cụ thể
+              </Text>
+            )}
+          {!isLoading &&
+            specificProcessSelector?.process_technical_specific &&
             specificProcessSelector?.process_technical_specific?.map(
               (diary, index) => (
                 <TouchableRipple

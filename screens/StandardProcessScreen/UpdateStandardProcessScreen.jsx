@@ -519,9 +519,9 @@ const UpdateStandardProcessScreen = ({ route, navigation }) => {
               is_deleted: material?.is_deleted ? true : null,
             })),
             content: stage.process_standard_stage_content.map((content) => ({
-              process_standard_stage_content_id:
-                content?.process_standard_stage_content_id
-                  ? content?.process_standard_stage_content_id
+              process_technical_standard_stage_content_id:
+                content?.process_technical_standard_stage_content_id
+                  ? content?.process_technical_standard_stage_content_id
                   : null,
               title: content.title,
               content: content.content,
@@ -1113,6 +1113,7 @@ const UpdateStandardProcessScreen = ({ route, navigation }) => {
           style={styles.submitBtn}
           mode="contained"
           onPress={() => handleSubmitProcess()}
+          disabled={isLoadingMaterial == true}
         >
           Cập nhật quy trình
         </Button>

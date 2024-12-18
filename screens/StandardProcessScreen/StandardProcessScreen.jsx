@@ -12,6 +12,7 @@ import { getStandardProcess } from "../../redux/slices/processSlice";
 import { useIsFocused } from "@react-navigation/native";
 import { capitalizeFirstLetter } from "../../utils";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
+import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
 const diaryList = [
   {
@@ -69,7 +70,9 @@ const StandardProcessScreen = ({ navigation }) => {
     <SafeAreaView style={{ flex: 1, position: "relative" }}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          {standardProcessList &&
+          {loading && <ActivityIndicatorComponent />}
+          {!loading &&
+            standardProcessList &&
             standardProcessList?.process_technical_standard &&
             standardProcessList?.process_technical_standard.map(
               (diary, index) => (

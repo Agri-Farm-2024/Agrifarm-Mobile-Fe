@@ -309,33 +309,35 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 </Text>
               </TouchableOpacity>
             ) : taskData?.request?.status === "in_progress" ? (
-              <TouchableOpacity
-                onPress={() => {
-                  onClose();
-                  if (taskData?.request?.type === "product_purchase") {
-                    navigation.navigate("ReportTaskPurchaseScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else if (
-                    taskData?.request?.type === "product_puchase_harvest"
-                  ) {
-                    navigation.navigate("ReportTaskPurchaseHarvestScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else if (taskData?.request?.type === "report_land") {
-                    navigation.navigate("ReportTaskLandScreen", {
-                      taskInfo: taskData,
-                    });
-                  } else {
-                    navigation.navigate("ReportTaskScreen", {
-                      taskInfo: taskData,
-                    });
-                  }
-                }}
-                style={styles.closeButton}
-              >
-                <Text style={styles.buttonText}>Báo cáo</Text>
-              </TouchableOpacity>
+              taskData?.request?.type !== "create_process_standard" && (
+                <TouchableOpacity
+                  onPress={() => {
+                    onClose();
+                    if (taskData?.request?.type === "product_purchase") {
+                      navigation.navigate("ReportTaskPurchaseScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else if (
+                      taskData?.request?.type === "product_puchase_harvest"
+                    ) {
+                      navigation.navigate("ReportTaskPurchaseHarvestScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else if (taskData?.request?.type === "report_land") {
+                      navigation.navigate("ReportTaskLandScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else {
+                      navigation.navigate("ReportTaskScreen", {
+                        taskInfo: taskData,
+                      });
+                    }
+                  }}
+                  style={styles.closeButton}
+                >
+                  <Text style={styles.buttonText}>Báo cáo</Text>
+                </TouchableOpacity>
+              )
             ) : null}
           </View>
         </View>

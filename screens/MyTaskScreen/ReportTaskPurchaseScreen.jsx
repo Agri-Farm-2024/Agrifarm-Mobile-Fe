@@ -55,7 +55,7 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
       if (!massPlantExpect || massPlantExpect == "") {
         Toast.show({
           type: "error",
-          text1: "Số lượng không được bỏ trống!",
+          text1: "Khối lượng không được bỏ trống!",
         });
         return;
       }
@@ -68,10 +68,10 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
           return;
         }
       }
-      if (Number(massPlantExpect) <= 0) {
+      if (Number(massPlantExpect) < 0) {
         Toast.show({
           type: "error",
-          text1: "Số lượng phải lớn hơn 1",
+          text1: "Khối lượng tối thiểu là 0",
         });
         return;
       }

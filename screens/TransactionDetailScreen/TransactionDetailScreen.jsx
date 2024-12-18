@@ -136,6 +136,8 @@ const TransactionScreen = () => {
                   ? "Báo cáo vật tư"
                   : transactionData.purpose === "service_purchase_product"
                   ? "Hoàn tiền thu hoạch"
+                  : transactionData.purpose === "cancel_purchase_product"
+                  ? "Hủy thu mua"
                   : "Chưa rõ"}
               </Text>
             </View>

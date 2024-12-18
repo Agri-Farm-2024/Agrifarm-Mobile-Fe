@@ -261,6 +261,7 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
               : "",
             seasonPrice: priceSeason,
             seasonObject: seasonObject,
+            isPurchase: serviceDetail.purchase,
           };
           navigation.navigate("PreviewBuyingServiceScreen", {
             serviceInfo: serviceInfo,

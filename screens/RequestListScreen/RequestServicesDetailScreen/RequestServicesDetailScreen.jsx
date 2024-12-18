@@ -32,6 +32,7 @@ export default function RequestServicesDetailScreen({ route }) {
     area: requestService?.acreage_land,
     timeStart: requestService?.time_start,
     timeEnd: requestService?.time_end,
+    isPurchase: requestService?.service_package?.purchase,
   };
 
   const openModal = (image) => {

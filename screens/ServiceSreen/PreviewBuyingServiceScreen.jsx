@@ -97,6 +97,7 @@ export default function PreviewBuyingServiceScreen({ route, navigation }) {
     timeStart: serviceInfo?.time_start,
     timeEnd: serviceInfo?.time_end,
     landrenter: userSelector,
+    isPurchase: serviceInfo?.isPurchase,
   };
 
   console.log("preview: " + JSON.stringify(contract));

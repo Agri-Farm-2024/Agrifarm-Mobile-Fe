@@ -94,7 +94,7 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             </Text>
           )}
 
-          {taskData?.request?.type === "product_purchase" && (
+          {taskData?.request?.service_specific?.plant_season?.plant?.name && (
             <Text style={styles.modalText}>
               Loại cây:{" "}
               {capitalizeFirstLetter(

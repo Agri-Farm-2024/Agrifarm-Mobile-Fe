@@ -19,7 +19,7 @@ const TransactionScreen = () => {
   const transactionError = useSelector((state) => state.transactionSlice.error);
   const loading = useSelector((state) => state.transactionSlice.loading);
 
-  console.log(JSON.stringify(transactionData));
+  console.log("transactionData: " + JSON.stringify(transactionData));
 
   useEffect(() => {
     if (transactionID) {

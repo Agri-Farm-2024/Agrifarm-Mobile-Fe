@@ -97,7 +97,6 @@ export default function RequestServicesDetailScreen({ route }) {
           </Text>
         </View>
         <Divider style={styles.divider} />
-        <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Mảnh đất sử dụng:</Text>

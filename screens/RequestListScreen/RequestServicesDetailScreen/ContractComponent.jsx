@@ -158,6 +158,20 @@ const ContractComponent = ({ contract, isDownload }) => {
             phí nhân công thu hoạch, đóng gói, vận chuyển.
           </Text>
 
+          <Text>
+            Bên A hủy hợp đồng lúc báo cáo kiểm định hủy hợp đồng bên hủy phải
+            bồi thường gấp 3 lần tổng sản lượng dự kiến nhân với giá tiền lúc ký
+            dịch vụ bao tiêu.
+          </Text>
+          <Text>
+            Bất kể Hợp đồng chấm dứt trong trường hợp nào, Bên B có trách nhiệm
+            thanh toán đầy đủ các chi phí Bên A đến thời điểm Hợp đồng chấm dứt.
+          </Text>
+          <Text>
+            Trường hợp bất khả kháng (thiên tai) doanh nghiệp sẽ miễn trách
+            nhiệm thu mua. Đàm phán với
+          </Text>
+
           {/* Điều khoản 2 */}
           <Text style={styles.sectionHeader}>
             Điều khoản 2: Điều kiện thanh toán

@@ -103,9 +103,23 @@ export default function RequestContractDetailScreen({ navigation, route }) {
         </View>
         <Divider style={styles.divider} />
         <View style={styles.detailContainer}>
+          <Text style={styles.label}>Tiền mỗi tháng:</Text>
+          <Text style={styles.value}>
+            {formatNumber(booking?.price_per_month)} VND
+          </Text>
+        </View>
+        <Divider style={styles.divider} />
+        <Divider style={styles.divider} />
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Tiền cọc:</Text>
+          <Text style={styles.value}>
+            {formatNumber(booking?.price_deposit)} VND
+          </Text>
+        </View>
+        <Divider style={styles.divider} />
+        <View style={styles.detailContainer}>
           <Text style={styles.label}>Trạng thái:</Text>
           <Text style={styles.value}>
-            {" "}
             {booking?.status === "completed" && "Đang hiệu lực"}
             {booking?.status === "pending" && "Đang xử lý"}
             {booking?.status === "pending_contract" && "Chờ phê duyệt"}

@@ -89,12 +89,14 @@ export default function RequestServicesDetailScreen({ route }) {
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Ngày bắt đầu:</Text>
+          <Text style={styles.label}>Thời gian dịch vụ:</Text>
           <Text style={styles.value}>
             {" "}
-            {formatDateToDDMMYYYY(requestService?.time_start)}
+            {formatDateToDDMMYYYY(requestService?.time_start)} -{" "}
+            {formatDateToDDMMYYYY(requestService?.time_end)}
           </Text>
         </View>
+        <Divider style={styles.divider} />
         <Divider style={styles.divider} />
 
         <View style={styles.detailContainer}>

@@ -13,11 +13,7 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { Button, TextInput } from "react-native-paper";
 import TextEditor from "../../components/TextEditor";
 import { capitalizeFirstLetter, formatDate } from "../../utils";
-import {
-  approveSpecificProcess,
-  getPlantSeason,
-  updateSpecificProcess,
-} from "../../redux/slices/processSlice";
+import { updateStandardProcess } from "../../redux/slices/processSlice";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import DropdownComponent from "../../components/DropdownComponent";
 import { getMaterial } from "../../redux/slices/materialSlice";
@@ -25,7 +21,7 @@ import { getPlantSeasonList } from "../../redux/slices/plantSlice";
 
 const PAGE_SIZE = 30;
 
-const UpdateStandardProcessScreen = ({ route }) => {
+const UpdateStandardProcessScreen = ({ route, navigation }) => {
   const { standardProcess } = route.params;
   //   console.log("standardProcess outside", JSON.stringify(standardProcess));
 
@@ -169,8 +165,8 @@ const UpdateStandardProcessScreen = ({ route }) => {
         stage_title: "",
         process_standard_stage_content: [
           {
-            time_start: new Date().toISOString(),
-            time_end: new Date().toISOString(),
+            time_start: "",
+            time_end: "",
             title: "",
             content: "",
           },
@@ -200,8 +196,8 @@ const UpdateStandardProcessScreen = ({ route }) => {
               process_standard_stage_content: [
                 ...stage.process_standard_stage_content,
                 {
-                  time_start: new Date().toISOString(),
-                  time_end: new Date().toISOString(),
+                  time_start: "",
+                  time_end: "",
                   title: "",
                   content: "",
                 },
@@ -232,6 +228,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
   };
 
   const removeInputBlock = (stageId, index) => {
+    console.log("Removing input block");
     const lengthOfThisStage = stages
       .filter(
         (stage) => stage.process_technical_standard_stage_id === stageId
@@ -240,21 +237,41 @@ const UpdateStandardProcessScreen = ({ route }) => {
         (contentItem) => !contentItem?.is_deleted
       ).length;
     if (lengthOfThisStage > 1) {
+      let existIndex = 0;
       setStages((prevStages) =>
-        prevStages.map((stage) =>
-          stage.process_technical_standard_stage_id === stageId
-            ? {
-                ...stage,
-                process_standard_stage_content:
-                  stage.process_standard_stage_content.map(
-                    (stageContent, idx) =>
-                      idx == index
-                        ? { ...stageContent, is_deleted: true }
-                        : stageContent
-                  ),
-              }
-            : stage
-        )
+        prevStages.map((stage) => {
+          if (stage.process_technical_standard_stage_id === stageId) {
+            return {
+              ...stage,
+              process_standard_stage_content:
+                stage.process_standard_stage_content.map(
+                  (stageContent, idx) => {
+                    console.log("call back");
+                    if (!stageContent?.is_deleted) {
+                      if (existIndex == index) {
+                        console.log(
+                          "exist index",
+                          existIndex,
+                          stageContent,
+                          index
+                        );
+                        existIndex = existIndex + 1;
+                        // return stageContent;
+                        return { ...stageContent, is_deleted: true };
+                      } else {
+                        existIndex = existIndex + 1;
+                        return stageContent;
+                      }
+                    } else {
+                      return stageContent;
+                    }
+                  }
+                ),
+            };
+          } else {
+            return stage;
+          }
+        })
       );
     } else {
       Toast.show({
@@ -265,19 +282,28 @@ const UpdateStandardProcessScreen = ({ route }) => {
   };
 
   const removeMaterialBlock = (stageId, index) => {
+    let existIndex = 0;
     setStages((prevStages) =>
       prevStages.map((stage) =>
         stage.process_technical_standard_stage_id === stageId
           ? {
               ...stage,
               process_standard_stage_material:
-                stage.process_standard_stage_material
-                  .filter((material) => !material?.is_deleted)
-                  .map((materialItem, idx) =>
-                    idx == index
-                      ? { ...materialItem, is_deleted: true }
-                      : materialItem
-                  ),
+                stage.process_standard_stage_material.map(
+                  (materialItem, idx) => {
+                    if (!materialItem?.is_deleted) {
+                      if (existIndex == index) {
+                        existIndex = existIndex + 1;
+                        return { ...materialItem, is_deleted: true };
+                      } else {
+                        existIndex = existIndex + 1;
+                        return materialItem;
+                      }
+                    } else {
+                      return materialItem;
+                    }
+                  }
+                ),
             }
           : stage
       )
@@ -364,32 +390,34 @@ const UpdateStandardProcessScreen = ({ route }) => {
             });
             isFalse = true;
           } else {
-            stage.process_standard_stage_content.map((input, idxInput) => {
-              if (input) {
-                if (!input.title.trim()) {
-                  Toast.show({
-                    type: "error",
-                    text1: `Giai đoạn ${idxStage + 1}`,
-                    text2: `Ô "Tiêu đề" ở bước ${
-                      idxInput + 1
-                    } không được để trống`,
-                  });
-                  isFalse = true;
-                }
+            stage.process_standard_stage_content
+              .filter((item) => !item?.is_deleted)
+              .map((input, idxInput) => {
+                if (input) {
+                  if (!input.title.trim()) {
+                    Toast.show({
+                      type: "error",
+                      text1: `Giai đoạn ${idxStage + 1}`,
+                      text2: `Ô "Tiêu đề" ở bước ${
+                        idxInput + 1
+                      } không được để trống`,
+                    });
+                    isFalse = true;
+                  }
 
-                // Check if 'content' field is empty
-                else if (!input.content.trim()) {
-                  Toast.show({
-                    type: "error",
-                    text1: `Giai đoạn ${idxStage + 1}`,
-                    text2: `Ô "Nội dung" ở bước ${
-                      idxInput + 1
-                    } không được để trống`,
-                  });
-                  isFalse = true;
+                  // Check if 'content' field is empty
+                  else if (!input.content.trim()) {
+                    Toast.show({
+                      type: "error",
+                      text1: `Giai đoạn ${idxStage + 1}`,
+                      text2: `Ô "Nội dung" ở bước ${
+                        idxInput + 1
+                      } không được để trống`,
+                    });
+                    isFalse = true;
+                  }
                 }
-              }
-            });
+              });
           }
         }
       });
@@ -400,12 +428,16 @@ const UpdateStandardProcessScreen = ({ route }) => {
         if (!isFalse) {
           // check time between stage
           if (idxStage > 0) {
-            const lastToPrev =
-              stages[idxStage - 1].process_standard_stage_content[
-                stages[idxStage - 1].process_standard_stage_content.length - 1
-              ].time_end;
-            const firstPresentTo =
-              stage.process_standard_stage_content[0].time_start;
+            const lastToPrev = stages[
+              idxStage - 1
+            ].process_standard_stage_content
+              .slice()
+              .reverse()
+              .find((item) => !item.is_deleted).time_end;
+
+            const firstPresentTo = stage.process_standard_stage_content
+              .slice()
+              .find((item) => !item.is_deleted).time_start;
             if (firstPresentTo <= lastToPrev) {
               Toast.show({
                 type: "error",
@@ -432,10 +464,12 @@ const UpdateStandardProcessScreen = ({ route }) => {
                 isFalse = true;
               }
 
-              //   Check from date between input of Stage
+              //   Check from time between input of Stage
               if (idxInput > 0) {
                 const lastToInputPrev =
-                  stage.process_standard_stage_content[idxInput - 1].time_end;
+                  stage.process_standard_stage_content.filter(
+                    (item) => !item?.is_deleted
+                  )[idxInput - 1].time_end;
                 const firstFromInputPresent = input.time_start;
 
                 if (firstFromInputPresent <= lastToInputPrev) {
@@ -462,44 +496,45 @@ const UpdateStandardProcessScreen = ({ route }) => {
     const isValidInput = handleCheckValidateDate();
     if (!isValidInput) {
       const formData = {
-        // time_start: specificProcess.time_start,
-        // time_end: specificProcess.time_end,
-        stage: stages.map((stage) => ({
-          process_technical_standard_stage_id:
-            stage.process_technical_standard_stage_id.includes("-")
-              ? stage.process_technical_standard_stage_id
-              : null,
-          stage_title: stage.stage_title,
-          stage_numberic_order: stage?.stage_numberic_order
-            ? stage.stage_numberic_order
-            : null,
-          time_start: stage.time_start,
-          time_end: stage.time_end,
-          material: stage.process_standard_stage_material.map((material) => ({
-            process_technical_standard_stage_material_id:
-              material?.process_technical_standard_stage_material_id
-                ? material?.process_technical_standard_stage_material_id
+        name: processInfo?.name,
+        stage: stages.map((stage) => {
+          return {
+            process_technical_standard_stage_id:
+              stage.process_technical_standard_stage_id.toString().includes("-")
+                ? stage.process_technical_standard_stage_id
                 : null,
-            material_id: material?.material_id,
-            quantity: material?.quantity,
-            is_deleted: material?.is_deleted ? true : null,
-          })),
-          content: stage.process_standard_stage_content.map((content) => ({
-            process_standard_stage_content_id:
-              content?.process_standard_stage_content_id
-                ? content?.process_standard_stage_content_id
-                : null,
-            title: content.title,
-            content: content.content,
-            content_numberic_order: content?.content_numberic_order
-              ? content?.content_numberic_order
+            stage_title: stage.stage_title,
+            stage_numberic_order: stage?.stage_numberic_order
+              ? stage.stage_numberic_order
               : null,
-            time_start: content.time_start,
-            time_end: content.time_end,
-            is_deleted: content?.is_deleted ? true : null,
-          })),
-          is_deleted: stage?.is_deleted ? true : null,
-        })),
+            time_start: stage.time_start,
+            time_end: stage.time_end,
+            material: stage.process_standard_stage_material.map((material) => ({
+              process_technical_standard_stage_material_id:
+                material?.process_technical_standard_stage_material_id
+                  ? material?.process_technical_standard_stage_material_id
+                  : null,
+              material_id: material?.material_id,
+              quantity: material?.quantity,
+              is_deleted: material?.is_deleted ? true : null,
+            })),
+            content: stage.process_standard_stage_content.map((content) => ({
+              process_standard_stage_content_id:
+                content?.process_standard_stage_content_id
+                  ? content?.process_standard_stage_content_id
+                  : null,
+              title: content.title,
+              content: content.content,
+              content_numberic_order: content?.content_numberic_order
+                ? content?.content_numberic_order
+                : null,
+              time_start: content.time_start,
+              time_end: content.time_end,
+              is_deleted: content?.is_deleted ? true : null,
+            })),
+            is_deleted: stage?.is_deleted ? true : null,
+          };
+        }),
       };
       console.log("form data submit", JSON.stringify(formData));
       const processId = standardProcess.process_technical_standard_id;
@@ -507,42 +542,22 @@ const UpdateStandardProcessScreen = ({ route }) => {
         formData: formData,
         processId: processId,
       };
-      //   dispatch(updateSpecificProcess(params)).then((updateResponse) => {
-      //     console.log("Update response", JSON.stringify(updateResponse));
-      //     if (updateResponse.payload.statusCode != 200) {
-      //       Toast.show({
-      //         type: "error",
-      //         text1: "Cập nhật quy trình không thành công!",
-      //       });
-      //     }
-      //     if (updateResponse.payload.statusCode == 200) {
-      //       dispatch(approveSpecificProcess(processId)).then(
-      //         (approveResponse) => {
-      //           console.log("Approve response", approveResponse);
-      //           if (approveResponse.payload.statusCode != 200) {
-      //             if (approveResponse.payload.statusCode == 400) {
-      //               Toast.show({
-      //                 type: "error",
-      //                 text1: approveResponse?.payload?.message,
-      //               });
-      //             } else {
-      //               Toast.show({
-      //                 type: "error",
-      //                 text1: "Cập nhật quy trình không thành công!",
-      //               });
-      //             }
-      //           }
-      //           if (approveResponse.payload.statusCode == 200) {
-      //             Toast.show({
-      //               type: "success",
-      //               text1: "Cập nhật quy trình thành công!",
-      //             });
-      //             navigation.goBack();
-      //           }
-      //         }
-      //       );
-      //     }
-      //   });
+      dispatch(updateStandardProcess(params)).then((updateResponse) => {
+        console.log("Update response", JSON.stringify(updateResponse));
+        if (updateResponse.payload.statusCode != 200) {
+          Toast.show({
+            type: "error",
+            text1: "Cập nhật quy trình không thành công!",
+          });
+        }
+        if (updateResponse.payload.statusCode == 200) {
+          Toast.show({
+            type: "success",
+            text1: "Cập nhật quy trình thành công!",
+          });
+          navigation.goBack();
+        }
+      });
     }
   };
   return (
@@ -558,7 +573,8 @@ const UpdateStandardProcessScreen = ({ route }) => {
               activeOutlineColor="#7FB640"
               textColor="#707070"
               inputMode="text"
-              value={processInfo?.name || ""}
+              readOnly
+              value={capitalizeFirstLetter(processInfo?.name) || ""}
               onChange={(value) =>
                 setProcessInfo((prevState) => ({ ...prevState, name: value }))
               }
@@ -708,6 +724,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
                               style={[styles.input, styles.marginHorizontal]}
                               value={input.time_start + ""}
                               onChangeText={(text) => {
+                                let existIndex = 0;
                                 setStages((prevStages) =>
                                   prevStages.map((stageItem) =>
                                     stageItem.process_technical_standard_stage_id ===
@@ -715,18 +732,26 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                       ? {
                                           ...stageItem,
                                           process_standard_stage_content:
-                                            stageItem.process_standard_stage_content
-                                              .filter(
-                                                (item) => !item?.is_deleted
-                                              )
-                                              .map((inputItem, idx) =>
-                                                idx === inputIndex
-                                                  ? {
+                                            stageItem.process_standard_stage_content.map(
+                                              (inputItem, idx) => {
+                                                if (!inputItem?.is_deleted) {
+                                                  if (
+                                                    existIndex == inputIndex
+                                                  ) {
+                                                    existIndex = existIndex + 1;
+                                                    return {
                                                       ...inputItem,
                                                       time_start: text,
-                                                    }
-                                                  : inputItem
-                                              ),
+                                                    };
+                                                  } else {
+                                                    existIndex = existIndex + 1;
+                                                    return inputItem;
+                                                  }
+                                                } else {
+                                                  return inputItem;
+                                                }
+                                              }
+                                            ),
                                         }
                                       : stageItem
                                   )
@@ -744,6 +769,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
                               style={[styles.input, styles.marginHorizontal]}
                               value={input.time_end + ""}
                               onChangeText={(text) => {
+                                let existIndex = 0;
                                 setStages((prevStages) =>
                                   prevStages.map((stageItem) =>
                                     stageItem.process_technical_standard_stage_id ===
@@ -751,18 +777,26 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                       ? {
                                           ...stageItem,
                                           process_standard_stage_content:
-                                            stageItem.process_standard_stage_content
-                                              .filter(
-                                                (item) => !item?.is_deleted
-                                              )
-                                              .map((inputItem, idx) =>
-                                                idx === inputIndex
-                                                  ? {
+                                            stageItem.process_standard_stage_content.map(
+                                              (inputItem, idx) => {
+                                                if (!inputItem?.is_deleted) {
+                                                  if (
+                                                    existIndex == inputIndex
+                                                  ) {
+                                                    existIndex = existIndex + 1;
+                                                    return {
                                                       ...inputItem,
                                                       time_end: text,
-                                                    }
-                                                  : inputItem
-                                              ),
+                                                    };
+                                                  } else {
+                                                    existIndex = existIndex + 1;
+                                                    return inputItem;
+                                                  }
+                                                } else {
+                                                  return inputItem;
+                                                }
+                                              }
+                                            ),
                                         }
                                       : stageItem
                                   )
@@ -819,6 +853,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
                             style={[styles.input, styles.marginVertical]}
                             value={input.title}
                             onChangeText={(text) => {
+                              let existIndex = 0;
                               setStages((prevStages) =>
                                 prevStages.map((stageItem) =>
                                   stageItem.process_technical_standard_stage_id ===
@@ -826,16 +861,24 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                     ? {
                                         ...stageItem,
                                         process_standard_stage_content:
-                                          stageItem.process_standard_stage_content
-                                            .filter(
-                                              (stageContent) =>
-                                                !stageContent?.is_deleted
-                                            )
-                                            .map((inputItem, idx) =>
-                                              idx === inputIndex
-                                                ? { ...inputItem, title: text }
-                                                : inputItem
-                                            ),
+                                          stageItem.process_standard_stage_content.map(
+                                            (inputItem, idx) => {
+                                              if (!inputItem?.is_deleted) {
+                                                if (existIndex == inputIndex) {
+                                                  existIndex = existIndex + 1;
+                                                  return {
+                                                    ...inputItem,
+                                                    title: text,
+                                                  };
+                                                } else {
+                                                  existIndex = existIndex + 1;
+                                                  return inputItem;
+                                                }
+                                              } else {
+                                                return inputItem;
+                                              }
+                                            }
+                                          ),
                                       }
                                     : stageItem
                                 )
@@ -862,24 +905,39 @@ const UpdateStandardProcessScreen = ({ route }) => {
                               value={input.content}
                               onValueChange={(text) => {
                                 console.log("Text change", text);
-                                let newArr = [...stages];
 
-                                let updatedStage = { ...newArr[indexStage] };
-
-                                let updatedContent = [
-                                  ...updatedStage.process_standard_stage_content,
-                                ];
-
-                                updatedContent[inputIndex] = {
-                                  ...updatedContent[inputIndex],
-                                  content: text,
-                                };
-
-                                updatedStage.process_standard_stage_content =
-                                  updatedContent;
-
-                                newArr[indexStage] = updatedStage;
-                                setStages([...newArr]);
+                                let existIndex = 0;
+                                setStages((prevStages) =>
+                                  prevStages.map((stageItem) =>
+                                    stageItem.process_technical_standard_stage_id ===
+                                    stage.process_technical_standard_stage_id
+                                      ? {
+                                          ...stageItem,
+                                          process_standard_stage_content:
+                                            stageItem.process_standard_stage_content.map(
+                                              (inputItem, idx) => {
+                                                if (!inputItem?.is_deleted) {
+                                                  if (
+                                                    existIndex == inputIndex
+                                                  ) {
+                                                    existIndex = existIndex + 1;
+                                                    return {
+                                                      ...inputItem,
+                                                      content: text,
+                                                    };
+                                                  } else {
+                                                    existIndex = existIndex + 1;
+                                                    return inputItem;
+                                                  }
+                                                } else {
+                                                  return inputItem;
+                                                }
+                                              }
+                                            ),
+                                        }
+                                      : stageItem
+                                  )
+                                );
                               }}
                               placeholder="Nội dung"
                             />
@@ -890,7 +948,9 @@ const UpdateStandardProcessScreen = ({ route }) => {
                     <Text style={styles.sub_header}>
                       Vật tư cần cho giai đoạn {indexStage + 1}:
                     </Text>
-                    {stage.process_standard_stage_material.length == 0 && (
+                    {stage.process_standard_stage_material.filter(
+                      (item) => !item?.is_deleted
+                    ).length == 0 && (
                       <Button
                         style={{
                           borderRadius: 7,
@@ -923,6 +983,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                 value={material.material_id}
                                 options={materialOptions}
                                 setValue={(value) => {
+                                  let existIndex = 0;
                                   setStages((prevStages) =>
                                     prevStages.map((stageItem) =>
                                       stageItem.process_technical_standard_stage_id ===
@@ -930,19 +991,31 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                         ? {
                                             ...stageItem,
                                             process_standard_stage_material:
-                                              stageItem.process_standard_stage_material
-                                                .filter(
-                                                  (materialItem) =>
+                                              stageItem.process_standard_stage_material.map(
+                                                (materialItem, idx) => {
+                                                  if (
                                                     !materialItem?.is_deleted
-                                                )
-                                                .map((materialItem, idx) =>
-                                                  idx === materialIndex
-                                                    ? {
+                                                  ) {
+                                                    if (
+                                                      existIndex ==
+                                                      materialIndex
+                                                    ) {
+                                                      existIndex =
+                                                        existIndex + 1;
+                                                      return {
                                                         ...materialItem,
                                                         material_id: value,
-                                                      }
-                                                    : materialItem
-                                                ),
+                                                      };
+                                                    } else {
+                                                      existIndex =
+                                                        existIndex + 1;
+                                                      return materialItem;
+                                                    }
+                                                  } else {
+                                                    return materialItem;
+                                                  }
+                                                }
+                                              ),
                                           }
                                         : stageItem
                                     )
@@ -958,6 +1031,7 @@ const UpdateStandardProcessScreen = ({ route }) => {
                               inputMode="decimal"
                               value={material.quantity + ""}
                               onChangeText={(text) => {
+                                let existIndex = 0;
                                 setStages((prevStages) =>
                                   prevStages.map((stageItem) =>
                                     stageItem.process_technical_standard_stage_id ===
@@ -965,19 +1039,26 @@ const UpdateStandardProcessScreen = ({ route }) => {
                                       ? {
                                           ...stageItem,
                                           process_standard_stage_material:
-                                            stageItem.process_standard_stage_material
-                                              .filter(
-                                                (materialItem) =>
-                                                  !materialItem?.is_deleted
-                                              )
-                                              .map((materialItem, idx) =>
-                                                idx === materialIndex
-                                                  ? {
+                                            stageItem.process_standard_stage_material.map(
+                                              (materialItem, idx) => {
+                                                if (!materialItem?.is_deleted) {
+                                                  if (
+                                                    existIndex == materialIndex
+                                                  ) {
+                                                    existIndex = existIndex + 1;
+                                                    return {
                                                       ...materialItem,
                                                       quantity: text,
-                                                    }
-                                                  : materialItem
-                                              ),
+                                                    };
+                                                  } else {
+                                                    existIndex = existIndex + 1;
+                                                    return materialItem;
+                                                  }
+                                                } else {
+                                                  return materialItem;
+                                                }
+                                              }
+                                            ),
                                         }
                                       : stageItem
                                   )

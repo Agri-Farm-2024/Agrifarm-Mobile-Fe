@@ -279,6 +279,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         (contentItem) => !contentItem?.is_deleted
       ).length;
     if (lengthOfThisStage > 1) {
+      let existIndex = 0;
       setStages((prevStages) =>
         prevStages.map((stage) =>
           stage.process_technical_specific_stage_id === stageId
@@ -286,10 +287,19 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                 ...stage,
                 process_technical_specific_stage_content:
                   stage.process_technical_specific_stage_content.map(
-                    (stageContent, idx) =>
-                      idx == index
-                        ? { ...stageContent, is_deleted: true }
-                        : stageContent
+                    (stageContent, idx) => {
+                      if (!stageContent?.is_deleted) {
+                        if (existIndex == index) {
+                          existIndex = existIndex + 1;
+                          return { ...stageContent, is_deleted: true };
+                        } else {
+                          existIndex = existIndex + 1;
+                          return stageContent;
+                        }
+                      } else {
+                        return stageContent;
+                      }
+                    }
                   ),
               }
             : stage
@@ -316,19 +326,28 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
   };
 
   const removeMaterialBlock = (stageId, index) => {
+    let existIndex = 0;
     setStages((prevStages) =>
       prevStages.map((stage) =>
         stage.process_technical_specific_stage_id === stageId
           ? {
               ...stage,
               process_technical_specific_stage_material:
-                stage.process_technical_specific_stage_material
-                  .filter((material) => !material?.is_deleted)
-                  .map((materialItem, idx) =>
-                    idx == index
-                      ? { ...materialItem, is_deleted: true }
-                      : materialItem
-                  ),
+                stage.process_technical_specific_stage_material.map(
+                  (materialItem, idx) => {
+                    if (!materialItem?.is_deleted) {
+                      if (existIndex == index) {
+                        existIndex = existIndex + 1;
+                        return { ...materialItem, is_deleted: true };
+                      } else {
+                        existIndex = existIndex + 1;
+                        return materialItem;
+                      }
+                    } else {
+                      return materialItem;
+                    }
+                  }
+                ),
             }
           : stage
       )
@@ -415,8 +434,9 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
             });
             isFalse = true;
           } else {
-            stage.process_technical_specific_stage_content.map(
-              (input, idxInput) => {
+            stage.process_technical_specific_stage_content
+              .filter((item) => !item?.is_deleted)
+              .map((input, idxInput) => {
                 if (input) {
                   if (!input.title.trim()) {
                     Toast.show({
@@ -441,8 +461,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                     isFalse = true;
                   }
                 }
-              }
-            );
+              });
           }
         }
       });
@@ -453,13 +472,24 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         if (!isFalse) {
           // check time between stage
           if (idxStage > 0) {
-            const lastToPrev =
-              stages[idxStage - 1].process_technical_specific_stage_content[
-                stages[idxStage - 1].process_technical_specific_stage_content
-                  .length - 1
-              ].time_end;
+            // const lastToPrev =
+            //   stages[idxStage - 1].process_technical_specific_stage_content[
+            //     stages[idxStage - 1].process_technical_specific_stage_content
+            //       .length - 1
+            //   ].time_end;
+            const lastToPrev = stages[
+              idxStage - 1
+            ].process_technical_specific_stage_content
+              .slice()
+              .reverse()
+              .find((item) => !item.is_deleted).time_end;
+
+            // const firstPresentTo =
+            //   stage.process_technical_specific_stage_content[0].time_start;
             const firstPresentTo =
-              stage.process_technical_specific_stage_content[0].time_start;
+              stage.process_technical_specific_stage_content
+                .slice()
+                .find((item) => !item.is_deleted).time_start;
             if (new Date(firstPresentTo) <= new Date(lastToPrev)) {
               Toast.show({
                 type: "error",
@@ -473,8 +503,9 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
               isFalse = true;
             }
           }
-          stage.process_technical_specific_stage_content.map(
-            (input, idxInput) => {
+          stage.process_technical_specific_stage_content
+            .filter((item) => !item?.is_deleted)
+            .map((input, idxInput) => {
               //   Check validate from and to
               if (new Date(input.time_start) > new Date(input.time_end)) {
                 Toast.show({
@@ -488,8 +519,9 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
               //   Check from date between input of Stage
               if (idxInput > 0) {
                 const lastToInputPrev =
-                  stage.process_technical_specific_stage_content[idxInput - 1]
-                    .time_end;
+                  stage.process_technical_specific_stage_content.filter(
+                    (item) => !item?.is_deleted
+                  )[idxInput - 1].time_end;
                 const firstFromInputPresent = input.time_start;
 
                 if (
@@ -505,8 +537,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                   isFalse = true;
                 }
               }
-            }
-          );
+            });
         }
       });
 
@@ -531,7 +562,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         time_end: specificProcess.time_end,
         stage: stages.map((stage) => ({
           process_technical_specific_stage_id:
-            stage.process_technical_specific_stage_id.includes("-")
+            stage.process_technical_specific_stage_id.toString().includes("-")
               ? stage.process_technical_specific_stage_id
               : null,
           stage_title: stage.stage_title,
@@ -576,42 +607,42 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         formData: formData,
         processId: processId,
       };
-      dispatch(updateSpecificProcess(params)).then((updateResponse) => {
-        console.log("Update response", JSON.stringify(updateResponse));
-        if (updateResponse.payload.statusCode != 200) {
-          Toast.show({
-            type: "error",
-            text1: "Duyệt quy trình không thành công!",
-          });
-        }
-        if (updateResponse.payload.statusCode == 200) {
-          dispatch(approveSpecificProcess(processId)).then(
-            (approveResponse) => {
-              console.log("Approve response", approveResponse);
-              if (approveResponse.payload.statusCode != 200) {
-                if (approveResponse.payload.statusCode == 400) {
-                  Toast.show({
-                    type: "error",
-                    text1: approveResponse?.payload?.message,
-                  });
-                } else {
-                  Toast.show({
-                    type: "error",
-                    text1: "Duyệt quy trình không thành công!",
-                  });
-                }
-              }
-              if (approveResponse.payload.statusCode == 200) {
-                Toast.show({
-                  type: "success",
-                  text1: "Duyệt quy trình thành công!",
-                });
-                navigation.goBack();
-              }
-            }
-          );
-        }
-      });
+      // dispatch(updateSpecificProcess(params)).then((updateResponse) => {
+      //   console.log("Update response", JSON.stringify(updateResponse));
+      //   if (updateResponse.payload.statusCode != 200) {
+      //     Toast.show({
+      //       type: "error",
+      //       text1: "Duyệt quy trình không thành công!",
+      //     });
+      //   }
+      //   if (updateResponse.payload.statusCode == 200) {
+      //     dispatch(approveSpecificProcess(processId)).then(
+      //       (approveResponse) => {
+      //         console.log("Approve response", approveResponse);
+      //         if (approveResponse.payload.statusCode != 200) {
+      //           if (approveResponse.payload.statusCode == 400) {
+      //             Toast.show({
+      //               type: "error",
+      //               text1: approveResponse?.payload?.message,
+      //             });
+      //           } else {
+      //             Toast.show({
+      //               type: "error",
+      //               text1: "Duyệt quy trình không thành công!",
+      //             });
+      //           }
+      //         }
+      //         if (approveResponse.payload.statusCode == 200) {
+      //           Toast.show({
+      //             type: "success",
+      //             text1: "Duyệt quy trình thành công!",
+      //           });
+      //           navigation.goBack();
+      //         }
+      //       }
+      //     );
+      //   }
+      // });
     }
   };
   return (
@@ -844,7 +875,6 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                   display="spinner"
                                   onChange={(event, selectedDate) => {
                                     console.log(selectedDate);
-
                                     setVisibleDatePicker((prevState) =>
                                       prevState.map((stageItem, index) =>
                                         index == indexStage
@@ -864,24 +894,52 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                       )
                                     );
 
+                                    let existIndex = 0;
+                                    let existStageIndex = 0;
                                     const newArr = stages.map(
-                                      (stageItem, stageIdx) =>
-                                        stageIdx === indexStage
-                                          ? {
+                                      (stageItem, stageIdx) => {
+                                        if (!stageItem?.is_deleted) {
+                                          if (existStageIndex == indexStage) {
+                                            existStageIndex =
+                                              existStageIndex + 1;
+                                            return {
                                               ...stageItem,
                                               process_technical_specific_stage_content:
                                                 stageItem.process_technical_specific_stage_content.map(
-                                                  (contentItem, contentIdx) =>
-                                                    contentIdx === inputIndex
-                                                      ? {
+                                                  (contentItem, contentIdx) => {
+                                                    if (
+                                                      !contentItem?.is_deleted
+                                                    ) {
+                                                      if (
+                                                        existIndex == inputIndex
+                                                      ) {
+                                                        existIndex =
+                                                          existIndex + 1;
+                                                        return {
                                                           ...contentItem,
                                                           time_start:
                                                             selectedDate.toISOString(),
-                                                        }
-                                                      : contentItem
+                                                        };
+                                                      } else {
+                                                        existIndex =
+                                                          existIndex + 1;
+                                                        return contentItem;
+                                                      }
+                                                    } else {
+                                                      return contentItem;
+                                                    }
+                                                  }
                                                 ),
-                                            }
-                                          : stageItem
+                                            };
+                                          } else {
+                                            existStageIndex =
+                                              existStageIndex + 1;
+                                            return stageItem;
+                                          }
+                                        } else {
+                                          return stageItem;
+                                        }
+                                      }
                                     );
                                     setStages((prevState) => [...newArr]);
                                   }}
@@ -958,24 +1016,52 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                           : stageItem
                                       )
                                     );
+                                    let existIndex = 0;
+                                    let existStageIndex = 0;
                                     const newArr = stages.map(
-                                      (stageItem, stageIdx) =>
-                                        stageIdx === indexStage
-                                          ? {
+                                      (stageItem, stageIdx) => {
+                                        if (!stageItem?.is_deleted) {
+                                          if (existStageIndex == indexStage) {
+                                            existStageIndex =
+                                              existStageIndex + 1;
+                                            return {
                                               ...stageItem,
                                               process_technical_specific_stage_content:
                                                 stageItem.process_technical_specific_stage_content.map(
-                                                  (contentItem, contentIdx) =>
-                                                    contentIdx === inputIndex
-                                                      ? {
+                                                  (contentItem, contentIdx) => {
+                                                    if (
+                                                      !contentItem?.is_deleted
+                                                    ) {
+                                                      if (
+                                                        existIndex == inputIndex
+                                                      ) {
+                                                        existIndex =
+                                                          existIndex + 1;
+                                                        return {
                                                           ...contentItem,
                                                           time_end:
                                                             selectedDate.toISOString(),
-                                                        }
-                                                      : contentItem
+                                                        };
+                                                      } else {
+                                                        existIndex =
+                                                          existIndex + 1;
+                                                        return contentItem;
+                                                      }
+                                                    } else {
+                                                      return contentItem;
+                                                    }
+                                                  }
                                                 ),
-                                            }
-                                          : stageItem
+                                            };
+                                          } else {
+                                            existStageIndex =
+                                              existStageIndex + 1;
+                                            return stageItem;
+                                          }
+                                        } else {
+                                          return stageItem;
+                                        }
+                                      }
                                     );
                                     setStages((prevState) => [...newArr]);
                                   }}
@@ -1030,6 +1116,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                             style={[styles.input, styles.marginVertical]}
                             value={input.title}
                             onChangeText={(text) => {
+                              let existIndex = 0;
                               setStages((prevStages) =>
                                 prevStages.map((stageItem) =>
                                   stageItem.process_technical_specific_stage_id ===
@@ -1037,16 +1124,24 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                     ? {
                                         ...stageItem,
                                         process_technical_specific_stage_content:
-                                          stageItem.process_technical_specific_stage_content
-                                            .filter(
-                                              (stageContent) =>
-                                                !stageContent?.is_deleted
-                                            )
-                                            .map((inputItem, idx) =>
-                                              idx === inputIndex
-                                                ? { ...inputItem, title: text }
-                                                : inputItem
-                                            ),
+                                          stageItem.process_technical_specific_stage_content.map(
+                                            (inputItem, idx) => {
+                                              if (!inputItem?.is_deleted) {
+                                                if (existIndex == inputIndex) {
+                                                  existIndex = existIndex + 1;
+                                                  return {
+                                                    ...inputItem,
+                                                    title: text,
+                                                  };
+                                                } else {
+                                                  existIndex = existIndex + 1;
+                                                  return inputItem;
+                                                }
+                                              } else {
+                                                return inputItem;
+                                              }
+                                            }
+                                          ),
                                       }
                                     : stageItem
                                 )
@@ -1135,6 +1230,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                 value={material.material_id}
                                 options={materialOptions}
                                 setValue={(value) => {
+                                  let existIndex = 0;
                                   setStages((prevStages) =>
                                     prevStages.map((stageItem) =>
                                       stageItem.process_technical_specific_stage_id ===
@@ -1142,19 +1238,31 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                         ? {
                                             ...stageItem,
                                             process_technical_specific_stage_material:
-                                              stageItem.process_technical_specific_stage_material
-                                                .filter(
-                                                  (materialItem) =>
+                                              stageItem.process_technical_specific_stage_material.map(
+                                                (materialItem, idx) => {
+                                                  if (
                                                     !materialItem?.is_deleted
-                                                )
-                                                .map((materialItem, idx) =>
-                                                  idx === materialIndex
-                                                    ? {
+                                                  ) {
+                                                    if (
+                                                      existIndex ==
+                                                      materialIndex
+                                                    ) {
+                                                      existIndex =
+                                                        existIndex + 1;
+                                                      return {
                                                         ...materialItem,
                                                         material_id: value,
-                                                      }
-                                                    : materialItem
-                                                ),
+                                                      };
+                                                    } else {
+                                                      existIndex =
+                                                        existIndex + 1;
+                                                      return materialItem;
+                                                    }
+                                                  } else {
+                                                    return materialItem;
+                                                  }
+                                                }
+                                              ),
                                           }
                                         : stageItem
                                     )
@@ -1170,6 +1278,7 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                               inputMode="decimal"
                               value={material.quantity + ""}
                               onChangeText={(text) => {
+                                let existIndex = 0;
                                 setStages((prevStages) =>
                                   prevStages.map((stageItem) =>
                                     stageItem.process_technical_specific_stage_id ===
@@ -1177,19 +1286,26 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
                                       ? {
                                           ...stageItem,
                                           process_technical_specific_stage_material:
-                                            stageItem.process_technical_specific_stage_material
-                                              .filter(
-                                                (materialItem) =>
-                                                  !materialItem?.is_deleted
-                                              )
-                                              .map((materialItem, idx) =>
-                                                idx === materialIndex
-                                                  ? {
+                                            stageItem.process_technical_specific_stage_material.map(
+                                              (materialItem, idx) => {
+                                                if (!materialItem?.is_deleted) {
+                                                  if (
+                                                    existIndex == materialIndex
+                                                  ) {
+                                                    existIndex = existIndex + 1;
+                                                    return {
                                                       ...materialItem,
                                                       quantity: text,
-                                                    }
-                                                  : materialItem
-                                              ),
+                                                    };
+                                                  } else {
+                                                    existIndex = existIndex + 1;
+                                                    return materialItem;
+                                                  }
+                                                } else {
+                                                  return materialItem;
+                                                }
+                                              }
+                                            ),
                                         }
                                       : stageItem
                                   )

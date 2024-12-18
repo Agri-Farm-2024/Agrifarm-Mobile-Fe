@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import {
+  capitalizeFirstLetter,
   convertImageURL,
   formatDate,
   isFutureDate,
@@ -182,9 +183,24 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                   <Text style={[styles.actionTitle]}>
                     {progressItem.actionTitle}
                   </Text>
-                  <Text style={[styles.actionDescription]}>
-                    {shortenText(progressItem.actionDescription, 100)}
-                  </Text>
+                  {!isDiary && (
+                    <Text style={[styles.actionDescription]}>
+                      {shortenText(progressItem.actionDescription, 100)}
+                    </Text>
+                  )}
+                  {isDiary && (
+                    <Text
+                      style={[styles.actionDescription, { marginBottom: 5 }]}
+                    >
+                      {capitalizeFirstLetter(progressItem.diaryNote, 100)}
+                    </Text>
+                  )}
+                  {isDiary && (
+                    <Text style={[styles.actionDescription]}>
+                      Chất lượng hoạt động canh tác:{" "}
+                      {progressItem?.actionQuality}%
+                    </Text>
+                  )}
                   {progressItem.isDone &&
                     progressItem?.imageReport &&
                     progressItem?.imageReport.length > 0 && (

@@ -94,14 +94,14 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             </Text>
           )}
 
-          {taskData?.request?.service_specific?.plant_season?.plant?.name && (
+          {/* {taskData?.request?.service_specific?.plant_season?.plant?.name && (
             <Text style={styles.modalText}>
               Loại cây:{" "}
               {capitalizeFirstLetter(
                 taskData?.request?.service_specific?.plant_season?.plant?.name
               )}
             </Text>
-          )}
+          )} */}
 
           <Text style={styles.modalText}>
             Mảnh đất:{" "}
@@ -177,6 +177,20 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               </Text>
             </Text>
           )}
+
+          {taskData?.request?.service_specific?.time_start && (
+            <Text style={styles.modalText}>
+              Quy trình:{" "}
+              <Text style={{ fontWeight: "bold" }}>
+                {capitalizeFirstLetter(
+                  taskData?.request?.service_specific?.plant_season?.plant?.name
+                )}{" "}
+                {formatDate(taskData?.request?.service_specific?.time_start, 2)}{" "}
+                -{formatDate(taskData?.request?.service_specific?.time_end, 2)}
+              </Text>
+            </Text>
+          )}
+
           {taskData?.request?.process_technical_specific_stage_content
             ?.process_technical_specific_stage?.stage_title && (
             <Text style={styles.modalText}>

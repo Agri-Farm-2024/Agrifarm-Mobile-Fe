@@ -109,7 +109,6 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           </Text>
         </View>
         <Divider style={styles.divider} />
-        <Divider style={styles.divider} />
         <View style={styles.detailContainer}>
           <Text style={styles.label}>Tiền cọc:</Text>
           <Text style={styles.value}>

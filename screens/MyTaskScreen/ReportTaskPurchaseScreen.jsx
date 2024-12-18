@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { IconButton } from "react-native-paper";
+import { Checkbox, IconButton } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { AntDesign } from "@expo/vector-icons";
@@ -30,20 +30,22 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
   const [massPlantExpect, setMassPlantExpect] = useState("");
   const [imageReports, setImageReports] = useState([]);
   const [videoReport, setVideoReport] = useState(null);
+  const [isChecked, setIsChecked] = useState(false);
+
   const video = useRef(null);
   const dispatch = useDispatch();
 
   const qualityOPtions = [
     {
-      label: "Tốt 🌳",
+      label: "Tốt - 100%",
       value: 100,
     },
     {
-      label: "Trung bình 🌿",
+      label: "Khá - 95%",
       value: 95,
     },
     {
-      label: "Xấu 🌱",
+      label: "Trung bình - 90%",
       value: 90,
     },
   ];
@@ -57,6 +59,15 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
         });
         return;
       }
+      if (isChecked) {
+        if (!qualityPlantExpect || qualityPlantExpect == "") {
+          Toast.show({
+            type: "error",
+            text1: "Chất lượng không được bỏ trống!",
+          });
+          return;
+        }
+      }
       if (Number(massPlantExpect) <= 0) {
         Toast.show({
           type: "error",
@@ -65,22 +76,16 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
         return;
       }
 
-      if (!qualityPlantExpect || qualityPlantExpect == "") {
-        Toast.show({
-          type: "error",
-          text1: "Chất lượng không được bỏ trống!",
-        });
-        return;
-      }
-      if (
-        Number(qualityPlantExpect) <= 0 ||
-        Number(qualityPlantExpect) >= 101
-      ) {
+      if (Number(qualityPlantExpect) < 0 || Number(qualityPlantExpect) >= 101) {
         Toast.show({
           type: "error",
           text1: "Chất lượng phải nằm khoảng 1 đến 100",
         });
         return;
+      }
+
+      if (!isChecked) {
+        setQualityPlantExpect(0);
       }
 
       if (!note || note == "") {
@@ -264,7 +269,7 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
             </Text>
           </View>
           <View style={styles.rowContainer}>
-            <Text style={styles.title}>Số lượng dự kiến (Kg)</Text>
+            <Text style={styles.title}>Số lượng dự kiến (kg)</Text>
             <TextInput
               value={massPlantExpect}
               onChangeText={setMassPlantExpect}
@@ -288,21 +293,31 @@ export const ReportTaskPurchaseScreen = ({ route, navigation }) => {
             />
           </View> */}
           <View style={styles.rowContainer}>
-            <Text style={styles.title}>Chất lượng dự kiến</Text>
-            <DropdownComponent
-              styleValue={{
-                height: 40,
-                width: 200,
-              }}
-              placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
-              options={qualityOPtions}
-              placeholder="Chọn chất lượng"
-              value={qualityPlantExpect}
-              setValue={(value) => {
-                setQualityPlantExpect(value);
-              }}
+            <Text style={styles.title}>Đồng ý thu mua</Text>
+            <Checkbox
+              status={isChecked ? "checked" : "unchecked"}
+              onPress={() => setIsChecked(!isChecked)}
+              color="#7fb640"
             />
           </View>
+          {isChecked && (
+            <View style={styles.rowContainer}>
+              <Text style={styles.title}>Chất lượng dự kiến</Text>
+              <DropdownComponent
+                styleValue={{
+                  height: 40,
+                  width: 200,
+                }}
+                placeholderStyleValue={{ fontSize: 14, color: "#707070" }}
+                options={qualityOPtions}
+                placeholder="Chọn chất lượng"
+                value={qualityPlantExpect}
+                setValue={(value) => {
+                  setQualityPlantExpect(value);
+                }}
+              />
+            </View>
+          )}
           <View style={styles.rowContainer}>
             <Text style={styles.title}>Ghi chú</Text>
             <TextInput

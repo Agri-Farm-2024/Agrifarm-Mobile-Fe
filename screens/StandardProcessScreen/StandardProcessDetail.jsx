@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { Text } from "react-native";
+import { Text, useWindowDimensions } from "react-native";
 import { Image } from "react-native";
 import { View } from "react-native";
 import { ScrollView } from "react-native";
 import { SafeAreaView } from "react-native";
 import { capitalizeFirstLetter, convertImageURL } from "../../utils";
 import { StyleSheet } from "react-native";
+import RenderHTML from "react-native-render-html";
 
 const StandardProcessDetail = ({ route, navigation }) => {
+  const { width } = useWindowDimensions();
   const { standardProcess } = route.params;
   console.log("standardProcessDetail", JSON.stringify(standardProcess));
   const [processDetail, setProcessDetail] = useState(null);
@@ -91,9 +93,10 @@ const StandardProcessDetail = ({ route, navigation }) => {
                                   : `Ngày ${step?.time_start}`}
                                 : {step?.title}
                               </Text>
-                              <Text style={styles.stepContent}>
-                                {step?.content}
-                              </Text>
+                              <RenderHTML
+                                contentWidth={width}
+                                source={{ html: step?.content }}
+                              />
                             </View>
                           )
                         )}

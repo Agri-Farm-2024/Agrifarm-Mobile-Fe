@@ -7,12 +7,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from "react-native";
 import { formatDate, isFutureDate, isTodayInRange } from "../../utils";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import { useSelector } from "react-redux";
 import { getUserSelector } from "../../redux/selectors";
+import RenderHTML from "react-native-render-html";
 
 const actionDetail = {
   title: "Chuẩn bị nhà màng",
@@ -28,6 +30,7 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
   const userInfo = useSelector(getUserSelector);
   console.log("userInfo", JSON.stringify(userInfo));
   console.log("processDetail", JSON.stringify(processDetail));
+  const { width } = useWindowDimensions();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -68,9 +71,12 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
       <ScrollView>
         <View style={styles.container}>
           <Text style={styles.title}>{processDetail.actionTitle}</Text>
-          <Text style={styles.description}>
-            {processDetail.actionDescription}
-          </Text>
+
+          <RenderHTML
+            baseStyle={styles.description}
+            contentWidth={width}
+            source={{ html: processDetail.actionDescription }}
+          />
 
           <View style={styles.diaryInfo}>
             <Text style={styles.infoTitle}>Ngày bắt đầu</Text>

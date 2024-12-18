@@ -1,5 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { Image, StyleSheet, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
 import { TouchableRipple } from "react-native-paper";
 import {
   capitalizeFirstLetter,
@@ -9,9 +15,12 @@ import {
   shortenText,
 } from "../utils";
 import { useEffect, useState } from "react";
+import RenderHTML from "react-native-render-html";
 
 const DiaryProgress = ({ diaryProgress, isDiary }) => {
   const navigation = useNavigation();
+  const { width } = useWindowDimensions();
+
   const [diaryRender, setDiaryRender] = useState(null);
   useEffect(() => {
     console.log(
@@ -184,9 +193,12 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                     {progressItem.actionTitle}
                   </Text>
                   {!isDiary && (
-                    <Text style={[styles.actionDescription]}>
-                      {shortenText(progressItem.actionDescription, 100)}
-                    </Text>
+                    <RenderHTML
+                      contentWidth={width}
+                      source={{
+                        html: shortenText(progressItem.actionDescription, 100),
+                      }}
+                    />
                   )}
                   {isDiary && (
                     <Text

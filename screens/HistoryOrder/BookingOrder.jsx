@@ -68,6 +68,9 @@ export default function BookingOrderCard() {
     }
   };
 
+  if (bookingOrderHistory?.booking_materials?.length <= 0)
+    return <EmptyComponent message="Không có đơn hàng" />;
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}

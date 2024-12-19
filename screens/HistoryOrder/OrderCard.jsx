@@ -11,6 +11,7 @@ import {
 import { formatDate, formatNumber } from "../../utils";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 
 const PAGE_SIZE = 30;
 
@@ -59,6 +60,8 @@ export default function OrderCard() {
     }
   };
 
+  if (orderHistory.length <= 0)
+    return <EmptyComponent message="Không có đơn hàng" />;
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}

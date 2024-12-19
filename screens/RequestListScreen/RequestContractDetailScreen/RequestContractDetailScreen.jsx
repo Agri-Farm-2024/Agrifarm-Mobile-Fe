@@ -50,6 +50,64 @@ export default function RequestContractDetailScreen({ navigation, route }) {
   }, [requestID]);
 
   console.log(requestID + "- booking:" + JSON.stringify(booking));
+  console.log(
+    "Test: " +
+      JSON.stringify(
+        booking?.extends
+          ?.filter((item) => item.status === "completed")
+          ?.map((item) => {
+            const timeStart = new Date(item.time_start);
+            const timeEnd = new Date(timeStart);
+            timeEnd.setMonth(timeEnd.getMonth() + item.total_month); // Add total_month to timeStart
+
+            return { ...item, time_end: timeEnd.toISOString() }; // Add time_end to the item
+          })
+          ?.reduce(
+            (latest, current) => {
+              return new Date(current.time_end) > new Date(latest.time_end)
+                ? current
+                : latest;
+            },
+            booking?.extends
+              ?.filter((item) => item.status === "completed")
+              ?.map((item) => {
+                const timeStart = new Date(item.time_start);
+                const timeEnd = new Date(timeStart);
+                timeEnd.setMonth(timeEnd.getMonth() + item.total_month); // Add total_month to timeStart
+
+                return { ...item, time_end: timeEnd.toISOString() }; // Add time_end to the item
+              })[0]
+          )?.time_end
+      )
+  );
+  const timeEndBooking =
+    booking?.extends?.length <= 0
+      ? booking?.time_end
+      : booking?.extends
+          ?.filter((item) => item.status === "completed")
+          ?.map((item) => {
+            const timeStart = new Date(item.time_start);
+            const timeEnd = new Date(timeStart);
+            timeEnd.setMonth(timeEnd.getMonth() + item.total_month); // Add total_month to timeStart
+
+            return { ...item, time_end: timeEnd.toISOString() }; // Add time_end to the item
+          })
+          ?.reduce(
+            (latest, current) => {
+              return new Date(current.time_end) > new Date(latest.time_end)
+                ? current
+                : latest;
+            },
+            booking?.extends
+              ?.filter((item) => item.status === "completed")
+              ?.map((item) => {
+                const timeStart = new Date(item.time_start);
+                const timeEnd = new Date(timeStart);
+                timeEnd.setMonth(timeEnd.getMonth() + item.total_month); // Add total_month to timeStart
+
+                return { ...item, time_end: timeEnd.toISOString() }; // Add time_end to the item
+              })[0]
+          )?.time_end;
 
   if (loading || !booking) return <ActivityIndicatorComponent />;
 
@@ -87,7 +145,8 @@ export default function RequestContractDetailScreen({ navigation, route }) {
           <Text style={styles.label}>Thời gian:</Text>
           <Text style={styles.value}>
             {formatDateToDDMMYYYY(booking?.time_start)} -{" "}
-            {formatDateToDDMMYYYY(booking?.time_end)}
+            {/* {formatDateToDDMMYYYY(booking?.time_end)} - */}
+            {formatDateToDDMMYYYY(timeEndBooking)}
           </Text>
         </View>
         <Divider style={styles.divider} />

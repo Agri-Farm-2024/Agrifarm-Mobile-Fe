@@ -51,6 +51,7 @@ import BookingOrderDetail from "../screens/HistoryOrder/HistoryOrderDetail/Booki
 import StandardProcessDetail from "../screens/StandardProcessScreen/StandardProcessDetail";
 import MaterialUsedScreen from "../screens/DiaryScreen/MaterialUsed";
 import UpdateStandardProcessScreen from "../screens/StandardProcessScreen/UpdateStandardProcessScreen";
+import { ReportTaskBookingMaterial } from "../screens/MyTaskScreen/ReportTaskBookingMaterial";
 
 const Stack = createStackNavigator();
 
@@ -383,6 +384,15 @@ const StackNavigator = () => (
       component={ReportTaskScreen}
       options={{
         headerTitle: "Báo cáo công việc",
+        headerTitleAlign: "center",
+      }}
+    />
+
+    <Stack.Screen
+      name="ReportTaskBookingMaterial"
+      component={ReportTaskBookingMaterial}
+      options={{
+        headerTitle: "Báo cáo vật tư",
         headerTitleAlign: "center",
       }}
     />

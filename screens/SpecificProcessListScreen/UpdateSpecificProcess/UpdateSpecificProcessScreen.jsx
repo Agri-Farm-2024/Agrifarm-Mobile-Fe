@@ -607,42 +607,42 @@ const UpdateSpecificProcessScreen = ({ route, navigation }) => {
         formData: formData,
         processId: processId,
       };
-      // dispatch(updateSpecificProcess(params)).then((updateResponse) => {
-      //   console.log("Update response", JSON.stringify(updateResponse));
-      //   if (updateResponse.payload.statusCode != 200) {
-      //     Toast.show({
-      //       type: "error",
-      //       text1: "Duyệt quy trình không thành công!",
-      //     });
-      //   }
-      //   if (updateResponse.payload.statusCode == 200) {
-      //     dispatch(approveSpecificProcess(processId)).then(
-      //       (approveResponse) => {
-      //         console.log("Approve response", approveResponse);
-      //         if (approveResponse.payload.statusCode != 200) {
-      //           if (approveResponse.payload.statusCode == 400) {
-      //             Toast.show({
-      //               type: "error",
-      //               text1: approveResponse?.payload?.message,
-      //             });
-      //           } else {
-      //             Toast.show({
-      //               type: "error",
-      //               text1: "Duyệt quy trình không thành công!",
-      //             });
-      //           }
-      //         }
-      //         if (approveResponse.payload.statusCode == 200) {
-      //           Toast.show({
-      //             type: "success",
-      //             text1: "Duyệt quy trình thành công!",
-      //           });
-      //           navigation.goBack();
-      //         }
-      //       }
-      //     );
-      //   }
-      // });
+      dispatch(updateSpecificProcess(params)).then((updateResponse) => {
+        console.log("Update response", JSON.stringify(updateResponse));
+        if (updateResponse.payload.statusCode != 200) {
+          Toast.show({
+            type: "error",
+            text1: "Duyệt quy trình không thành công!",
+          });
+        }
+        if (updateResponse.payload.statusCode == 200) {
+          dispatch(approveSpecificProcess(processId)).then(
+            (approveResponse) => {
+              console.log("Approve response", approveResponse);
+              if (approveResponse.payload.statusCode != 200) {
+                if (approveResponse.payload.statusCode == 400) {
+                  Toast.show({
+                    type: "error",
+                    text1: approveResponse?.payload?.message,
+                  });
+                } else {
+                  Toast.show({
+                    type: "error",
+                    text1: "Duyệt quy trình không thành công!",
+                  });
+                }
+              }
+              if (approveResponse.payload.statusCode == 200) {
+                Toast.show({
+                  type: "success",
+                  text1: "Duyệt quy trình thành công!",
+                });
+                navigation.goBack();
+              }
+            }
+          );
+        }
+      });
     }
   };
   return (

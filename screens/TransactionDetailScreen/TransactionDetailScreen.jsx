@@ -134,6 +134,8 @@ const TransactionScreen = () => {
                   ? "Báo cáo thuê đất"
                   : transactionData.purpose === "report_booking_material"
                   ? "Báo cáo vật tư"
+                  : transactionData.purpose === "cancel_booking_material"
+                  ? "Huỷ thuê thiết bị"
                   : transactionData.purpose === "service_purchase_product"
                   ? "Hoàn tiền thu hoạch"
                   : transactionData.purpose === "cancel_purchase_product"

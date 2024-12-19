@@ -226,7 +226,14 @@ const TaskList = ({ taskType }) => {
           task?.request?.status === "rejected" ||
           task?.request?.status === "assigned"
       );
-      console.log("newData: " + JSON.stringify(newData));
+      console.log(
+        "notStartTask: " +
+          JSON.stringify(
+            newData.filter(
+              (task) => task?.request?.type === "report_booking_material"
+            )
+          )
+      );
       setTaskList(newData);
     } else if (taskType == "Đang làm") {
       const newData = taskList.filter(
@@ -377,8 +384,12 @@ const TaskList = ({ taskType }) => {
               )}`
             : item?.request?.type === "report_land"
             ? "Báo cáo mảnh đất"
+            : item?.request?.type === "report_booking_material"
+            ? "Giao vật tư thuê"
             : item?.request?.type === "technical_support"
             ? "Hỗ trợ kĩ thuật"
+            : item?.request?.type === "view_land"
+            ? "Xem đất"
             : item?.request?.type === "product_purchase"
             ? `Kiểm định thu mua\n${capitalizeFirstLetter(
                 item?.request?.service_specific?.plant_season?.plant?.name

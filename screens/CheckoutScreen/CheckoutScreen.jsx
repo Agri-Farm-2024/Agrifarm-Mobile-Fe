@@ -323,7 +323,7 @@ const CheckoutScreen = ({ route, navigation }) => {
           mode="contained"
           style={styles.payButton}
           onPress={() => handleCheckout()}
-          disabled={!isChecked || !bookingId}
+          disabled={!isRent ? false : !isChecked || !bookingId}
         >
           THANH TOÁN
         </Button>

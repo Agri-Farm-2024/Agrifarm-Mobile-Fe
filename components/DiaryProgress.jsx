@@ -94,6 +94,7 @@ const DiaryProgress = ({ diaryProgress, isDiary }) => {
                     process_technical_specific_stage_content_id:
                       content.process_technical_specific_stage_content_id,
                     canWriteDiary: content?.can_write_dinary,
+                    isLogged: content?.dinary_stage == null ? false : true,
                   })
                 );
               }

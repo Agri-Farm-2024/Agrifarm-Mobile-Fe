@@ -188,7 +188,7 @@ function HomeScreen({ navigation }) {
                   color="#7FB640"
                 />
               </TouchableOpacity>
-              <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
+              <Text style={styles.iconLabel}>Xem Nhật ký</Text>
             </View>
 
             <View style={styles.iconContainer}>

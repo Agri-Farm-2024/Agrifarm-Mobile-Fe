@@ -155,47 +155,49 @@ const TransactionScreen = () => {
                 {transactionData.transaction_code}
               </Text>
             </View>
-            {transactionData?.service_specific?.requests[2]?.task?.report
-              ?.mass_plant && (
-              <View style={styles.infoRow}>
-                <Text style={styles.textLabel}>Số lượng</Text>
-                <Text style={styles.textValue}>
-                  {formatNumber(
-                    transactionData?.service_specific?.requests[2]?.task?.report
-                      ?.mass_plant
-                  )}{" "}
-                  kg
-                </Text>
-              </View>
-            )}
-            {transactionData?.service_specific?.requests[2]?.task?.report
-              ?.quality_plant && (
-              <View style={styles.infoRow}>
-                <Text style={styles.textLabel}>Chất lượng</Text>
-                <Text style={styles.textValue}>
-                  {transactionData?.service_specific?.requests[2]?.task?.report
-                    ?.quality_plant === 100
-                    ? "Tốt"
-                    : transactionData?.service_specific?.requests[2]?.task
-                        ?.report?.quality_plant === 95
-                    ? "Khá"
-                    : "Trung bình"}
-                </Text>
-              </View>
-            )}
-            {transactionData?.service_specific?.requests[2]?.task?.report
-              ?.price_purchase_per_kg && (
-              <View style={styles.infoRow}>
-                <Text style={styles.textLabel}>Đơn giá</Text>
-                <Text style={styles.textValue}>
-                  {formatNumber(
-                    transactionData?.service_specific?.requests[2]?.task?.report
-                      ?.price_purchase_per_kg
-                  )}{" "}
-                  VND/kg
-                </Text>
-              </View>
-            )}
+            {transactionData?.service_specific?.requests?.find(
+              (request) => request.type === "product_puchase_harvest"
+            ) &&
+              transactionData?.type === "refund" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.textLabel}>Số lượng</Text>
+                  <Text style={styles.textValue}>
+                    {formatNumber(
+                      transactionData?.service_specific?.mass_plant
+                    )}{" "}
+                    kg
+                  </Text>
+                </View>
+              )}
+            {transactionData?.service_specific?.requests?.find(
+              (request) => request.type === "product_puchase_harvest"
+            ) &&
+              transactionData?.type === "refund" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.textLabel}>Chất lượng</Text>
+                  <Text style={styles.textValue}>
+                    {transactionData?.service_specific?.quality_plant === 100
+                      ? "Tốt"
+                      : transactionData?.service_specific?.quality_plant === 95
+                      ? "Khá"
+                      : "Trung bình"}
+                  </Text>
+                </View>
+              )}
+            {transactionData?.service_specific?.requests?.find(
+              (request) => request.type === "product_puchase_harvest"
+            ) &&
+              transactionData?.type === "refund" && (
+                <View style={styles.infoRow}>
+                  <Text style={styles.textLabel}>Đơn giá</Text>
+                  <Text style={styles.textValue}>
+                    {formatNumber(
+                      transactionData?.service_specific?.price_purchase_per_kg
+                    )}{" "}
+                    VND/kg
+                  </Text>
+                </View>
+              )}
             <View style={styles.infoRow}>
               <Text style={styles.textLabel}>Số tiền thanh toán</Text>
               <Text style={styles.textValue}>

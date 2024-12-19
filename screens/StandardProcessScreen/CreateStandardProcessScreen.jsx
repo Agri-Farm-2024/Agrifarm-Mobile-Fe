@@ -31,7 +31,7 @@ const StandardProcessSchema = Yup.object().shape({
   plantSeason: Yup.string().required("Vui lòng chọn loại cây!"),
 });
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 
 export default function CreateStandardProcessScreen({ navigation }) {
   const [openStandardProcess, setOpenStandardProcess] = useState(false);

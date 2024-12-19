@@ -19,7 +19,7 @@ import DropdownComponent from "../../components/DropdownComponent";
 import { getMaterial } from "../../redux/slices/materialSlice";
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 const UpdateStandardProcessScreen = ({ route, navigation }) => {
   const { standardProcess } = route.params;

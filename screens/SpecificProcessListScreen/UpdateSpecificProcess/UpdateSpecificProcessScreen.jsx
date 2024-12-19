@@ -24,7 +24,7 @@ import {
 import { getSpecificProcessDetailSelector } from "../../../redux/selectors";
 import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 const UpdateSpecificProcessScreen = ({ route, navigation }) => {
   const { specificProcess } = route.params;
   // console.log("specificProcess", JSON.stringify(specificProcess));

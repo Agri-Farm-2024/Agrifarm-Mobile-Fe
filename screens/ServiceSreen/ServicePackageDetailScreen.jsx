@@ -28,7 +28,7 @@ import {
 import { getPlantSeasonList } from "../../redux/slices/plantSlice";
 import ActivityIndicatorComponent from "../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 const ServicePackageDetailScreen = ({ navigation, route }) => {
   const [formInput, setFormInput] = useState({

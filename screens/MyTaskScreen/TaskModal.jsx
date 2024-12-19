@@ -82,6 +82,8 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 ? "Kiểm định thu mua"
                 : taskData?.request?.type === "product_puchase_harvest"
                 ? "Yêu cầu thu hoạch"
+                : taskData?.request?.type === "report_service_specific"
+                ? "Báo cáo dịch vụ"
                 : taskData?.request?.type === "view_land"
                 ? "Xem đất"
                 : taskData?.request?.type === "material_process_specfic_stage"

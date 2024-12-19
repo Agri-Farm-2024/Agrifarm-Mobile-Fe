@@ -14,7 +14,7 @@ import { getMaterial } from "../../redux/slices/materialSlice";
 import { useDispatch } from "react-redux";
 import { capitalizeFirstLetter } from "../../utils";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 const PlanToStandardFarmingInput = forwardRef(
   ({ plantStages, setPlantStages }, ref) => {

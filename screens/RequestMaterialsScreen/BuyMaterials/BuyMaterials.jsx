@@ -55,7 +55,7 @@ const data = [
     requestType: "buy",
   },
 ];
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 export default function BuyMaterials() {
   const dispatch = useDispatch();

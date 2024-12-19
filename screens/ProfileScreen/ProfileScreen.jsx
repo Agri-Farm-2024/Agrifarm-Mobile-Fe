@@ -85,6 +85,9 @@ const ProfileScreen = ({ navigation }) => {
             <MaterialIcons name="arrow-forward-ios" size={24} color="#707070" />
           </View>
         </TouchableHighlight>
+        <Text style={{ textAlign: "center" }}>
+          Phiên bản 20.12 (20/12/2024)
+        </Text>
       </View>
     </SafeAreaView>
   );

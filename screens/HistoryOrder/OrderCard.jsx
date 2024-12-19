@@ -60,8 +60,9 @@ export default function OrderCard() {
     }
   };
 
-  if (orderHistory.length <= 0)
+  if (orderHistory?.length <= 0)
     return <EmptyComponent message="Không có đơn hàng" />;
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{ width: "100%" }}>
       {loading && <ActivityIndicatorComponent />}

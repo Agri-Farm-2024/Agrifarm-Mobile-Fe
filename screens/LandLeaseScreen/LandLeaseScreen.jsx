@@ -5,7 +5,7 @@ import LandLeaseInput from "./LandLeaseInput/LandLeaseInput";
 import LandLeaseSign from "./LandLeaseSign/LandLeaseSign";
 import Toast from "react-native-toast-message";
 import LandLeaseReview from "./LandLeaseReview/LandLeaseReview";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { bookingLand } from "../../redux/slices/landSlice";
 import { TouchableOpacity } from "react-native";
 import ContractLandLeaseDialog from "../../components/ContractLandLeaseDialog/ContractLandLeaseDialog";
@@ -23,6 +23,9 @@ export default function LandLeaseScreen({ navigation, route }) {
     startTime: new Date(),
     isMultiplePayment: false,
   });
+
+  const user = useSelector((state) => state.userSlice.userInfo);
+  console.log(user?.full_name);
   const [visibleContract, setVisibleContract] = useState(false);
 
   const dispatch = useDispatch();
@@ -125,7 +128,7 @@ export default function LandLeaseScreen({ navigation, route }) {
 
   const contract = {
     farmOwner: "Trang trại AgriFarm - quản lí trang trại: bà Trịnh Gia Hân",
-    landrenter: "Ninh",
+    landrenter: user?.full_name,
     totalMonth: formData?.rentalMonths,
     purpose: formData?.purpose,
     area: land?.acreage_land,

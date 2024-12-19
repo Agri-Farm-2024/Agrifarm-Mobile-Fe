@@ -32,7 +32,7 @@ const diaryList = [
   },
 ];
 
-const PAGE_SIZE = 50;
+const PAGE_SIZE = 100;
 
 const DiaryScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);

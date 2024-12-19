@@ -386,6 +386,8 @@ const TaskList = ({ taskType }) => {
             ? "Báo cáo mảnh đất"
             : item?.request?.type === "report_booking_material"
             ? "Giao vật tư thuê"
+            : item?.request?.type === "report_service_specific"
+            ? "Báo cáo dịch vụ"
             : item?.request?.type === "technical_support"
             ? "Hỗ trợ kĩ thuật"
             : item?.request?.type === "view_land"

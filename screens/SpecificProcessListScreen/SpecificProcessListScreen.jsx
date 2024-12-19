@@ -33,7 +33,7 @@ const diaryList = [
   },
 ];
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 const SpecificProcessListScreen = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);

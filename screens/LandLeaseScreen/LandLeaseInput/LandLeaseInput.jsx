@@ -96,7 +96,7 @@ const LandLeaseInput = forwardRef((props, ref) => {
             parseInt(new Date(values.startTime).getMonth()) + 1;
 
           const params = {
-            page_size: 50,
+            page_size: 100,
             page_index: 1,
             time_start: startMonth,
             total_month: parseInt(values.rentalMonths),

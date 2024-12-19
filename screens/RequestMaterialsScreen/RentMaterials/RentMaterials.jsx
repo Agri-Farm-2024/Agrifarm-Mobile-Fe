@@ -55,7 +55,7 @@ const deviceData = [
   },
 ];
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 export default function RentMaterials() {
   const dispatch = useDispatch();

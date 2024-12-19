@@ -11,7 +11,7 @@ import { TouchableRipple } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import ActivityIndicatorComponent from "../../../components/ActivityIndicatorComponent/ActivityIndicatorComponent";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 export default function ItemsRequestServices() {
   const [isLoading, setIsLoading] = useState(true);
   const [pageNumber, setPageNumber] = useState(1);

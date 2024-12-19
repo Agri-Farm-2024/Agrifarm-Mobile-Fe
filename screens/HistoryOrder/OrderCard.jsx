@@ -13,7 +13,7 @@ import ActivityIndicatorComponent from "../../components/ActivityIndicatorCompon
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import EmptyComponent from "../../components/EmptyComponent/EmptyComponent";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 
 export default function OrderCard() {
   const navigation = useNavigation();

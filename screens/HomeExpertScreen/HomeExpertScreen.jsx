@@ -180,7 +180,7 @@ function HomeExpertScreen({ navigation }) {
               <Text style={styles.iconLabel}>Ghi Nhật ký</Text>
             </View>
 
-            <View style={styles.iconContainer}>
+            {/* <View style={styles.iconContainer}>
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => navigation.navigate("RequestMaterialsScreen")}
@@ -192,7 +192,7 @@ function HomeExpertScreen({ navigation }) {
                 />
               </TouchableOpacity>
               <Text style={styles.iconLabel}>Vật tư</Text>
-            </View>
+            </View> */}
             <View style={styles.iconContainer}></View>
           </View>
         </View>

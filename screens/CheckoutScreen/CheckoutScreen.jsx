@@ -24,7 +24,7 @@ import { getBookingList } from "../../redux/slices/landSlice";
 import DropdownComponent from "../../components/DropdownComponent";
 import ContractRentDialog from "../../components/ContractRentDialog/ContractRentDialog";
 
-const PAGE_SIZE = 30;
+const PAGE_SIZE = 100;
 const CheckoutScreen = ({ route, navigation }) => {
   const { cartItemsCheckout, isRent, rentDay } = route.params;
   const [isChecked, setIsChecked] = useState(false);

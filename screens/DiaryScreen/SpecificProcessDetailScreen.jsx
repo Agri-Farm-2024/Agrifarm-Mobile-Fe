@@ -39,15 +39,20 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
           style={[{ padding: 10 }, userInfo?.role != 3 && { display: "none" }]}
           onPress={() => {
             if (isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo)) {
-              if (processDetail.canWriteDiary == true) {
+              if (
+                processDetail?.isLogged == false &&
+                processDetail.canWriteDiary == true
+              ) {
                 navigation.navigate("WriteDiaryScreen", {
                   diary: processDetail,
                 });
               } else {
-                Toast.show({
-                  type: "error",
-                  text1: "Hãy bắt đầu task để ghi nhật ký!",
-                });
+                if (processDetail?.isLogged == false) {
+                  Toast.show({
+                    type: "error",
+                    text1: "Hãy bắt đầu task để ghi nhật ký!",
+                  });
+                }
               }
             }
           }}
@@ -56,9 +61,10 @@ const SpecificProcessDetailScreen = ({ route, navigation }) => {
             name="pencil-plus"
             size={24}
             color={
-              !isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo)
-                ? "#707070"
-                : "#fff"
+              isTodayInRange(processDetail?.dayFrom, processDetail?.dayTo) &&
+              processDetail?.isLogged == false
+                ? "#fff"
+                : "#707070"
             }
           />
         </TouchableOpacity>

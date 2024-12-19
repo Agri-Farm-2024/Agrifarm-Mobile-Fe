@@ -74,12 +74,16 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                 ? "Canh tác và ghi nhật ký"
                 : taskData?.request?.type === "report_land"
                 ? "Báo cáo mảnh đất"
+                : taskData?.request?.type === "report_booking_material"
+                ? "Giao vật tư thuê"
                 : taskData?.request?.type === "technical_support"
                 ? "Hỗ trợ kĩ thuật"
                 : taskData?.request?.type === "product_purchase"
                 ? "Kiểm định thu mua"
                 : taskData?.request?.type === "product_puchase_harvest"
                 ? "Yêu cầu thu hoạch"
+                : taskData?.request?.type === "view_land"
+                ? "Xem đất"
                 : taskData?.request?.type === "material_process_specfic_stage"
                 ? "Lấy vật tư theo giai đoạn"
                 : taskData?.request?.type}
@@ -119,6 +123,8 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
               ? taskData?.request?.process_technical_specific_stage
                   ?.process_technical_specific?.service_specific?.booking_land
                   ?.land?.name
+              : taskData?.request?.booking_material?.booking_land?.land?.name
+              ? taskData?.request?.booking_material?.booking_land?.land?.name
               : "Không có"}
           </Text>
           {taskData?.request?.type == "create_process_standard" && (
@@ -237,7 +243,7 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
             ?.process_technical_specific_stage_material?.length >= 1 && (
             <View>
               <Text style={styles.modalText}>Danh sách vật tư: </Text>
-              {taskData?.request.process_technical_specific_stage.process_technical_specific_stage_material?.map(
+              {taskData?.request?.process_technical_specific_stage?.process_technical_specific_stage_material?.map(
                 (item, index) => (
                   <Text
                     style={[
@@ -255,6 +261,44 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                     {item?.materialSpecific?.unit === "piece" && "Cái"}
                     {item?.materialSpecific?.unit === "bottle" && "Chai"}
                     {item?.materialSpecific?.unit === "square_meter" && "m2"}
+                  </Text>
+                )
+              )}
+            </View>
+          )}
+
+          {taskData?.request?.type == "report_booking_material" && (
+            <Text style={styles.modalText}>
+              Người thuê:{" "}
+              <Text>
+                {taskData?.request?.booking_material?.landrenter?.full_name ||
+                  "không có"}
+              </Text>
+            </Text>
+          )}
+
+          {taskData?.request?.booking_material?.booking_material_detail
+            ?.length >= 1 && (
+            <View>
+              <Text style={styles.modalText}>Danh sách vật tư: </Text>
+              {taskData?.request?.booking_material?.booking_material_detail?.map(
+                (item, index) => (
+                  <Text
+                    style={[
+                      styles.modalText,
+                      {
+                        fontSize: 14,
+                      },
+                    ]}
+                    key={index}
+                  >
+                    + {capitalizeFirstLetter(item?.material?.name)} - SL:{" "}
+                    {item?.quantity}{" "}
+                    {item?.material?.unit === "package" && "Túi"}
+                    {item?.material?.unit === "bag" && "Bao"}
+                    {item?.material?.unit === "piece" && "Cái"}
+                    {item?.material?.unit === "bottle" && "Chai"}
+                    {item?.material?.unit === "square_meter" && "m2"}
                   </Text>
                 )
               )}
@@ -339,6 +383,12 @@ const TaskModal = ({ isVisible, onClose, taskData, handleStartTask }) => {
                       });
                     } else if (taskData?.request?.type === "report_land") {
                       navigation.navigate("ReportTaskLandScreen", {
+                        taskInfo: taskData,
+                      });
+                    } else if (
+                      taskData?.request?.type === "report_booking_material"
+                    ) {
+                      navigation.navigate("ReportTaskBookingMaterial", {
                         taskInfo: taskData,
                       });
                     } else {

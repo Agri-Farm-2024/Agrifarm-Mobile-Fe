@@ -52,26 +52,37 @@ const AgricultureExpertEfficiency = () => {
           <View
             style={[
               styles.segment,
-              { backgroundColor: "#4caf50", flex: completedTasks },
+              {
+                backgroundColor: "#4caf50",
+                height: `${(completedTasks * 100) / totalTasks}%`,
+              },
             ]}
           />
           {/* Segment 2: Incomplete */}
           <View
             style={[
               styles.segment,
-              { backgroundColor: "#ff9800", flex: inProgressTaks },
+              {
+                backgroundColor: "#ff9800",
+                height: `${(inProgressTaks * 100) / totalTasks}%`,
+              },
             ]}
           />
           {/* Segment 3: Not Started */}
           <View
             style={[
               styles.segment,
-              { backgroundColor: "#f44336", flex: notStartedTasks },
+              {
+                backgroundColor: "#f44438",
+                height: `${(notStartedTasks * 100) / totalTasks}%`,
+              },
             ]}
           />
         </View>
         <View style={styles.chartTextContainer}>
-          <Text style={styles.chartText}>{totalTasks} công việc</Text>
+          <Text style={styles.chartText}>{completedTasks}</Text>
+          <Text style={styles.chartText}>{inProgressTaks}</Text>
+          <Text style={styles.chartText}>{notStartedTasks}</Text>
         </View>
       </View>
 
@@ -120,24 +131,30 @@ const styles = StyleSheet.create({
   outerCircle: {
     height: 120,
     width: 120,
-    borderRadius: 90, // Ensure it's circular
-    borderWidth: 3,
+    // borderRadius: 90, // Ensure it's circular
+    borderWidth: 0,
     borderColor: "#ddd",
     overflow: "hidden",
     flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-end",
   },
   segment: {
+    width: "30%",
     height: "100%",
   },
   chartTextContainer: {
+    width: 120,
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
   chartText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 12,
+    fontWeight: "500",
     color: "#324F5E",
+    width: "30%",
+    textAlign: "center",
   },
   chartSubText: {
     fontSize: 14,

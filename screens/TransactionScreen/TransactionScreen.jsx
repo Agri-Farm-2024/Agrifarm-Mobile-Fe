@@ -110,6 +110,8 @@ export default function TransactionScreen() {
                     ? "Báo cáo thuê đất"
                     : transaction.purpose === "report_booking_material"
                     ? "Báo cáo vật tư"
+                    : transaction.purpose === "cancel_booking_material"
+                    ? "Huỷ thuê thiết bị"
                     : transaction.purpose === "service_purchase_product"
                     ? "Hoàn tiền thu hoạch"
                     : transaction.purpose === "cancel_purchase_product"

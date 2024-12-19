@@ -227,6 +227,11 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
           type: "error",
           text1: "Diện tích canh tác tối thiểu là 1000 m²!",
         });
+      } else if (!isDateGreaterThanTodayPlus7Days(formInput.dateStart)) {
+        Toast.show({
+          type: "error",
+          text1: "Ngày bắt đầu phải sau ngày hôm nay 7 ngày!",
+        });
       } else {
         const bookingObject =
           bookingSelector?.bookings &&
@@ -390,13 +395,15 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                             styles.selectItem,
                           booking?.acreage_land_can_used < 1000 &&
                             styles.disabledItem,
-                          new Date(booking?.time_start) > new Date() &&
+                          new Date(booking?.time_start) >
+                            new Date(formInput.dateStart) &&
                             styles.disabledItem,
                         ]}
                         onPress={() => {
                           if (
                             booking?.acreage_land_can_used >= 1000 &&
-                            new Date(booking?.time_start) <= new Date()
+                            new Date(booking?.time_start) <=
+                              new Date(formInput.dateStart)
                           ) {
                             console.log("select booking", booking.booking_id);
                             setFormInput((prevState) => ({
@@ -417,7 +424,8 @@ const ServicePackageDetailScreen = ({ navigation, route }) => {
                               styles.selectText,
                             booking?.acreage_land_can_used < 1000 &&
                               styles.disabledText,
-                            new Date(booking?.time_start) > new Date() &&
+                            new Date(booking?.time_start) >
+                              new Date(formInput.dateStart) &&
                               styles.disabledText,
                           ]}
                         >

@@ -125,19 +125,19 @@ export const ReportTaskBookingMaterial = ({ route, navigation }) => {
           if (response.payload.statusCode === 201) {
             Toast.show({
               type: "success",
-              text1: "Báo cáo công việc thành công!",
+              text1: "Báo cáo vật tư thành công!",
             });
             navigation.goBack();
           } else {
             if (response.payload.message === "Report already exist") {
               Toast.show({
                 type: "error",
-                text1: "Công việc này đã được báo cáo!",
+                text1: "Vật tư này đã được báo cáo!",
               });
             } else {
               Toast.show({
                 type: "error",
-                text1: "Báo cáo công việc thất bại!",
+                text1: "Báo cáo vật tư thất bại!",
               });
             }
           }

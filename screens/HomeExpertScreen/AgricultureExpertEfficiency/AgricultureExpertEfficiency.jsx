@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
   segment: {
     width: "30%",
     height: "100%",
+    minHeight: "1%",
   },
   chartTextContainer: {
     width: 120,

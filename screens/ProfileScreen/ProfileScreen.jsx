@@ -86,7 +86,7 @@ const ProfileScreen = ({ navigation }) => {
           </View>
         </TouchableHighlight>
         <Text style={{ textAlign: "center" }}>
-          Phiên bản 20.12 (20/12/2024)
+          Phiên bản 20.12.1 (20/12/2024)
         </Text>
       </View>
     </SafeAreaView>
